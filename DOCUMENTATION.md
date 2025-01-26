@@ -1,10 +1,34 @@
 ## Bingo Documentation
 Here is the documentation I gathered from BingoSync
 
+## Create a room
+Method: `POST`
+
+URL: https://bingosync.com/
+
+Body:
+```json
+{
+  "room_name": "ROOM NAME",
+  "passphrase": "ROOM PASSWORD",
+  "nickname": "USERNAME",
+  "game_type": 18, // CUSTOM
+  "variant_type": 18|172, // 18 = Fixed Board, 172 = Randomized
+  "custom_json": "JSON OF THE BOARD",
+  "lockout_mode": 1|2, // 1 = Non-Lockout, 2 = Lockout
+  "seed": ""|"123123", // Leave empty if none
+  "is_spectator": true|false,
+  "hide_card": true|false,
+  "csrfmiddlewaretoken": "CSRF secret token"
+}
+```
+
+Response: `none`
+
 ## Join a room
 Method: `POST`
 
-Url: https://bingosync.com/api/join-room
+URL: https://bingosync.com/api/join-room
 
 Body:
 ```json
@@ -19,14 +43,14 @@ Body:
 Response:
 ```json
 {
-    "socket_key": "SOCKT_KEY"
+    "socket_key": "SOCKET_KEY"
 }
 ```
 
 ## Get board
 Method: `GET`
 
-Url: https://bingosync.com/room/ROOM_ID/board
+URL: https://bingosync.com/room/ROOM_ID/board
 
 Body: `none`
 
@@ -35,7 +59,7 @@ Response:
 [
   {
       "name": "NAME OF THE OBJECTIVE",
-      "slot": "SLOT INDEX (slot1)",
+      "slot": "SLOT INDEX (#)",
       "colors": "blank OR COLORS SEPARATE BY A SPACE (red blue purple)"
   },
 ]
@@ -44,13 +68,13 @@ Response:
 ## Mark a square
 Method: `PUT`
 
-Url: https://bingosync.com/api/select
+URL: https://bingosync.com/api/select
 
 Body:
 ```json
 {
     "room": "ROOM_ID",
-    "slot": "SLOT INDEX (1)",
+    "slot": "SLOT INDEX (#)",
     "color": "COLOR NAME",
     "remove_color": false
 }
@@ -61,13 +85,13 @@ Response: `none`
 ## Clear a square
 Method: `PUT`
 
-Url: https://bingosync.com/api/select
+URL: https://bingosync.com/api/select
 
 Body:
 ```json
 {
     "room": "ROOM_ID",
-    "slot": "SLOT INDEX (1)",
+    "slot": "SLOT INDEX (#)",
     "color": "COLOR NAME",
     "remove_color": true
 }
@@ -75,10 +99,10 @@ Body:
 
 Response: `none`
 
-## Change color
+## Change team
 Method: `PUT`
 
-Url: https://bingosync.com/api/color
+URL: https://bingosync.com/api/color
 
 Body:
 ```json
@@ -102,17 +126,34 @@ Possible colors:
 - navy
 - purple
 
+## Send message
+Method: `PUT`
+
+URL: https://bingosync.com/api/chat
+
+Body:
+```json
+{
+  "room": "ROOM ID",
+  "text": "MESSAGE",
+}
+```
+
+Response: `none`
+
 ## Chat Feed
 Method: `GET`
 
-Url: https://bingosync.com/room/ROOM_ID/feed
+URL: https://bingosync.com/room/ROOM_ID/feed
 
 Body: `none`
 
 Response:
 ```json
-[
-  "events": [ ... ],
+{
+  "events": [
+    ...
+  ],
   "allIncluded": true
-]
+}
 ```
