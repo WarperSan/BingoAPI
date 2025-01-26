@@ -2,6 +2,9 @@
 
 namespace BingoAPI.Events;
 
+/// <summary>
+/// Event that represents someone talking in chat
+/// </summary>
 public class ChatEvent : Event
 {
     public readonly string Text;

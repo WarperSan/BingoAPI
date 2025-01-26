@@ -3,6 +3,9 @@ using System.Reflection;
 
 namespace BingoAPI.Helpers;
 
+/// <summary>
+/// Helper that loads embedded DLL from this mod
+/// </summary>s
 internal static class AssemblyLoader
 {
     public static void LoadEmbeddedDLL()

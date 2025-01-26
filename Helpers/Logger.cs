@@ -3,7 +3,7 @@
 namespace BingoAPI.Helpers;
 
 /// <summary>
-/// Helper to log things from this mod
+/// Helper that logs things from this mod
 /// </summary>
 internal static class Logger
 {

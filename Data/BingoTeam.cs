@@ -2,6 +2,9 @@
 
 namespace BingoAPI.Data;
 
+/// <summary>
+/// All the teams available for a bingo
+/// </summary>
 [Flags]
 public enum BingoTeam: ushort
 {

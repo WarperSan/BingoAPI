@@ -3,6 +3,9 @@ using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Data;
 
+/// <summary>
+/// Data for a player
+/// </summary>
 public struct PlayerData
 {
     public string? UUID;

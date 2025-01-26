@@ -4,6 +4,9 @@ using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Network;
 
+/// <summary>
+/// Structure that holds every useful information of a response
+/// </summary>
 internal struct Response
 {
     public string URL;

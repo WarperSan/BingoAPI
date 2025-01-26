@@ -3,6 +3,9 @@ using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Events;
 
+/// <summary>
+/// Event that represents a goal's state being changed
+/// </summary>
 public class GoalEvent : Event
 {
     public readonly SquareData Square;

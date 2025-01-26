@@ -10,6 +10,9 @@ namespace BingoAPI.Network;
 
 internal static class Request
 {
+    /// <summary>
+    /// Sends the given request and waits until it's done
+    /// </summary>
     private static async Task Send(UnityWebRequest request)
     {
         var req = request.SendWebRequest();
@@ -18,6 +21,9 @@ internal static class Request
             await Task.Delay(25);
     }
 
+    /// <summary>
+    /// Compiles the given request into a more comprehensive response
+    /// </summary>
     private static Response CompileResponse(UnityWebRequest req) => new()
     {
         URL = req.url,
@@ -32,6 +38,9 @@ internal static class Request
         Content = req.downloadHandler.text.Trim()
     };
 
+    /// <summary>
+    /// Sends a <c>GET</c> request to the given URI
+    /// </summary>
     public static async Task<Response> Get(string uri)
     {
         using var request = UnityWebRequest.Get(uri);
@@ -41,6 +50,9 @@ internal static class Request
         return CompileResponse(request);
     }
 
+    /// <summary>
+    /// Fetches the hidden CORS token from the given URI
+    /// </summary>
     public static async Task<string?> GetCORSToken(string uri)
     {
         using var request = UnityWebRequest.Get(uri);
@@ -78,16 +90,22 @@ internal static class Request
         return token;
     }
 
-    public static async Task<Response> PostJson(string uri, object payload)
+    /// <summary>
+    /// Sends a <c>POST</c> request to the given URI with the given payload
+    /// </summary>
+    public static async Task<Response> PostJson(string uri, object payload, string contentType = "application/json")
     {
         var json = JsonConvert.SerializeObject(payload);
-        using var request = UnityWebRequest.Post(uri, json, "application/json");
+        using var request = UnityWebRequest.Post(uri, json, contentType);
         request.downloadHandler = new DownloadHandlerBuffer();
 
         await Send(request);
         return CompileResponse(request);
     }
 
+    /// <summary>
+    /// Sends a <c>POST</c> request to the given URI with the given JSON payload while using the given CORS token
+    /// </summary>
     public static async Task<Response> PostCORSForm(string uri, string corsToken, object payload)
     {
         var formFields = new Dictionary<string, string>();
@@ -104,6 +122,9 @@ internal static class Request
         return CompileResponse(request);
     }
 
+    /// <summary>
+    /// Sends a <c>PUT</c> request to the given URI with the given JSON payload
+    /// </summary>
     public static async Task<Response> PutJson(string uri, object payload)
     {
         var json = JsonConvert.SerializeObject(payload);

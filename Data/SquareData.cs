@@ -3,6 +3,9 @@ using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Data;
 
+/// <summary>
+/// Data for a square
+/// </summary>
 public struct SquareData
 {
     public string? Name;

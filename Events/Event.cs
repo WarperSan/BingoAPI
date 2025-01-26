@@ -5,6 +5,9 @@ using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Events;
 
+/// <summary>
+/// Class that handles the events sent from the bingo server
+/// </summary>
 public abstract class Event
 {
     public readonly PlayerData Player;
