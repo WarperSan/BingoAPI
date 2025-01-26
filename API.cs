@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BingoAPI.Data;
+using BingoAPI.Events;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using BingoAPI.Network;
@@ -22,7 +24,6 @@ public static class API
     
     private const string GET_BOARD_URL = BINGO_URL + "/room/{0}/board";
     private const string FEED_URL = BINGO_URL + "/room/{0}/feed";
-    private const string ROOM_SETTINGS_URL = BINGO_URL + "/room/{0}/room-settings";
     
     private const string JOIN_ROOM_URL = BINGO_URL + "/api/join-room";
     private const string CHANGE_TEAM_URL = BINGO_URL + "/api/color";
@@ -30,8 +31,6 @@ public static class API
     private const string SEND_MESSAGE_URL = BINGO_URL + "/api/chat";
     private const string REVEAL_CARD_URL = BINGO_URL + "/api/revealed";
     private const string NEW_CARD_URL = BINGO_URL + "/api/new-card";
-    private const string GET_SOCKET_KEY_URL = BINGO_URL + "/api/get-socket-key/{0}";
-    private const string GET_SOCKET_URL = BINGO_URL + "/api/socket/{0}";
     
     /// <summary>
     /// Creates a room, joins it and creates a client out of it
@@ -352,19 +351,32 @@ public static class API
     }
 
     /// <summary>
-    /// Fetches the socket key for the given room
+    /// Fetches the feed of all the events for the given room
     /// </summary>
     /// <param name="roomId">ID of the room</param>
-    public static async Task<string?> GetSocketKey(string roomId)
+    public static async Task<Event?[]> GetFeed(string roomId)
     {
-        var response = await Request.Get(string.Format(GET_SOCKET_KEY_URL, roomId));
+        var response = await Request.Get(string.Format(FEED_URL, roomId));
 
         if (response.IsError)
         {
-            response.PrintError($"Failed to get the socket key for the room '{roomId}'");
-            return null;
+            response.PrintError($"Failed to get the feed for the room '{roomId}'");
+            return [];
         }
 
-        return response.Json()?.Value<string>("socket_key");
+        var jsonEvents = response.Json()?.GetValue("events");
+
+        if (jsonEvents == null)
+            return [];
+
+        var feed = new List<Event?>();
+
+        foreach (var child in jsonEvents.Children())
+        {
+            var obj = child?.ToObject<JObject>();
+            feed.Add(obj != null ? Event.ParseEvent(obj) : null);
+        }
+
+        return feed.ToArray();
     }
 }
