@@ -11,7 +11,6 @@ using UnityEngine.Events;
 
 namespace BingoAPI;
 
-// ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public abstract class BingoClient
 {
     public string? roomId { get; private set; }
