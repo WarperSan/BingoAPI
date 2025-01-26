@@ -7,8 +7,9 @@ Note: *This mod does nothing alone. You should use the mod that was made for you
 ## Features
 - Creating rooms
 - Joining rooms
-- Obtaining the  board
+- Obtaining the board
 - Sending / Receiving messages
 - Marking / Clearing goals
 - Changing team
 - Revealing the card
+- Obtaining the room feed
