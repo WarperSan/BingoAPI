@@ -1,4 +1,4 @@
-# Bingo API
+# ![](https://raw.githubusercontent.com/WarperSan/BingoAPI/refs/heads/master/Resources/icon.png) Bingo API
 
 This mod allows any game to be linked directly to [BingoSync](https://bingosync.com), removing the need to leave the game and making the experience as seamless as possible.
 
