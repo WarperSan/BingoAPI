@@ -3,11 +3,11 @@ using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using BingoAPI.Helpers;
+using BingoAPI.Managers;
 using BingoAPI.Models;
 using BingoAPI.Models.Events;
 using BingoAPI.Network;
 using Newtonsoft.Json.Linq;
-using UnityEngine.Events;
 
 namespace BingoAPI;
 
@@ -38,24 +38,6 @@ public abstract class BingoClient
     #region Socket
 
     private readonly ClientWebSocket socket;
-
-    // ReSharper disable ArrangeObjectCreationWhenTypeNotEvident
-    // Self
-    public static readonly UnityEvent<string?, PlayerData> OnSelfConnected = new();
-    public static readonly UnityEvent OnSelfDisconnected = new();
-    public static readonly UnityEvent<PlayerData, SquareData> OnSelfMarked = new();
-    public static readonly UnityEvent<PlayerData, SquareData> OnSelfCleared = new();
-    public static readonly UnityEvent<PlayerData, string, ulong> OnSelfChatted = new();
-    public static readonly UnityEvent<PlayerData, Team, Team> OnSelfTeamChanged = new();
-    
-    // Other
-    public static readonly UnityEvent<string?, PlayerData> OnOtherConnected = new();
-    public static readonly UnityEvent<string?, PlayerData> OnOtherDisconnected = new();
-    public static readonly UnityEvent<PlayerData, SquareData> OnOtherMarked = new();
-    public static readonly UnityEvent<PlayerData, SquareData> OnOtherCleared = new();
-    public static readonly UnityEvent<PlayerData, string, ulong> OnOtherChatted = new();
-    public static readonly UnityEvent<PlayerData, Team, Team> OnOtherTeamChanged = new();
-    // ReSharper restore ArrangeObjectCreationWhenTypeNotEvident
 
     public async Task<bool> WaitForConnection(float timeoutMS)
     {
@@ -110,12 +92,12 @@ public abstract class BingoClient
             roomId = @event.RoomId;
             PlayerData = @event.Player;
             
-            OnSelfConnected.Invoke(@event.RoomId, @event.Player);
+            ClientEventManager.OnSelfConnected.Invoke(@event.RoomId, @event.Player);
         }
         else
         {
             OnOtherConnect(@event.RoomId, @event.Player);
-            OnOtherConnected.Invoke(@event.RoomId, @event.Player);
+            ClientEventManager.OnOtherConnected.Invoke(@event.RoomId, @event.Player);
         }
     }
 
@@ -124,7 +106,7 @@ public abstract class BingoClient
         if (roomId != null)
         {
             OnOtherDisconnect(@event.RoomId, @event.Player);
-            OnOtherDisconnected.Invoke(@event.RoomId, @event.Player);
+            ClientEventManager.OnOtherDisconnected.Invoke(@event.RoomId, @event.Player);
         }
     }
     
@@ -133,12 +115,12 @@ public abstract class BingoClient
         if (PlayerData.UUID == @event.Player.UUID)
         {
             OnSelfMessageReceived(@event.Text, @event.Timestamp);
-            OnSelfChatted.Invoke(@event.Player, @event.Text, @event.Timestamp);
+            ClientEventManager.OnSelfChatted.Invoke(@event.Player, @event.Text, @event.Timestamp);
         }
         else
         {
             OnOtherMessageReceived(@event.Player, @event.Text, @event.Timestamp);
-            OnOtherChatted.Invoke(@event.Player, @event.Text, @event.Timestamp);
+            ClientEventManager.OnOtherChatted.Invoke(@event.Player, @event.Text, @event.Timestamp);
         }
     }
 
@@ -154,12 +136,12 @@ public abstract class BingoClient
             data.Team = @event.Player.Team;
             PlayerData = data;
             
-            OnSelfTeamChanged.Invoke(@event.Player, oldTeam, @event.Player.Team);
+            ClientEventManager.OnSelfTeamChanged.Invoke(@event.Player, oldTeam, @event.Player.Team);
         }
         else
         {
             OnOtherTeamChange(@event.Player, oldTeam, @event.Player.Team);
-            OnOtherTeamChanged.Invoke(@event.Player, oldTeam, @event.Player.Team);
+            ClientEventManager.OnOtherTeamChanged.Invoke(@event.Player, oldTeam, @event.Player.Team);
         }
     }
 
@@ -168,12 +150,12 @@ public abstract class BingoClient
         if (PlayerData.UUID == @event.Player.UUID)
         {
             OnSelfMark(@event.Square);
-            OnSelfMarked.Invoke(@event.Player, @event.Square);
+            ClientEventManager.OnSelfMarked.Invoke(@event.Player, @event.Square);
         }
         else
         {
             OnOtherMark(@event.Player, @event.Square);
-            OnOtherMarked.Invoke(@event.Player, @event.Square);
+            ClientEventManager.OnOtherMarked.Invoke(@event.Player, @event.Square);
         }
     }
 
@@ -182,12 +164,12 @@ public abstract class BingoClient
         if (PlayerData.UUID == @event.Player.UUID)
         {
             OnSelfClear(@event.Square);
-            OnSelfCleared.Invoke(@event.Player, @event.Square);
+            ClientEventManager.OnSelfCleared.Invoke(@event.Player, @event.Square);
         }
         else
         {
             OnOtherClear(@event.Player, @event.Square);
-            OnOtherCleared.Invoke(@event.Player, @event.Square);
+            ClientEventManager.OnOtherCleared.Invoke(@event.Player, @event.Square);
         }
     }
     
@@ -347,7 +329,7 @@ public abstract class BingoClient
         };
 
         OnSelfDisconnect();
-        OnSelfDisconnected.Invoke();
+        ClientEventManager.OnSelfDisconnected.Invoke();
         
         Logger.Debug("Client disconnected!");
         

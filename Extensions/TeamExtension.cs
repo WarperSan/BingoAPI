@@ -5,7 +5,10 @@ using UnityEngine;
 
 namespace BingoAPI.Extensions;
 
-public static class BingoTeamExtension
+/// <summary>
+/// Provides extension methods for <see cref="Team"/>
+/// </summary>
+public static class TeamExtension
 {
     /// <summary>
     /// Fetches the name of the given team
