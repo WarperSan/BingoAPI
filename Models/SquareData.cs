@@ -1,7 +1,7 @@
 ﻿using BingoAPI.Extensions;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Data;
+namespace BingoAPI.Models;
 
 /// <summary>
 /// Data for a square
@@ -10,7 +10,7 @@ public struct SquareData
 {
     public string? Name;
     public int Index;
-    public BingoTeam[] Teams;
+    public Team[] Teams;
 
     public static SquareData ParseJSON(JToken? obj)
     {

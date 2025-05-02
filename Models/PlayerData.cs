@@ -1,7 +1,7 @@
 ﻿using BingoAPI.Extensions;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Data;
+namespace BingoAPI.Models;
 
 /// <summary>
 /// Data for a player
@@ -10,14 +10,14 @@ public struct PlayerData
 {
     public string? UUID;
     public string? Name;
-    public BingoTeam Team;
+    public Team Team;
     public bool IsSpectator;
 
     public static PlayerData ParseJSON(JToken? obj) => new()
     {
         UUID = obj?.Value<string>("uuid"),
         Name = obj?.Value<string>("name"),
-        Team = obj?.Value<string>("color").GetTeam() ?? BingoTeam.BLANK,
+        Team = obj?.Value<string>("color").GetTeam() ?? Team.BLANK,
         IsSpectator = obj?.Value<bool>("is_spectator") ?? false
     };
 }

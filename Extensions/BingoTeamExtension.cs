@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using BingoAPI.Data;
+using BingoAPI.Models;
 using UnityEngine;
 
 namespace BingoAPI.Extensions;
@@ -10,34 +10,34 @@ public static class BingoTeamExtension
     /// <summary>
     /// Fetches the name of the given team
     /// </summary>
-    public static string GetName(this BingoTeam team) => team.ToString().ToLower();
+    public static string GetName(this Team team) => team.ToString().ToLower();
 
     /// <summary>
     /// Fetches the team with the given name
     /// </summary>
-    public static BingoTeam GetTeam(this string? name)
+    public static Team GetTeam(this string? name)
     {
         if (string.IsNullOrEmpty(name))
-            return BingoTeam.BLANK;
+            return Team.BLANK;
 
-        return Enum.TryParse(name.ToUpper(), out BingoTeam _team) ? _team : BingoTeam.BLANK;
+        return Enum.TryParse(name.ToUpper(), out Team _team) ? _team : Team.BLANK;
     }
 
     /// <summary>
     /// Fetches the teams with the given name
     /// </summary>
-    public static BingoTeam[] GetTeams(this string? name)
+    public static Team[] GetTeams(this string? name)
     {
         if (string.IsNullOrEmpty(name))
             return [];
 
-        var teams = new List<BingoTeam>();
+        var teams = new List<Team>();
 
         foreach (var color in name.Split(" "))
         {
             var _team = color.GetTeam();
             
-            if (_team == BingoTeam.BLANK)
+            if (_team == Team.BLANK)
                 continue;
             
             teams.Add(_team);
@@ -49,14 +49,14 @@ public static class BingoTeamExtension
     /// <summary>
     /// Fetches all the teams
     /// </summary>
-    public static BingoTeam[] GetAllTeams()
+    public static Team[] GetAllTeams()
     {
-        var array = Enum.GetValues(typeof(BingoTeam));
-        var teams = new List<BingoTeam>();
+        var array = Enum.GetValues(typeof(Team));
+        var teams = new List<Team>();
 
-        foreach (BingoTeam team in array)
+        foreach (Team team in array)
         {
-            if (team == BingoTeam.BLANK)
+            if (team == Team.BLANK)
                 continue;
             
             teams.Add(team);
@@ -68,31 +68,31 @@ public static class BingoTeamExtension
     /// <summary>
     /// Fetches the HEX color of the given team
     /// </summary>
-    public static string GetHexColor(this BingoTeam team)
+    public static string GetHexColor(this Team team)
     {
         switch (team)
         {
-            case BingoTeam.PINK:
+            case Team.PINK:
                 return "#ED86AA";
-            case BingoTeam.RED:
+            case Team.RED:
                 return "#FF4944";
-            case BingoTeam.ORANGE:
+            case Team.ORANGE:
                 return "#FF9C12";
-            case BingoTeam.BROWN:
+            case Team.BROWN:
                 return "#AB5C23";
-            case BingoTeam.YELLOW:
+            case Team.YELLOW:
                 return "#D8D014";
-            case BingoTeam.GREEN:
+            case Team.GREEN:
                 return "#31D814";
-            case BingoTeam.TEAL:
+            case Team.TEAL:
                 return "#419695";
-            case BingoTeam.BLUE:
+            case Team.BLUE:
                 return "#409CFF";
-            case BingoTeam.NAVY:
+            case Team.NAVY:
                 return "#0D48B5";
-            case BingoTeam.PURPLE:
+            case Team.PURPLE:
                 return "#822DBF";
-            case BingoTeam.BLANK:
+            case Team.BLANK:
             default:
                 return "#FFFFFF";
         }
@@ -101,7 +101,7 @@ public static class BingoTeamExtension
     /// <summary>
     /// Fetches the color of the given team
     /// </summary>
-    public static Color GetColor(this BingoTeam team)
+    public static Color GetColor(this Team team)
     {
         var hex = team.GetHexColor();
 

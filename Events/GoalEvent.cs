@@ -1,4 +1,4 @@
-﻿using BingoAPI.Data;
+﻿using BingoAPI.Models;
 using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Events;

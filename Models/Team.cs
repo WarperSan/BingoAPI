@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace BingoAPI.Data;
+namespace BingoAPI.Models;
 
 /// <summary>
 /// All the teams available for a bingo
 /// </summary>
 [Flags]
-public enum BingoTeam: ushort
+public enum Team: ushort
 {
     // No team
     BLANK = 0,

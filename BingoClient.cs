@@ -2,9 +2,9 @@
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
-using BingoAPI.Data;
 using BingoAPI.Events;
 using BingoAPI.Helpers;
+using BingoAPI.Models;
 using BingoAPI.Network;
 using Newtonsoft.Json.Linq;
 using UnityEngine.Events;
@@ -25,7 +25,7 @@ public abstract class BingoClient
         {
             UUID = null,
             Name = null,
-            Team = BingoTeam.BLANK,
+            Team = Team.BLANK,
             IsSpectator = true
         };
         this.socket = socket;
@@ -46,7 +46,7 @@ public abstract class BingoClient
     public static readonly UnityEvent<PlayerData, SquareData> OnSelfMarked = new();
     public static readonly UnityEvent<PlayerData, SquareData> OnSelfCleared = new();
     public static readonly UnityEvent<PlayerData, string, ulong> OnSelfChatted = new();
-    public static readonly UnityEvent<PlayerData, BingoTeam, BingoTeam> OnSelfTeamChanged = new();
+    public static readonly UnityEvent<PlayerData, Team, Team> OnSelfTeamChanged = new();
     
     // Other
     public static readonly UnityEvent<string?, PlayerData> OnOtherConnected = new();
@@ -54,7 +54,7 @@ public abstract class BingoClient
     public static readonly UnityEvent<PlayerData, SquareData> OnOtherMarked = new();
     public static readonly UnityEvent<PlayerData, SquareData> OnOtherCleared = new();
     public static readonly UnityEvent<PlayerData, string, ulong> OnOtherChatted = new();
-    public static readonly UnityEvent<PlayerData, BingoTeam, BingoTeam> OnOtherTeamChanged = new();
+    public static readonly UnityEvent<PlayerData, Team, Team> OnOtherTeamChanged = new();
     // ReSharper restore ArrangeObjectCreationWhenTypeNotEvident
 
     public async Task<bool> WaitForConnection(float timeoutMS)
@@ -248,12 +248,12 @@ public abstract class BingoClient
     /// <summary>
     /// Called when this client changes team
     /// </summary>
-    protected virtual void OnSelfTeamChange(BingoTeam oldTeam, BingoTeam newTeam) { }
+    protected virtual void OnSelfTeamChange(Team oldTeam, Team newTeam) { }
     
     /// <summary>
     /// Called when another client changes team
     /// </summary>
-    protected virtual void OnOtherTeamChange(PlayerData player, BingoTeam oldTeam, BingoTeam newTeam) {  }
+    protected virtual void OnOtherTeamChange(PlayerData player, Team oldTeam, Team newTeam) {  }
     
     #endregion
 
@@ -270,7 +270,7 @@ public abstract class BingoClient
         return await API.GetBoard(roomId);
     }
     
-    public async Task ChangeTeam(BingoTeam newTeam)
+    public async Task ChangeTeam(Team newTeam)
     {
         if (roomId == null)
         {
@@ -342,7 +342,7 @@ public abstract class BingoClient
         {
             UUID = null,
             Name = null,
-            Team = BingoTeam.BLANK,
+            Team = Team.BLANK,
             IsSpectator = true
         };
 

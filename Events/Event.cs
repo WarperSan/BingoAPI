@@ -1,6 +1,6 @@
-﻿using BingoAPI.Data;
-using BingoAPI.Extensions;
+﻿using BingoAPI.Extensions;
 using BingoAPI.Helpers;
+using BingoAPI.Models;
 using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Events;
@@ -11,7 +11,7 @@ namespace BingoAPI.Events;
 public abstract class Event
 {
     public readonly PlayerData Player;
-    public readonly BingoTeam Team;
+    public readonly Team Team;
     public readonly ulong Timestamp;
 
     internal Event(JObject json)

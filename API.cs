@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BingoAPI.Data;
 using BingoAPI.Events;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
+using BingoAPI.Models;
 using BingoAPI.Network;
 using Newtonsoft.Json.Linq;
 
@@ -211,7 +211,7 @@ public static class API
     /// </summary>
     /// <param name="roomId">ID of the room</param>
     /// <param name="newTeam">Team to change to</param>
-    public static async Task<bool> ChangeTeam(string roomId, BingoTeam newTeam)
+    public static async Task<bool> ChangeTeam(string roomId, Team newTeam)
     {
         Logger.Debug($"Changing team to '{newTeam}'...");
         
@@ -233,7 +233,7 @@ public static class API
         return true;
     }
     
-    private static async Task<Response?> SelectSquare(string roomId, BingoTeam team, int id, bool isMarking)
+    private static async Task<Response?> SelectSquare(string roomId, Team team, int id, bool isMarking)
     {
         if (id is <= 0 or > MAX_BINGO_SIZE)
         {
@@ -260,7 +260,7 @@ public static class API
     /// <param name="roomId">ID of the room</param>
     /// <param name="team">Name of the team</param>
     /// <param name="id">Index of the square</param>
-    public static async Task<bool> MarkSquare(string roomId, BingoTeam team, int id)
+    public static async Task<bool> MarkSquare(string roomId, Team team, int id)
     {
         var r = await SelectSquare(roomId, team, id, true);
 
@@ -285,7 +285,7 @@ public static class API
     /// <param name="roomId">ID of the room</param>
     /// <param name="team">Name of the team</param>
     /// <param name="id">Index of the square</param>
-    public static async Task<bool> ClearSquare(string roomId, BingoTeam team, int id)
+    public static async Task<bool> ClearSquare(string roomId, Team team, int id)
     {
         var r = await SelectSquare(roomId, team, id, false);
 
