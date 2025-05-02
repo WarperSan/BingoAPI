@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Events;
+namespace BingoAPI.Models.Events;
 
 /// <summary>
 /// Event that represents someone changing team

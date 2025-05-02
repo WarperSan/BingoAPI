@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BingoAPI.Events;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
+using BingoAPI.Models.Events;
 using BingoAPI.Network;
 using Newtonsoft.Json.Linq;
 

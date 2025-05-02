@@ -1,9 +1,8 @@
 ﻿using BingoAPI.Extensions;
 using BingoAPI.Helpers;
-using BingoAPI.Models;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Events;
+namespace BingoAPI.Models.Events;
 
 /// <summary>
 /// Class that handles the events sent from the bingo server

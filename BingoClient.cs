@@ -2,9 +2,9 @@
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
-using BingoAPI.Events;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
+using BingoAPI.Models.Events;
 using BingoAPI.Network;
 using Newtonsoft.Json.Linq;
 using UnityEngine.Events;

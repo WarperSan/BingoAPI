@@ -1,7 +1,6 @@
-﻿using BingoAPI.Models;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Events;
+namespace BingoAPI.Models.Events;
 
 /// <summary>
 /// Event that represents a goal's state being changed
