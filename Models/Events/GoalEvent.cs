@@ -5,7 +5,7 @@ namespace BingoAPI.Models.Events;
 /// <summary>
 /// Event that represents a goal's state being changed
 /// </summary>
-public class GoalEvent : Event
+public sealed class GoalEvent : Event
 {
     public readonly SquareData Square;
     public readonly bool Remove;

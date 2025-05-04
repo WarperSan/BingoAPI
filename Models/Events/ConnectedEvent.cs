@@ -5,7 +5,7 @@ namespace BingoAPI.Models.Events;
 /// <summary>
 /// Event that represents someone joining the room
 /// </summary>
-public class ConnectedEvent : Event
+public sealed class ConnectedEvent : Event
 {
     public readonly string RoomId;
     
