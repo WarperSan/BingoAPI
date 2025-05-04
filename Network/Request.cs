@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
+using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
@@ -17,10 +18,9 @@ internal static class Request
     {
         var req = request.SendWebRequest();
 
-        while (!req.isDone)
-            await Task.Delay(25);
+        await req.HandleTimeout();
     }
-
+    
     /// <summary>
     /// Compiles the given request into a more comprehensive response
     /// </summary>

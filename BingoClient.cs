@@ -1,66 +1,30 @@
-﻿using System;
-using System.Net.WebSockets;
-using System.Threading;
+﻿using System.Net.WebSockets;
 using System.Threading.Tasks;
+using BingoAPI.Bingo;
+using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using BingoAPI.Managers;
 using BingoAPI.Models;
 using BingoAPI.Models.Events;
-using BingoAPI.Network;
-using Newtonsoft.Json.Linq;
 
 namespace BingoAPI;
 
-public abstract class BingoClient
+public abstract class BingoClient : Client
 {
     public string? roomId { get; private set; }
-    public PlayerData PlayerData { get; protected set; }
-    public readonly bool IsCreator;
-
-    protected BingoClient(ClientWebSocket socket, bool isCreator)
+    public PlayerData PlayerData { get; protected set; } = new()
     {
-        IsCreator = isCreator;
-        roomId = null;
-        PlayerData = new PlayerData
-        {
-            UUID = null,
-            Name = null,
-            Team = Team.BLANK,
-            IsSpectator = true
-        };
-        this.socket = socket;
+        UUID = null,
+        Name = null,
+        Team = Team.BLANK,
+        IsSpectator = true
+    };
 
-        _ = socket.HandleMessages(OnSocketReceived);
-    }
+    #region Events
 
-    ~BingoClient() => _ = Disconnect();
-
-    #region Socket
-
-    private readonly ClientWebSocket socket;
-
-    public async Task<bool> WaitForConnection(float timeoutMS)
+    protected override void HandleEvent(Event @event)
     {
-        while (roomId == null && timeoutMS > 0)
-        {
-            await Task.Delay(25);
-            timeoutMS -= 25;
-        }
-
-        return roomId != null;
-    }
-
-    private void OnSocketReceived(JObject? json)
-    {
-        if (json == null)
-            return;
-
-        var _event = Event.ParseEvent(json);
-        
-        if (_event == null)
-            return;
-
-        switch (_event)
+        switch (@event)
         {
             case ConnectedEvent _connected:
                 HandleConnectedEvent(_connected);
@@ -301,23 +265,31 @@ public abstract class BingoClient
         return await API.SendMessage(roomId, message);
     }
     
-    public async Task<bool> Disconnect()
+    #endregion
+
+    #region Client
+
+    /// <inheritdoc/>
+    internal override async Task<bool> Connect(ClientWebSocket socket)
+    {
+        if (roomId != null)
+            return false;
+
+        if (!await base.Connect(socket))
+            return false;
+
+        return await RequestExtension.HandleTimeout(() => roomId != null);
+    }
+
+    /// <inheritdoc/>
+    public override void Disconnect()
     {
         if (roomId == null)
-            return true;
+            return;
         
         Logger.Debug($"Disconnecting client for the room '{roomId}'...");
 
-        try
-        {
-            await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client disconnecting", CancellationToken.None);
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e.Message);
-        }
-
-        socket.Dispose();
+        base.Disconnect();
         
         roomId = null;
         PlayerData = new PlayerData
@@ -332,8 +304,6 @@ public abstract class BingoClient
         ClientEventManager.OnSelfDisconnected.Invoke();
         
         Logger.Debug("Client disconnected!");
-        
-        return true;
     }
 
     #endregion

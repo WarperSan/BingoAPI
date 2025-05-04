@@ -1,63 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
 using BingoAPI.Models.Events;
+using BingoAPI.Models.Settings;
 using BingoAPI.Network;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI;
+namespace BingoAPI.Bingo;
 
 public static class API
 {
-    // Size
-    public const int BINGO_HEIGHT = 5;
-    public const int BINGO_WIDTH = 5;
-    public const int MAX_BINGO_SIZE = BINGO_HEIGHT * BINGO_WIDTH;
-    
-    // URLs
-    public const string SOCKETS_URL = "wss://sockets.bingosync.com/broadcast";
-    private const string BINGO_URL = "https://bingosync.com";
-    private const string CREATE_ROOM_URL = BINGO_URL + "/";
-    
-    private const string GET_BOARD_URL = BINGO_URL + "/room/{0}/board";
-    private const string FEED_URL = BINGO_URL + "/room/{0}/feed";
-    
-    private const string JOIN_ROOM_URL = BINGO_URL + "/api/join-room";
-    private const string CHANGE_TEAM_URL = BINGO_URL + "/api/color";
-    private const string SELECT_SQUARE_URL = BINGO_URL + "/api/select";
-    private const string SEND_MESSAGE_URL = BINGO_URL + "/api/chat";
-    private const string REVEAL_CARD_URL = BINGO_URL + "/api/revealed";
-    private const string NEW_CARD_URL = BINGO_URL + "/api/new-card";
-    
     /// <summary>
     /// Creates a room, joins it and creates a client out of it
     /// </summary>
-    /// <param name="roomName">Name of the room</param>
-    /// <param name="roomPassword">Password of the room</param>
-    /// <param name="nickName">Nickname of the user</param>
-    /// <param name="isRandomized">Is the board randomized or not</param>
-    /// <param name="goals">List of goals</param>
-    /// <param name="isLockout">Is the board in lockout or not</param>
-    /// <param name="seed">Seed to use for the board</param>
-    /// <param name="isSpectator">Is the user a spectator or not</param>
-    /// <param name="hideCard">Is the card hidden initially or not</param>
-    public static async Task<T?> CreateRoom<T>(
-        string roomName,
-        string roomPassword,
-        string nickName,
-        bool isRandomized,
-        Goal[] goals,
-        bool isLockout,
-        string seed,
-        bool isSpectator,
-        bool hideCard
-    ) where T : BingoClient {
+    public static async Task<T?> CreateRoom<T>(CreateRoomSettings settings) where T : Client, new()
+    {
         Logger.Debug("Fetching CORS token...");
 
-        var token = await Request.GetCORSToken(BINGO_URL);
+        var token = await Request.GetCORSToken(Constants.BINGO_URL);
 
         if (token == null)
             return null;
@@ -68,20 +30,20 @@ public static class API
 
         var body = new
         {
-            room_name = roomName,
-            passphrase = roomPassword,
+            room_name = settings.Name,
+            passphrase = settings.Password,
             nickname = "LethalBingo",
             game_type = 18, // Custom (Advanced)
-            variant_type = isRandomized ? 172 : 18, // 18 = Fixed Board, 172 = Randomized 
-            custom_json = goals.GenerateJSON(),
-            lockout_mode = isLockout ? 2 : 1, // 1 = Non-Lockout, 2 = Lockout
-            seed = seed, // Specify seed if needed
+            variant_type = settings.VariantType,
+            custom_json = settings.Goals.GenerateJSON(),
+            lockout_mode = settings.LockoutMode,
+            seed = settings.Seed, // Specify seed if needed
             is_spectator = true,
-            hide_card = hideCard,
+            hide_card = settings.HideCard,
             csrfmiddlewaretoken = token
         };
         
-        var response = await Request.PostCORSForm(CREATE_ROOM_URL, token, body);
+        var response = await Request.PostCORSForm(Constants.CREATE_ROOM_URL, token, body);
         
         // If failed, fetch error
         if (response.IsError)
@@ -91,48 +53,45 @@ public static class API
         }
         
         Logger.Debug("Room created!");
-        var roomCode = response.URL[^22..];
+
+        var joinSettings = new JoinRoomSettings
+        {
+            Code = response.URL[^22..],
+            Password = settings.Password,
+            Nickname = settings.Nickname,
+            IsSpectator = settings.IsSpectator
+        };
         
-        return await JoinRoom<T>(roomCode, roomPassword, nickName, isSpectator, true);
+        return await JoinRoom<T>(joinSettings);
     }
     
     /// <summary>
     /// Joins the given room and creates a client out of it
     /// </summary>
-    /// <param name="roomId">ID of the room</param>
-    /// <param name="roomPassword">Password of the room</param>
-    /// <param name="nickName">Nickname of the user</param>
-    /// <param name="isSpectator">Is the user a spectator or not</param>
-    /// <param name="isCreator">Is the creator of the room or not</param>
-    public static async Task<T?> JoinRoom<T>(
-        string roomId, 
-        string roomPassword, 
-        string nickName, 
-        bool isSpectator, 
-        bool isCreator
-    ) where T : BingoClient {
-        Logger.Debug($"Joining the room '{roomId}'...");
+    public static async Task<T?> JoinRoom<T>(JoinRoomSettings settings) where T : Client, new()
+    {
+        Logger.Debug($"Joining the room '{settings.Code}'...");
         
         var body = new
         {
-            room = roomId,
-            password = roomPassword,
-            nickname = nickName,
-            is_spectator = isSpectator
+            room = settings.Code,
+            password = settings.Password,
+            nickname = settings.Nickname,
+            is_spectator = settings.IsSpectator
         };
         
-        var response = await Request.PostJson(JOIN_ROOM_URL, body);
+        var response = await Request.PostJson(Constants.JOIN_ROOM_URL, body);
 
         // If failed, fetch error
         if (response.IsError)
         {
-            response.PrintError($"Failed to join room '{roomId}'.");
+            response.PrintError($"Failed to join room '{settings.Code}'.");
             return null;
         }
 
         var responseJson = response.Json();
 
-        var socket = await Socket.CreateSocket(SOCKETS_URL, responseJson?.Value<string>("socket_key"));
+        var socket = await Socket.CreateSocket(Constants.SOCKETS_URL, responseJson?.Value<string>("socket_key"));
 
         if (socket == null)
         {
@@ -142,20 +101,10 @@ public static class API
         
         Logger.Debug("Room joined!");
 
-        T client;
-
-        try
-        {
-            client = (T)Activator.CreateInstance(typeof(T), socket, isCreator);
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e.Message);
-            return null;
-        }
+        var client = new T();
 
         Logger.Debug("Waiting for connection...");
-        var connected = await client.WaitForConnection(60_000);
+        var connected = await client.Connect(socket);
 
         if (!connected)
         {
@@ -176,7 +125,7 @@ public static class API
     {
         Logger.Debug($"Obtaining the board of the room '{roomId}'...");
         
-        var url = string.Format(GET_BOARD_URL, roomId);
+        var url = string.Format(Constants.GET_BOARD_URL, roomId);
 
         var response = await Request.Get(url);
         
@@ -220,7 +169,7 @@ public static class API
             color = newTeam.GetName()
         };
         
-        var response = await Request.PutJson(CHANGE_TEAM_URL, body);
+        var response = await Request.PutJson(Constants.CHANGE_TEAM_URL, body);
 
         if (response.IsError)
         {
@@ -234,7 +183,7 @@ public static class API
     
     private static async Task<Response?> SelectSquare(string roomId, Team team, int id, bool isMarking)
     {
-        if (id is <= 0 or > MAX_BINGO_SIZE)
+        if (id is <= 0 or > Constants.BINGO_SIZE)
         {
             Logger.Error("Could not mark square as the id is out of range.");
             return null;
@@ -250,7 +199,7 @@ public static class API
             remove_color = !isMarking
         };
         
-        return await Request.PutJson(SELECT_SQUARE_URL, body);
+        return await Request.PutJson(Constants.SELECT_SQUARE_URL, body);
     }
 
     /// <summary>
@@ -316,7 +265,7 @@ public static class API
             text = message
         };
         
-        var response = await Request.PutJson(SEND_MESSAGE_URL, body);
+        var response = await Request.PutJson(Constants.SEND_MESSAGE_URL, body);
 
         if (response.IsError)
         {
@@ -338,7 +287,7 @@ public static class API
             room = roomId
         };
 
-        var response = await Request.PutJson(REVEAL_CARD_URL, body);
+        var response = await Request.PutJson(Constants.REVEAL_CARD_URL, body);
 
         if (response.IsError)
         {
@@ -355,7 +304,7 @@ public static class API
     /// <param name="roomId">ID of the room</param>
     public static async Task<Event?[]> GetFeed(string roomId)
     {
-        var response = await Request.Get(string.Format(FEED_URL, roomId));
+        var response = await Request.Get(string.Format(Constants.FEED_URL, roomId));
 
         if (response.IsError)
         {
