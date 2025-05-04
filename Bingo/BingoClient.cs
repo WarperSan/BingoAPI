@@ -1,13 +1,12 @@
 ﻿using System.Net.WebSockets;
 using System.Threading.Tasks;
-using BingoAPI.Bingo;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using BingoAPI.Managers;
 using BingoAPI.Models;
 using BingoAPI.Models.Events;
 
-namespace BingoAPI;
+namespace BingoAPI.Bingo;
 
 public abstract class BingoClient : Client
 {

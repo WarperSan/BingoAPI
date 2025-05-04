@@ -16,7 +16,15 @@ public abstract class Client
     
     ~Client() => Disconnect();
 
-    internal virtual async Task<bool> Connect(ClientWebSocket socket) => await socket.HandleTimeout();
+    internal virtual async Task<bool> Connect(ClientWebSocket socket)
+    {
+        if (!await socket.HandleTimeout())
+            return false;
+
+        _socket = socket;
+        _ = socket.HandleMessages(OnSocketReceived);
+        return true;
+    }
 
     public virtual async void Disconnect()
     {
@@ -39,11 +47,7 @@ public abstract class Client
         _socket = null;
     }
 
-    internal void AssignSocket(ClientWebSocket socket)
-    {
-        _socket = socket;
-        _ = socket.HandleMessages(OnSocketReceived);
-    }
+    #region Events
 
     private void OnSocketReceived(JObject? json)
     {
@@ -62,4 +66,6 @@ public abstract class Client
     /// Called when this client needs to handle a new event
     /// </summary>
     protected abstract void HandleEvent(Event @event);
+    
+    #endregion
 }
