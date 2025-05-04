@@ -47,7 +47,7 @@ public class GoalManager
     }
 
     /// <summary>
-    /// Fetches all the registered goals
+    /// Fetches all registered goals
     /// </summary>
     public static List<Goal> GetAllGoals()
     {

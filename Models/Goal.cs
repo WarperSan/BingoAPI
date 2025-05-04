@@ -22,12 +22,4 @@ public struct Goal
     /// Text to show when displaying this goal
     /// </summary>
     public string Title;
-
-    /// <summary>
-    /// Converts this goal into a JSON element
-    /// </summary>
-    public string GetJSON()
-    {
-        return $"{{\"name\":\"{Title}\"}}";
-    }
 }

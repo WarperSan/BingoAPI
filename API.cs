@@ -39,7 +39,7 @@ public static class API
     /// <param name="roomPassword">Password of the room</param>
     /// <param name="nickName">Nickname of the user</param>
     /// <param name="isRandomized">Is the board randomized or not</param>
-    /// <param name="boardJSON">List of goals</param>
+    /// <param name="goals">List of goals</param>
     /// <param name="isLockout">Is the board in lockout or not</param>
     /// <param name="seed">Seed to use for the board</param>
     /// <param name="isSpectator">Is the user a spectator or not</param>
@@ -49,13 +49,12 @@ public static class API
         string roomPassword,
         string nickName,
         bool isRandomized,
-        string boardJSON,
+        Goal[] goals,
         bool isLockout,
         string seed,
         bool isSpectator,
         bool hideCard
     ) where T : BingoClient {
-        
         Logger.Debug("Fetching CORS token...");
 
         var token = await Request.GetCORSToken(BINGO_URL);
@@ -74,7 +73,7 @@ public static class API
             nickname = "LethalBingo",
             game_type = 18, // Custom (Advanced)
             variant_type = isRandomized ? 172 : 18, // 18 = Fixed Board, 172 = Randomized 
-            custom_json = boardJSON,
+            custom_json = goals.GenerateJSON(),
             lockout_mode = isLockout ? 2 : 1, // 1 = Non-Lockout, 2 = Lockout
             seed = seed, // Specify seed if needed
             is_spectator = true,
