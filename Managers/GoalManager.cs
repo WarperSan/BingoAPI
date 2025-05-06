@@ -9,6 +9,11 @@ public class GoalManager
     private static readonly Dictionary<string, Goal> registeredGoals = [];
     
     /// <summary>
+    /// Number of goal that are active
+    /// </summary>
+    public static int ActiveGoalCount { get; private set; }
+    
+    /// <summary>
     /// Registers the given goal
     /// </summary>
     /// <returns>Success of the registering</returns>
@@ -28,6 +33,7 @@ public class GoalManager
         };
         
         registeredGoals.Add(guid, goal);
+        ActiveGoalCount++;
         return true;
     }
 
@@ -41,6 +47,14 @@ public class GoalManager
             Logger.Error($"No goal has been registered under the GUID '{guid}'.");
             return;
         }
+        
+        if (goal.IsActive == isActive)
+            return;
+
+        if (isActive)
+            ActiveGoalCount++;
+        else
+            ActiveGoalCount--;
 
         goal.IsActive = isActive;
         registeredGoals[guid] = goal;

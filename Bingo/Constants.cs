@@ -1,6 +1,6 @@
 ﻿namespace BingoAPI.Bingo;
 
-internal static class Constants
+public static class Constants
 {
     /// <summary>
     /// Height of the board
