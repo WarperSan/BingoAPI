@@ -1,6 +1,5 @@
 using BepInEx;
 using BingoAPI.Configurations;
-using BingoAPI.Helpers;
 
 namespace BingoAPI;
 
@@ -9,8 +8,6 @@ internal class Plugin : BaseUnityPlugin
 {
     private void Awake()
     {
-        AssemblyLoader.LoadEmbeddedDLL();
-        
         Helpers.Logger.SetLogger(Logger);
         Configuration.Load(Config);
         

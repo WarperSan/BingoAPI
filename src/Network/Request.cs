@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using BingoAPI.Configurations;
 using BingoAPI.Extensions;
-using HtmlAgilityPack;
 using Newtonsoft.Json;
 using UnityEngine.Networking;
 using Logger = BingoAPI.Helpers.Logger;
@@ -129,26 +129,16 @@ internal static class Request
             return null;
         }
         
-        var doc = new HtmlDocument();
-        doc.LoadHtml(response.Content);
-        
-        var input = doc.DocumentNode.SelectSingleNode("//input[@name='csrfmiddlewaretoken']");
-        
-        if (input == null)
-        {
-            Logger.Error("Could not find the input 'csrfmiddlewaretoken'.");
-            return null;
-        }
+        var match = Regex.Match(
+            response.Content ?? "",
+            "<input[^>]*name=\"csrfmiddlewaretoken\"[^>]*value=\"(.*?)\"[^>]*>"
+        );
 
-        var token = input.GetAttributeValue("value", null);
-        
-        if (token == null)
-        {
-            Logger.Error("Could not find the attribute 'value'.");
-            return null;
-        }
-        
-        return token;
+        if (match.Success)
+            return match.Groups[1].Value;
+
+        Logger.Error("Could not find the input 'csrfmiddlewaretoken'.");
+        return null;
     }
     
     /// <summary>
