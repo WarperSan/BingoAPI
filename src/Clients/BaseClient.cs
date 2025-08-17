@@ -347,6 +347,7 @@ public abstract class BaseClient
     
     private ClientWebSocket? _socket;
     private Task? _socketReceiveTask;
+    private CancellationTokenSource? _ctSource;
 
     /// <summary>
     /// Connects this client to the servers
@@ -362,8 +363,11 @@ public abstract class BaseClient
         if (!isSocketConnected)
             return false;
         
+        var cts = new CancellationTokenSource();
+        
         _socket = socket;
-        _socketReceiveTask = _socket.HandleMessages(OnSocketReceived);
+        _socketReceiveTask = _socket.HandleMessages(OnSocketReceived, cts.Token);
+        _ctSource = cts;
 
         return await Request.HandleTimeout(() => IsInRoom);
     }
@@ -384,9 +388,12 @@ public abstract class BaseClient
                 "Client disconnecting",
                 CancellationToken.None
             );
-            
-            if (_socketReceiveTask != null)
+
+            if (_ctSource != null && _socketReceiveTask != null)
+            {
+                _ctSource.Cancel();
                 await _socketReceiveTask;
+            }
         }
         catch (Exception e)
         {
@@ -433,5 +440,15 @@ public abstract class BaseClient
     #endregion
     
     /// <inheritdoc/>
-    ~BaseClient() => _ = Disconnect();
+    ~BaseClient()
+    {
+        try
+        {
+            Disconnect().GetAwaiter().GetResult();
+        }
+        catch
+        {
+            // ignored
+        }
+    }
 }
