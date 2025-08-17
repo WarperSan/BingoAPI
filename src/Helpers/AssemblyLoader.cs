@@ -8,7 +8,7 @@ namespace BingoAPI.Helpers;
 /// </summary>s
 internal static class AssemblyLoader
 {
-    private const string RESOURCE_NAME_TEMPLATE = MyPluginInfo.PLUGIN_GUID + ".Resources.{0}.dll";
+    private const string RESOURCE_NAME_TEMPLATE = PluginInfo.PLUGIN_GUID + ".Resources.{0}.dll";
 
     public static void LoadEmbeddedDLL()
     {

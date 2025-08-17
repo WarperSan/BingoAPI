@@ -60,7 +60,7 @@ public abstract class BaseClient
         {
             room_name = settings.Name,
             passphrase = settings.Password,
-            nickname = MyPluginInfo.PLUGIN_GUID,
+            nickname = PluginInfo.PLUGIN_GUID,
             game_type = 18, // Custom (Advanced)
             variant_type = settings.VariantType,
             custom_json = settings.Goals.GenerateJSON(),
