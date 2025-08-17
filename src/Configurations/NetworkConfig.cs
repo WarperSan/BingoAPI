@@ -5,7 +5,7 @@ namespace BingoAPI.Configurations;
 /// <summary>
 /// Class that holds the configurations related to the networking
 /// </summary>
-public class NetworkConfig
+internal class NetworkConfig
 {
     private const string SECTION = "Network";
 

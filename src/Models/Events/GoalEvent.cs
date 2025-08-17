@@ -11,6 +11,7 @@ public sealed class GoalEvent : BaseEvent
     public readonly bool Remove;
     
     public GoalEvent(JObject json) : base(json)
+    internal GoalEvent(JObject json) : base(json)
     {
         var goal = json.GetValue("square");
         Square = new SquareData(goal);

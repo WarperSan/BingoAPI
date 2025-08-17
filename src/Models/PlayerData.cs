@@ -28,7 +28,7 @@ public readonly struct PlayerData
     /// </summary>
     public readonly bool IsSpectator;
 
-    public PlayerData(JToken? obj)
+    internal PlayerData(JToken? obj)
     {
         UUID = obj?.Value<string>("uuid");
         Name = obj?.Value<string>("name");

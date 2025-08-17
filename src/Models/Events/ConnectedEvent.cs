@@ -12,7 +12,7 @@ public sealed class ConnectedEvent : BaseEvent
     /// </summary>
     public readonly string RoomId;
     
-    public ConnectedEvent(JObject json) : base(json)
+    internal ConnectedEvent(JObject json) : base(json)
     {
         RoomId = json.Value<string>("room") ?? "";
     }

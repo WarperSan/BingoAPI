@@ -7,7 +7,7 @@ namespace BingoAPI.Models.Events;
 /// </summary>
 public sealed class ColorEvent : BaseEvent
 {
-    public ColorEvent(JObject json) : base(json)
+    internal ColorEvent(JObject json) : base(json)
     {
     }
 }

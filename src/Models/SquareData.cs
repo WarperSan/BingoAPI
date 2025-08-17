@@ -26,7 +26,7 @@ public readonly struct SquareData
     /// </summary>
     public readonly Team[] Teams;
 
-    public SquareData(JToken? obj)
+    internal SquareData(JToken? obj)
     {
         var slot = obj?.Value<string>("slot")?.Replace("slot", "");
 
