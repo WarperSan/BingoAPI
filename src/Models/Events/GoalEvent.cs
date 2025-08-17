@@ -7,14 +7,20 @@ namespace BingoAPI.Models.Events;
 /// </summary>
 public sealed class GoalEvent : BaseEvent
 {
+    /// <summary>
+    /// Square modified by this event
+    /// </summary>
     public readonly SquareData Square;
-    public readonly bool Remove;
     
-    public GoalEvent(JObject json) : base(json)
+    /// <summary>
+    /// Defines if the selected square has been cleared or marked
+    /// </summary>
+    public readonly bool HasBeenCleared;
+    
     internal GoalEvent(JObject json) : base(json)
     {
         var goal = json.GetValue("square");
         Square = new SquareData(goal);
-        Remove = goal?.Value<bool>("remove") ?? false;
+        HasBeenCleared = goal?.Value<bool>("remove") ?? false;
     }
 }

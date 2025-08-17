@@ -21,7 +21,7 @@ public abstract class BaseClient
     private const string SOCKETS_URL = "wss://sockets.bingosync.com/broadcast";
     private const string BINGO_URL = "https://bingosync.com";
     
-    public const string NEW_CARD_URL = BINGO_URL + "/api/new-card";
+    //public const string NEW_CARD_URL = BINGO_URL + "/api/new-card";
     
     /// <summary>
     /// Current room ID of this client
@@ -37,8 +37,6 @@ public abstract class BaseClient
     /// Current UUID of this player
     /// </summary>
     public string? UUID { get; protected set; }
-    
-    public PlayerData PlayerData { get; protected set; }
     
     #region API
     
@@ -170,16 +168,11 @@ public abstract class BaseClient
         
         var response = await Request.PutJSON(BINGO_URL + "/api/color", body);
 
-        if (response.IsError)
-        {
-            response.PrintError($"Failed to change team to '{body.color}'");
-            return false;
-        }
+        if (!response.IsError)
+            return true;
 
-        var data = PlayerData;
-        //data.Team = newTeam;
-        PlayerData = data;
-        return true;
+        response.PrintError($"Failed to change team to '{body.color}'");
+        return false;
     }
 
     private async Task<Response?> SelectSquare(Team team, int index, bool isMarking)
@@ -397,7 +390,7 @@ public abstract class BaseClient
         _socketReceiveTask = null;
         
         RoomID = null;
-        PlayerData = new PlayerData();
+        UUID = null;
         return true;
     }
     
@@ -416,6 +409,12 @@ public abstract class BaseClient
             return;
 
         OnEvent(@event);
+
+        if (IsInRoom || @event is not ConnectedEvent connectedEvent)
+            return;
+
+        RoomID = connectedEvent.RoomId;
+        UUID = connectedEvent.Player.UUID;
     }
 
     /// <summary>
@@ -425,5 +424,6 @@ public abstract class BaseClient
     
     #endregion
     
+    /// <inheritdoc/>
     ~BaseClient() => _ = Disconnect();
 }

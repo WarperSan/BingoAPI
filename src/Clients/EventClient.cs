@@ -35,7 +35,7 @@ public class EventClient : BaseClient
                 OnColorEvent(_color);
                 break;
             case GoalEvent _goal:
-                if (_goal.Remove)
+                if (_goal.HasBeenCleared)
                     OnGoalCleared(_goal);
                 else
                     OnGoalMarked(_goal);
@@ -53,10 +53,6 @@ public class EventClient : BaseClient
         }
         
         OnSelfConnect(@event.RoomId, @event.Player);
-        
-        RoomID = @event.RoomId;
-        PlayerData = @event.Player;
-        
         EventManager.OnSelfConnected.Invoke(@event.RoomId, @event.Player);
     }
 
@@ -87,22 +83,15 @@ public class EventClient : BaseClient
     
     private void OnColorEvent(ColorEvent @event)
     {
-        var oldTeam = PlayerData.Team;
-
         if (@event.IsFromLocal(this))
         {
-            OnSelfTeamChange(oldTeam, @event.Player.Team);
-            
-            var data = PlayerData;
-            //data.Team = @event.Player.Team;
-            PlayerData = data;
-            
-            EventManager.OnSelfTeamChanged.Invoke(@event.Player, oldTeam, @event.Player.Team);
+            OnSelfTeamChange(@event.Player.Team);
+            EventManager.OnSelfTeamChanged.Invoke(@event.Player, @event.Player.Team);
             return;
         }
 
-        OnOtherTeamChange(@event.Player, oldTeam, @event.Player.Team);
-        EventManager.OnOtherTeamChanged.Invoke(@event.Player, oldTeam, @event.Player.Team);
+        OnOtherTeamChange(@event.Player, @event.Player.Team);
+        EventManager.OnOtherTeamChanged.Invoke(@event.Player, @event.Player.Team);
     }
     
     private void OnGoalCleared(GoalEvent @event)
@@ -188,12 +177,12 @@ public class EventClient : BaseClient
     /// <summary>
     /// Called when this client changes team
     /// </summary>
-    protected virtual void OnSelfTeamChange(Team oldTeam, Team newTeam) { }
+    protected virtual void OnSelfTeamChange(Team newTeam) { }
     
     /// <summary>
     /// Called when another client changes team
     /// </summary>
-    protected virtual void OnOtherTeamChange(PlayerData player, Team oldTeam, Team newTeam) {  }
+    protected virtual void OnOtherTeamChange(PlayerData player, Team newTeam) {  }
     
     #endregion
 

@@ -36,7 +36,7 @@ public static class EventManager
     /// <summary>
     /// Called when the local client changes team
     /// </summary>
-    public readonly static UnityEvent<PlayerData, Team, Team> OnSelfTeamChanged = new();
+    public readonly static UnityEvent<PlayerData, Team> OnSelfTeamChanged = new();
     
     /// <summary>
     /// Called when another client gets connected
@@ -66,5 +66,5 @@ public static class EventManager
     /// <summary>
     /// Called when another client changes team
     /// </summary>
-    public readonly static UnityEvent<PlayerData, Team, Team> OnOtherTeamChanged = new();
+    public readonly static UnityEvent<PlayerData, Team> OnOtherTeamChanged = new();
 }
