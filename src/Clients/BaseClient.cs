@@ -16,7 +16,7 @@ namespace BingoAPI.Clients;
 /// <summary>
 /// Class that represents the bare minimum for a client
 /// </summary>
-public abstract class BaseClient
+public abstract class BaseClient : IAsyncDisposable
 {
     private const string SOCKETS_URL = "wss://sockets.bingosync.com/broadcast";
     private const string BINGO_URL = "https://bingosync.com";
@@ -388,12 +388,6 @@ public abstract class BaseClient
                 "Client disconnecting",
                 CancellationToken.None
             );
-
-            if (_ctSource != null && _socketReceiveTask != null)
-            {
-                _ctSource.Cancel();
-                await _socketReceiveTask;
-            }
         }
         catch (Exception e)
         {
@@ -402,6 +396,14 @@ public abstract class BaseClient
 
         _socket.Dispose();
         _socket = null;
+        
+        _ctSource?.Cancel();
+        _ctSource?.Dispose();
+        _ctSource = null;
+
+        if (_socketReceiveTask != null)
+            await _socketReceiveTask;
+        _socketReceiveTask?.Dispose();
         _socketReceiveTask = null;
         
         RoomID = null;
@@ -438,17 +440,11 @@ public abstract class BaseClient
     protected abstract void OnEvent(BaseEvent baseEvent);
     
     #endregion
-    
+
+    #region IAsyncDisposable
+
     /// <inheritdoc/>
-    ~BaseClient()
-    {
-        try
-        {
-            Disconnect().GetAwaiter().GetResult();
-        }
-        catch
-        {
-            // ignored
-        }
-    }
+    public async ValueTask DisposeAsync() => await Disconnect();
+
+    #endregion
 }
