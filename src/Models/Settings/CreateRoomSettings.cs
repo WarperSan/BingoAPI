@@ -17,6 +17,9 @@ public struct CreateRoomSettings
     /// </summary>
     public string Password { get; set; }
     
+    /// <inheritdoc cref="JoinRoomSettings.Nickname"/>
+    public string Nickname { get; set; }
+    
     /// <summary>
     /// Should the room be randomized or not
     /// </summary>

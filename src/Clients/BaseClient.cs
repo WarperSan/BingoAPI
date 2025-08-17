@@ -44,14 +44,14 @@ public abstract class BaseClient
     /// Creates a room with the given settings
     /// </summary>
     /// <returns>Code of the room or null if the room couldn't be created</returns>
-    public async Task<string?> CreateRoom(CreateRoomSettings settings)
+    public async Task<bool> CreateRoom(CreateRoomSettings settings)
     {
         var token = await Request.GetCORSToken(BINGO_URL);
 
         if (token == null)
         {
             Logger.Error("CORS Token not found.");
-            return null;
+            return false;
         }
         
         var body = new
@@ -71,17 +71,25 @@ public abstract class BaseClient
         
         var response = await Request.PostCORSForm(BINGO_URL + "/", token, body);
 
-        if (!response.IsError)
-            return response.URL[^22..];
-
-        response.PrintError("Failed to create a new room");
-        return null;
+        if (response.IsError)
+        {
+            response.PrintError("Failed to create a new room");
+            return false;
+        }
+        
+        return await JoinRoom(new JoinRoomSettings
+        {
+            Code = response.URL[^22..],
+            Nickname = settings.Nickname,
+            Password = settings.Password,
+            IsSpectator = settings.IsSpectator
+        });
     }
 
     /// <summary>
     /// Joins the room with the given settings
     /// </summary>
-    /// <returns>Success of the join</returns>
+    /// <returns>Succeeded to join the room</returns>
     public async Task<bool> JoinRoom(JoinRoomSettings settings)
     {
         var body = new
