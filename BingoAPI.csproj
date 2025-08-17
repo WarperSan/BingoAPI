@@ -39,6 +39,12 @@
         -->
         <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
     </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\netstandard2.1\BingoAPI.xml</DocumentationFile>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\netstandard2.1\BingoAPI.xml</DocumentationFile>
+    </PropertyGroup>
 
     <!-- Primary Package References -->
     <ItemGroup>
