@@ -19,8 +19,10 @@ internal static class Logger
         var message = data ?? "null";
 
         _logger?.Log(level, message.ToString());
+#if DEBUG
         UnityEngine.Debug.Log($"[{level}] {message}");
         System.Console.WriteLine($"[{level}] {message}");
+#endif
     }
 
     /// <inheritdoc cref="BepInEx.Logging.ManualLogSource.LogDebug"/>
