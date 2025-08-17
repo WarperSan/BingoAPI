@@ -18,7 +18,7 @@ public struct JoinRoomSettings
     public string Password { get; set; }
     
     /// <summary>
-    /// Nickname of the user to log as
+    /// Name of the player to connect as
     /// </summary>
     public string Nickname { get; set; }
     
