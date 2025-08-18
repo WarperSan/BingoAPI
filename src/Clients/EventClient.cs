@@ -127,12 +127,12 @@ public class EventClient : BaseClient
     /// <summary>
     /// Called when this client gets connected to the room
     /// </summary>
-    protected virtual void OnSelfConnect(string? _roomId, PlayerData player) { }
+    protected virtual void OnSelfConnect(string? roomId, PlayerData player) { }
 
     /// <summary>
     /// Called when another client gets connected to the room
     /// </summary>
-    protected virtual void OnOtherConnect(string? _roomId, PlayerData player) {  }
+    protected virtual void OnOtherConnect(string? roomId, PlayerData player) {  }
 
     /// <summary>
     /// Called when this client gets disconnected to the room
@@ -142,7 +142,7 @@ public class EventClient : BaseClient
     /// <summary>
     /// Called when another client gets disconnected to the room
     /// </summary>
-    protected virtual void OnOtherDisconnect(string? _roomId, PlayerData player) {  }
+    protected virtual void OnOtherDisconnect(string? roomId, PlayerData player) {  }
 
     /// <summary>
     /// Called when this client marks a square
