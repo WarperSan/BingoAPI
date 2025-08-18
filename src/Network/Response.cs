@@ -1,4 +1,5 @@
-﻿using UnityEngine.Networking;
+﻿using BingoAPI.Helpers;
+using UnityEngine.Networking;
 
 namespace BingoAPI.Network;
 
@@ -43,5 +44,7 @@ internal readonly struct Response
         
         // Content
         Content = req.downloadHandler?.text.Trim();
+
+        Logger.Debug($"[{req.responseCode}] {req.method} '{req.url}' {Content}");
     }
 }
