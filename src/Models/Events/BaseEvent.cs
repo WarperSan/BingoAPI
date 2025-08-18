@@ -36,8 +36,6 @@ public abstract class BaseEvent
     /// </summary>
     public static BaseEvent? ParseEvent(JObject json)
     {
-        Logger.Debug(json);
-
         var type = json.Value<string>("type");
         
         switch (type)
