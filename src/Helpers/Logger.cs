@@ -25,15 +25,23 @@ internal static class Logger
 #endif
     }
 
-    /// <inheritdoc cref="BepInEx.Logging.ManualLogSource.LogDebug"/>
+    /// <summary>
+    /// Logs information for developers that helps to debug the mod
+    /// </summary>
     public static void Debug(object? data) => LogSelf(data, LogLevel.Debug);
-    
-    /// <inheritdoc cref="BepInEx.Logging.ManualLogSource.LogInfo"/>
+
+    /// <summary>
+    /// Logs information for players to know important steps of the mod
+    /// </summary>
     public static void Info(object? data) => LogSelf(data, LogLevel.Message);
     
-    /// <inheritdoc cref="BepInEx.Logging.ManualLogSource.LogWarning"/>
+    /// <summary>
+    /// Logs information for players to warn them about an unwanted state
+    /// </summary>
     public static void Warning(object? data) => LogSelf(data, LogLevel.Warning);
     
-    /// <inheritdoc cref="BepInEx.Logging.ManualLogSource.LogError"/>
+    /// <summary>
+    /// Logs information for players to notify them of an error
+    /// </summary>
     public static void Error(object? data) => LogSelf(data, LogLevel.Error);
 }
