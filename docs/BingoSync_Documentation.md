@@ -30,7 +30,7 @@ If `lockout_mode` is set to 1, the room will generate as a `Non-Lockout`. If it 
 
 Unless `seed` is set to a number, the game will generate a seed automatically.
 
-In order to make the request work, you need to set both `csrfmiddlewaretoken` and the header `X-CSRFToken` to a valid CORS token.
+In order to make the request work, you need the cookie `csrftoken` from calling `GET https://bingosync.com`, and you need to set both `csrfmiddlewaretoken` and the header `X-CSRFToken` to te secret CSRF token.
 
 ### Response Body:
 `none`
