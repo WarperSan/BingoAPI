@@ -383,31 +383,47 @@ public abstract class BaseClient : IAsyncDisposable
 
         try
         {
-            await _socket.CloseAsync(
-                WebSocketCloseStatus.NormalClosure,
-                "Client disconnecting",
-                CancellationToken.None
-            );
+            if (_socket.State == WebSocketState.Open)
+            {
+                await _socket.CloseAsync(
+                    WebSocketCloseStatus.NormalClosure,
+                    "Client disconnecting",
+                    CancellationToken.None
+                );
+            }
         }
         catch (Exception e)
         {
-            Logger.Error(e.Message);
+            Logger.Error($"Error closing WebSocket: {e.Message}");
+        }
+
+        _ctSource?.Cancel();
+
+        if (_socketReceiveTask != null)
+        {
+            try
+            {
+                await _socketReceiveTask;
+            }
+            catch (OperationCanceledException) { /* Expected */ }
+            catch (ObjectDisposedException) { /* Expected */ }
+            catch (Exception ex)
+            {
+                Logger.Error($"Error in receive task during disconnect: {ex.Message}");
+            }
         }
 
         _socket.Dispose();
         _socket = null;
-        
-        _ctSource?.Cancel();
+
         _ctSource?.Dispose();
         _ctSource = null;
 
-        if (_socketReceiveTask != null)
-            await _socketReceiveTask;
-        _socketReceiveTask?.Dispose();
         _socketReceiveTask = null;
-        
+
         RoomID = null;
         UUID = null;
+
         return true;
     }
     
