@@ -60,9 +60,9 @@ public abstract class BaseClient : IAsyncDisposable
             passphrase = settings.Password,
             nickname = PluginInfo.PLUGIN_GUID,
             game_type = 18, // Custom (Advanced)
-            variant_type = settings.VariantType,
+            variant_type = settings.IsRandomized ? 172 : 18, // 18 = Fixed Board, 172 = Randomized
             custom_json = settings.Goals.GenerateJSON(),
-            lockout_mode = settings.LockoutMode,
+            lockout_mode = settings.IsLockout ? 2 : 1, // 1 = Non-Lockout, 2 = Lockout
             seed = settings.Seed,
             is_spectator = settings.IsSpectator,
             hide_card = settings.HideCard,

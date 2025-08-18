@@ -52,7 +52,4 @@ public struct CreateRoomSettings
     /// Should the card be hidden at the start of the game or not
     /// </summary>
     public bool HideCard { get; set; }
-
-    internal int VariantType => IsRandomized ? 172 : 18; // 18 = Fixed Board, 172 = Randomized
-    internal int LockoutMode => IsLockout ? 2 : 1; // 1 = Non-Lockout, 2 = Lockout
 }
