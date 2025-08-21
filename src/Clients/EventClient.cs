@@ -125,64 +125,64 @@ public class EventClient : BaseClient
     #region Callbacks
     
     /// <summary>
-    /// Called when this client gets connected to the room
+    /// Invoked after this client has connected to the room.
     /// </summary>
     protected virtual void OnSelfConnect(string? roomId, PlayerData player) { }
 
     /// <summary>
-    /// Called when another client gets connected to the room
+    /// Invoked after another client has connected to the room.
     /// </summary>
-    protected virtual void OnOtherConnect(string? roomId, PlayerData player) {  }
+    protected virtual void OnOtherConnect(string? roomId, PlayerData player) { }
 
     /// <summary>
-    /// Called when this client gets disconnected to the room
+    /// Invoked after this client has disconnected from the room.
     /// </summary>
     protected virtual void OnSelfDisconnect() { }
-    
-    /// <summary>
-    /// Called when another client gets disconnected to the room
-    /// </summary>
-    protected virtual void OnOtherDisconnect(string? roomId, PlayerData player) {  }
 
     /// <summary>
-    /// Called when this client marks a square
+    /// Invoked after another client has disconnected from the room.
     /// </summary>
-    protected virtual void OnSelfMark(SquareData square) {  }
+    protected virtual void OnOtherDisconnect(string? roomId, PlayerData player) { }
 
     /// <summary>
-    /// Called when another client marks a square
+    /// Invoked after this client has marked a square.
     /// </summary>
-    protected virtual void OnOtherMark(PlayerData player, SquareData square) {  }
+    protected virtual void OnSelfMark(SquareData square) { }
 
     /// <summary>
-    /// Called when this client clears a square
+    /// Invoked after another client has marked a square.
     /// </summary>
-    protected virtual void OnSelfClear(SquareData square) {  }
+    protected virtual void OnOtherMark(PlayerData player, SquareData square) { }
 
     /// <summary>
-    /// Called when another client clears a square
+    /// Invoked after this client has cleared a square.
     /// </summary>
-    protected virtual void OnOtherClear(PlayerData player, SquareData square) {  }
-    
+    protected virtual void OnSelfClear(SquareData square) { }
+
     /// <summary>
-    /// Called when this client sends a message to the room
+    /// Invoked after another client has cleared a square.
     /// </summary>
-    protected virtual void OnSelfMessageReceived(string content, ulong timestamp) {  }
-    
+    protected virtual void OnOtherClear(PlayerData player, SquareData square) { }
+
     /// <summary>
-    /// Called when another client sends a message to the room
+    /// Invoked after this client has sent a message in the room.
+    /// </summary>
+    protected virtual void OnSelfMessageReceived(string content, ulong timestamp) { }
+
+    /// <summary>
+    /// Invoked after another client has sent a message in the room.
     /// </summary>
     protected virtual void OnOtherMessageReceived(PlayerData player, string content, ulong timestamp) { }
 
     /// <summary>
-    /// Called when this client changes team
+    /// Invoked after this client has changed team.
     /// </summary>
     protected virtual void OnSelfTeamChange(Team newTeam) { }
-    
+
     /// <summary>
-    /// Called when another client changes team
+    /// Invoked after another client has changed team.
     /// </summary>
-    protected virtual void OnOtherTeamChange(PlayerData player, Team newTeam) {  }
+    protected virtual void OnOtherTeamChange(PlayerData player, Team newTeam) { }
     
     #endregion
 
