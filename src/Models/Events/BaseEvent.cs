@@ -1,4 +1,6 @@
-﻿using BingoAPI.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using Newtonsoft.Json.Linq;
 
@@ -31,6 +33,10 @@ public abstract class BaseEvent
         Timestamp = json.Value<ulong>("timestamp");
     }
 
+    #region Parsing
+
+    private static readonly List<(string, Func<JObject, BaseEvent>)> parsingFallback = [];
+
     /// <summary>
     /// Parses the given JSON to the appropriate event
     /// </summary>
@@ -59,20 +65,27 @@ public abstract class BaseEvent
                 return new GoalEvent(json);
         }
 
-        var @event = ParseEventFallback(json, type);
-        
-        if (@event != null)
-            return @event;
+        type = type?.ToLower();
+
+        foreach (var (target, parser) in parsingFallback)
+        {
+            if (type != target)
+                continue;
+
+            var @event = parser.Invoke(json);
+            
+            if (@event != null)
+                return @event;
+        }
         
         Logger.Error($"Unhandled response: {json}");
         return null;
     }
-
+    
     /// <summary>
-    /// Fallback for parsing events
+    /// Adds a parser for any event with the given type
     /// </summary>
-    /// <remarks>
-    /// This can be patched by other mods if they use custom events
-    /// </remarks>
-    private static BaseEvent? ParseEventFallback(JObject json, string? type) => null;
+    public static void AddParser(string type, Func<JObject, BaseEvent> callback) => parsingFallback.Add((type.ToLower(), callback));
+
+    #endregion
 }
