@@ -3,7 +3,7 @@ using BingoAPI.Configurations;
 
 namespace BingoAPI;
 
-[BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+[BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 internal class Plugin : BaseUnityPlugin
 {
     private void Awake()
@@ -11,6 +11,6 @@ internal class Plugin : BaseUnityPlugin
         Helpers.Logger.SetLogger(Logger);
         Configuration.Load(Config);
         
-        Helpers.Logger.Info($"{PluginInfo.PLUGIN_GUID} v{PluginInfo.PLUGIN_VERSION} has loaded!");
+        Helpers.Logger.Info($"{MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} has loaded!");
     }
 }

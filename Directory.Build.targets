@@ -1,5 +1,5 @@
 <Project>
-    <Target Name="AddGeneratedFile" BeforeTargets="BeforeCompile;CoreCompile" Inputs="$(MSBuildAllProjects)" Outputs="$(IntermediateOutputPath)luginInfo.cs">
+    <Target Name="AddGeneratedFile" BeforeTargets="BeforeCompile;CoreCompile" Inputs="$(MSBuildAllProjects)" Outputs="$(IntermediateOutputPath)MyPluginInfo.cs">
 
         <PropertyGroup>
             <PluginGUID Condition="'$(PluginGUID)' == ''">dev.$([System.String]::Copy('$(Authors)').ToLower()).$([System.String]::Copy('$(AssemblyName)').ToLower())</PluginGUID>
@@ -7,14 +7,19 @@
             <PluginVersion Condition="'$(PluginVersion)' == ''">$(Version)</PluginVersion>
 
             <GeneratedText><![CDATA[
-internal static class PluginInfo
+#pragma warning disable CS1591
+
+namespace $(RootNamespace)
 {
-  public const string PLUGIN_GUID = "$(PluginGUID)"%3B
-  public const string PLUGIN_NAME = "$(PluginName)"%3B
-  public const string PLUGIN_VERSION = "$(PluginVersion)"%3B
+    public class MyPluginInfo
+    {
+      public const string PLUGIN_GUID = "$(PluginGUID)"%3B
+      public const string PLUGIN_NAME = "$(PluginName)"%3B
+      public const string PLUGIN_VERSION = "$(PluginVersion)"%3B
+    }
 }
 ]]></GeneratedText>
-            <GeneratedFilePath>$(IntermediateOutputPath)PluginInfo.cs</GeneratedFilePath>
+            <GeneratedFilePath>$(IntermediateOutputPath)MyPluginInfo.cs</GeneratedFilePath>
         </PropertyGroup>
 
         <ItemGroup>

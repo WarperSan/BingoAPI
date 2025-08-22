@@ -38,7 +38,7 @@ internal static class Request
     
     private static async Task<Response> InternalSendRequest(UnityWebRequest request)
     {
-        request.SetRequestHeader("User-Agent", $"{PluginInfo.PLUGIN_GUID}/{PluginInfo.PLUGIN_VERSION}");
+        request.SetRequestHeader("User-Agent", $"{MyPluginInfo.PLUGIN_GUID}/{MyPluginInfo.PLUGIN_VERSION}");
 
         var requestOperation = request.SendWebRequest();
         await HandleTimeout(() => requestOperation.isDone);

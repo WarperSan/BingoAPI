@@ -60,7 +60,7 @@ public abstract class BaseClient : IAsyncDisposable
         {
             room_name = settings.Name,
             passphrase = settings.Password,
-            nickname = PluginInfo.PLUGIN_GUID,
+            nickname = MyPluginInfo.PLUGIN_GUID,
             game_type = 18, // Custom (Advanced)
             variant_type = settings.IsRandomized ? 172 : 18, // 18 = Fixed Board, 172 = Randomized
             custom_json = settings.Goals.GenerateJSON(),
