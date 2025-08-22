@@ -14,10 +14,8 @@
         <RootNamespace>BingoAPI</RootNamespace>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
-    </PropertyGroup>
 
-    <!-- Enable Nullable for better IDE null-checking -->
-    <PropertyGroup>
+        <!-- Enable Nullable for better IDE null-checking -->
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
@@ -52,8 +50,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Resources\icon.png">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
+      <None Update="Resources\icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 </Project>
