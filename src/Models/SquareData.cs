@@ -19,6 +19,9 @@ public readonly struct SquareData
     /// <summary>
     /// Index of this square
     /// </summary>
+    /// <remarks>
+    /// This index is 1-based
+    /// </remarks>
     public readonly int Index;
     
     /// <summary>
