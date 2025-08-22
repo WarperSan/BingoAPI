@@ -1,4 +1,6 @@
-﻿namespace BingoAPI.Models;
+﻿using BingoAPI.Models.Conditions;
+
+namespace BingoAPI.Models;
 
 /// <summary>
 /// Data for a goal
