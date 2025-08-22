@@ -11,5 +11,10 @@ public class Goal
     /// <summary>
     /// Text to show when displaying this goal
     /// </summary>
-    public string Title;
+    public string Name;
+
+    /// <summary>
+    /// Condition to fulfill in order to mark this goal
+    /// </summary>
+    public BaseCondition Condition;
 }

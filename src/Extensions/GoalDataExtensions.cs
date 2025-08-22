@@ -24,7 +24,7 @@ internal static class GoalDataExtensions
             
             builder.Append("{");
             
-            builder.Append($"\"name\":\"{goal.Title}\"");
+            builder.Append($"\"name\":\"{goal.Name}\"");
 
             builder.Append("}");
 
