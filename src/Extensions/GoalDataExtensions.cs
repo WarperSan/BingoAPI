@@ -4,7 +4,7 @@ using BingoAPI.Models;
 namespace BingoAPI.Extensions;
 
 /// <summary>
-/// Provides extension methods for <see cref="GoalData"/>
+/// Provides extension methods for <see cref="Goal"/>
 /// </summary>
 internal static class GoalDataExtensions
 {
@@ -12,7 +12,7 @@ internal static class GoalDataExtensions
     /// Generates the JSON for the given goals
     /// </summary>
     /// <returns></returns>
-    public static string GenerateJSON(this GoalData[] goals)
+    public static string GenerateJSON(this Goal[] goals)
     {
         var builder = new StringBuilder();
 
