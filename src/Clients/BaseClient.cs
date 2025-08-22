@@ -492,8 +492,6 @@ public abstract class BaseClient : IAsyncDisposable
         if (@event == null)
             return;
         
-        Logger.Debug($"[Event '{@event.GetType().Name}'] {json}");
-
         OnEvent(@event);
 
         if (IsInRoom || @event is not ConnectedEvent connectedEvent)
