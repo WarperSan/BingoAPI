@@ -35,35 +35,43 @@ public abstract class BaseCondition
     /// </summary>
     public static BaseCondition? ParseCondition(JObject json)
     {
-        var action = json.Value<string>("action");
-
-        switch (action?.ToUpper())
+        try
         {
-            case "AND":
-                return new AndCondition(json);
-            case "OR":
-                return new OrCondition(json);
-            case "SOME":
-                return new SomeCondition(json);
-            case "NOT":
-                return new NotCondition(json);
-        }
+            var action = json.Value<string>("action");
 
-        action = action?.ToLower();
+            switch (action?.ToUpper())
+            {
+                case "AND":
+                    return new AndCondition(json);
+                case "OR":
+                    return new OrCondition(json);
+                case "SOME":
+                    return new SomeCondition(json);
+                case "NOT":
+                    return new NotCondition(json);
+            }
 
-        foreach (var (target, parser) in parsingFallback)
-        {
-            if (action != target)
-                continue;
+            action = action?.ToLower();
 
-            var condition = parser.Invoke(json);
+            foreach (var (target, parser) in parsingFallback)
+            {
+                if (action != target)
+                    continue;
+
+                var condition = parser.Invoke(json);
             
-            if (condition != null)
-                return condition;
+                if (condition != null)
+                    return condition;
+            }
+            
+            Log.Error($"Unhandled condition: {json}");
+            return null;
         }
-
-        Log.Error($"Unhandled condition: {json}");
-        return null;
+        catch (Exception e)
+        {
+            Log.Error($"Error while parsing condition ('{e.Message}'): {json}");
+            return null;
+        }
     }
 
     /// <summary>
