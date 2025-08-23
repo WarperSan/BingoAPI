@@ -55,14 +55,14 @@ public abstract class BaseClient : IAsyncDisposable
             Log.Error("CORS Token not found.");
             return false;
         }
-        
+
         var body = new
         {
             room_name = settings.Name,
             passphrase = settings.Password,
             nickname = MyPluginInfo.PLUGIN_GUID,
             game_type = 18, // Custom (Advanced)
-            variant_type = settings.IsRandomized ? 172 : 18, // 18 = Fixed Board, 172 = Randomized
+            variant_type = settings.IsRandomized ? 172 : 18, // 172 = Randomized, 18 = Fixed Board
             custom_json = settings.Goals.GenerateJSON(),
             lockout_mode = settings.IsLockout ? 2 : 1, // 1 = Non-Lockout, 2 = Lockout
             seed = settings.Seed,
@@ -110,7 +110,7 @@ public abstract class BaseClient : IAsyncDisposable
 
         if (response.IsError)
         {
-            response.PrintError($"Failed to join room '{settings.Code}'.");
+            response.PrintError($"Failed to join room '{settings.Code}'");
             return false;
         }
         
@@ -146,7 +146,7 @@ public abstract class BaseClient : IAsyncDisposable
 
         if (response.IsError)
         {
-            response.PrintError("Failed to obtain the board.");
+            response.PrintError("Failed to obtain the board");
             return null;
         }
 
