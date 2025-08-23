@@ -79,7 +79,7 @@ public abstract class BaseEvent
                 return @event;
         }
         
-        Log.Error($"Unhandled response: {json}");
+        Log.Error($"Unhandled event: {json}");
         return null;
     }
     
