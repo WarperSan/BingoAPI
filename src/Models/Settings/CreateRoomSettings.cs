@@ -1,4 +1,4 @@
-﻿using BingoAPI.Clients;
+﻿using BingoAPI.Entities.Clients;
 
 namespace BingoAPI.Models.Settings;
 

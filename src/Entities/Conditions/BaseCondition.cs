@@ -4,7 +4,7 @@ using BingoAPI.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Models.Conditions;
+namespace BingoAPI.Entities.Conditions;
 
 /// <summary>
 /// Class that represents the conditions used for marking goals

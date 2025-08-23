@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
+using BingoAPI.Entities.Events;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using BingoAPI.Managers;
 using BingoAPI.Models;
-using BingoAPI.Models.Events;
 
-namespace BingoAPI.Clients;
+namespace BingoAPI.Entities.Clients;
 
 /// <summary>
 /// Client that converts received <see cref="BaseEvent"/> into calls

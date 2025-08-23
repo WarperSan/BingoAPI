@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
+using BingoAPI.Models;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Models.Events;
+namespace BingoAPI.Entities.Events;
 
 /// <summary>
 /// Class that represents the events sent from the server

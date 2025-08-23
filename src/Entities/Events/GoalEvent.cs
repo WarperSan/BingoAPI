@@ -1,6 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using BingoAPI.Models;
+using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Models.Events;
+namespace BingoAPI.Entities.Events;
 
 /// <summary>
 /// Event used when a user marks or unmarks a square

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using BingoAPI.Entities.Conditions;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
-using BingoAPI.Models.Conditions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

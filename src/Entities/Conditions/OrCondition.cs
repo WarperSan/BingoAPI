@@ -1,15 +1,15 @@
 ﻿using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Models.Conditions;
+namespace BingoAPI.Entities.Conditions;
 
 /// <summary>
-/// Condition that is valid when all the conditions are valid
+/// Condition that is valid if any of the conditions is valid
 /// </summary>
-internal sealed class AndCondition : BaseCondition
+internal sealed class OrCondition : BaseCondition
 {
     private readonly BaseCondition?[] Conditions;
 
-    public AndCondition(JObject obj) : base(obj)
+    public OrCondition(JObject obj) : base(obj)
     {
         Conditions = ParseConditions(obj);
     }
@@ -22,10 +22,10 @@ internal sealed class AndCondition : BaseCondition
             if (condition == null)
                 continue;
 
-            if (!condition.Check())
-                return false;
+            if (condition.Check())
+                return true;
         }
 
-        return true;
+        return false;
     }
 }

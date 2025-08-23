@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
+using BingoAPI.Entities.Events;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
-using BingoAPI.Models.Events;
 using BingoAPI.Models.Settings;
 using BingoAPI.Network;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Clients;
+namespace BingoAPI.Entities.Clients;
 
 /// <summary>
 /// Class that represents the bare minimum for a client

@@ -1,4 +1,4 @@
-﻿using BingoAPI.Models.Conditions;
+﻿using BingoAPI.Entities.Conditions;
 
 namespace BingoAPI.Models;
 
