@@ -9,9 +9,9 @@ internal sealed class OrCondition : BaseCondition
 {
     private readonly BaseCondition[] Conditions;
 
-    public OrCondition(JObject obj) : base(obj)
+    public OrCondition(JObject json) : base(json)
     {
-        Conditions = ParseConditions(obj);
+        Conditions = ParseConditions(json);
     }
 
     /// <inheritdoc/>

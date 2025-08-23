@@ -9,9 +9,9 @@ internal sealed class AndCondition : BaseCondition
 {
     private readonly BaseCondition[] Conditions;
 
-    public AndCondition(JObject obj) : base(obj)
+    public AndCondition(JObject json) : base(json)
     {
-        Conditions = ParseConditions(obj);
+        Conditions = ParseConditions(json);
     }
 
     /// <inheritdoc/>

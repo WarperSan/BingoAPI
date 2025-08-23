@@ -12,13 +12,13 @@ internal sealed class SomeCondition : BaseCondition
 
     private readonly uint amount;
 
-    public SomeCondition(JObject obj) : base(obj)
+    public SomeCondition(JObject json) : base(json)
     {
-        var parameters = ParseParameters(obj);
+        var parameters = ParseParameters(json);
 
         amount = parameters.GetValueOrDefault("amount", 1u);
         
-        Conditions = ParseConditions(obj);
+        Conditions = ParseConditions(json);
     }
 
     /// <inheritdoc/>
