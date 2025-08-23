@@ -45,6 +45,8 @@ public abstract class BaseCondition
                 return new OrCondition(json);
             case "SOME":
                 return new SomeCondition(json);
+            case "NOT":
+                return new NotCondition(json);
         }
 
         action = action?.ToLower();
