@@ -1,8 +1,8 @@
+using System;
 using System.Threading.Tasks;
 using BingoAPI.Entities.Events;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
-using BingoAPI.Managers;
 using BingoAPI.Models;
 
 namespace BingoAPI.Entities.Clients;
@@ -10,9 +10,6 @@ namespace BingoAPI.Entities.Clients;
 /// <summary>
 /// Client that converts received <see cref="BaseEvent"/> into calls
 /// </summary>
-/// <remarks>
-/// You can subscribe to <see cref="EventManager"/> to get notify about this client's events
-/// </remarks>
 public class EventClient : BaseClient
 {
     #region Events
@@ -48,12 +45,12 @@ public class EventClient : BaseClient
         if (IsInRoom)
         {
             OnOtherConnect(@event.RoomId, @event.Player);
-            EventManager.OnOtherConnected.Invoke(@event.RoomId, @event.Player);
+            OnOtherConnected.Invoke(@event.RoomId, @event.Player);
             return;
         }
         
         OnSelfConnect(@event.RoomId, @event.Player);
-        EventManager.OnSelfConnected.Invoke(@event.RoomId, @event.Player);
+        OnSelfConnected.Invoke(@event.RoomId, @event.Player);
     }
 
     private void OnDisconnectedEvent(DisconnectedEvent @event)
@@ -65,7 +62,7 @@ public class EventClient : BaseClient
         }
         
         OnOtherDisconnect(@event.RoomId, @event.Player);
-        EventManager.OnOtherDisconnected.Invoke(@event.RoomId, @event.Player);
+        OnOtherDisconnected.Invoke(@event.RoomId, @event.Player);
     }
 
     private void OnChatEvent(ChatEvent @event)
@@ -73,12 +70,12 @@ public class EventClient : BaseClient
         if (@event.IsFromLocal(this))
         {
             OnSelfMessageReceived(@event.Text, @event.Timestamp);
-            EventManager.OnSelfChatted.Invoke(@event.Player, @event.Text, @event.Timestamp);
+            OnSelfChatted.Invoke(@event.Player, @event.Text, @event.Timestamp);
             return;
         }
 
         OnOtherMessageReceived(@event.Player, @event.Text, @event.Timestamp);
-        EventManager.OnOtherChatted.Invoke(@event.Player, @event.Text, @event.Timestamp);
+        OnOtherChatted.Invoke(@event.Player, @event.Text, @event.Timestamp);
     }
     
     private void OnColorEvent(ColorEvent @event)
@@ -86,12 +83,12 @@ public class EventClient : BaseClient
         if (@event.IsFromLocal(this))
         {
             OnSelfTeamChange(@event.Player.Team);
-            EventManager.OnSelfTeamChanged.Invoke(@event.Player, @event.Player.Team);
+            OnSelfTeamChanged.Invoke(@event.Player, @event.Player.Team);
             return;
         }
 
         OnOtherTeamChange(@event.Player, @event.Player.Team);
-        EventManager.OnOtherTeamChanged.Invoke(@event.Player, @event.Player.Team);
+        OnOtherTeamChanged.Invoke(@event.Player, @event.Player.Team);
     }
     
     private void OnGoalCleared(GoalEvent @event)
@@ -99,12 +96,12 @@ public class EventClient : BaseClient
         if (@event.IsFromLocal(this))
         {
             OnSelfClear(@event.Square);
-            EventManager.OnSelfCleared.Invoke(@event.Player, @event.Square);
+            OnSelfCleared.Invoke(@event.Player, @event.Square);
             return;
         }
 
         OnOtherClear(@event.Player, @event.Square);
-        EventManager.OnOtherCleared.Invoke(@event.Player, @event.Square);
+        OnOtherCleared.Invoke(@event.Player, @event.Square);
     }
     
     private void OnGoalMarked(GoalEvent @event)
@@ -112,17 +109,81 @@ public class EventClient : BaseClient
         if (@event.IsFromLocal(this))
         {
             OnSelfMark(@event.Square);
-            EventManager.OnSelfMarked.Invoke(@event.Player, @event.Square);
+            OnSelfMarked.Invoke(@event.Player, @event.Square);
             return;
         }
 
         OnOtherMark(@event.Player, @event.Square);
-        EventManager.OnOtherMarked.Invoke(@event.Player, @event.Square);
+        OnOtherMarked.Invoke(@event.Player, @event.Square);
     }
     
     #endregion
 
-    #region Callbacks
+    #region External Callbacks
+
+    /// <summary>
+    /// Called when the local client gets connected
+    /// </summary>
+    public event Action<string?, PlayerData> OnSelfConnected = null!;
+    
+    /// <summary>
+    /// Called when the local client gets disconnected
+    /// </summary>
+    public event Action OnSelfDisconnected = null!;
+
+    /// <summary>
+    /// Called when the local client marks a goal
+    /// </summary>
+    public event Action<PlayerData, SquareData> OnSelfMarked = null!;
+
+    /// <summary>
+    /// Called when the local client clears a goal
+    /// </summary>
+    public event Action<PlayerData, SquareData> OnSelfCleared = null!;
+
+    /// <summary>
+    /// Called when the local client sends a message
+    /// </summary>
+    public event Action<PlayerData, string, ulong> OnSelfChatted = null!;
+
+    /// <summary>
+    /// Called when the local client changes team
+    /// </summary>
+    public event Action<PlayerData, Team> OnSelfTeamChanged = null!;
+    
+    /// <summary>
+    /// Called when another client gets connected
+    /// </summary>
+    public event Action<string?, PlayerData> OnOtherConnected = null!;
+
+    /// <summary>
+    /// Called when another client gets disconnected
+    /// </summary>
+    public event Action<string?, PlayerData> OnOtherDisconnected = null!;
+    
+    /// <summary>
+    /// Called when another client marks a goal
+    /// </summary>
+    public event Action<PlayerData, SquareData> OnOtherMarked = null!;
+    
+    /// <summary>
+    /// Called when another client clears a goal
+    /// </summary>
+    public event Action<PlayerData, SquareData> OnOtherCleared = null!;
+    
+    /// <summary>
+    /// Called when another client sends a message
+    /// </summary>
+    public event Action<PlayerData, string, ulong> OnOtherChatted = null!;
+    
+    /// <summary>
+    /// Called when another client changes team
+    /// </summary>
+    public event Action<PlayerData, Team> OnOtherTeamChanged = null!;
+
+    #endregion
+
+    #region Internal Callbacks
     
     /// <summary>
     /// Invoked after this client has connected to the room.
@@ -197,7 +258,7 @@ public class EventClient : BaseClient
             return false;
 
         OnSelfDisconnect();
-        EventManager.OnSelfDisconnected.Invoke();
+        OnSelfDisconnected.Invoke();
         return true;
     }
 
