@@ -7,7 +7,7 @@ namespace BingoAPI.Entities.Conditions;
 /// </summary>
 internal sealed class OrCondition : BaseCondition
 {
-    private readonly BaseCondition?[] Conditions;
+    private readonly BaseCondition[] Conditions;
 
     public OrCondition(JObject obj) : base(obj)
     {
@@ -19,9 +19,6 @@ internal sealed class OrCondition : BaseCondition
     {
         foreach (var condition in Conditions)
         {
-            if (condition == null)
-                continue;
-
             if (condition.Check())
                 return true;
         }

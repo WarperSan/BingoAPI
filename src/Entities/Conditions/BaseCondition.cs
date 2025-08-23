@@ -91,26 +91,29 @@ public abstract class BaseCondition
     /// <summary>
     /// Parses the 'conditions' field from this object
     /// </summary>
-    protected static BaseCondition?[] ParseConditions(JObject obj)
+    protected static BaseCondition[] ParseConditions(JObject obj)
     {
         var rawConditions = obj.Value<JArray>("conditions");
 
         if (rawConditions == null)
             throw new JsonException($"Expected 'conditions': {obj}");
 
-        var conditions = new BaseCondition?[rawConditions.Count];
+        var conditions = new List<BaseCondition>();
 
         for (int i = 0; i < rawConditions.Count; i++)
         {
-            BaseCondition? newCondition = null;
+            if (rawConditions[i] is not JObject child)
+                continue;
 
-            if (rawConditions[i] is JObject child)
-                newCondition = ParseCondition(child);
-
-            conditions[i] = newCondition;
+            var newCondition = ParseCondition(child);
+            
+            if (newCondition == null)
+                continue;
+            
+            conditions.Add(newCondition);
         }
 
-        return conditions;
+        return conditions.ToArray();
     }
 
     /// <summary>

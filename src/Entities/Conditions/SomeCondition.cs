@@ -8,7 +8,7 @@ namespace BingoAPI.Entities.Conditions;
 /// </summary>
 internal sealed class SomeCondition : BaseCondition
 {
-    private readonly BaseCondition?[] Conditions;
+    private readonly BaseCondition[] Conditions;
 
     private readonly uint amount;
 
@@ -24,13 +24,13 @@ internal sealed class SomeCondition : BaseCondition
     /// <inheritdoc/>
     public override bool Check()
     {
+        if (Conditions.Length < amount)
+            return false;
+
         var currentAmount = 0;
 
         foreach (var condition in Conditions)
         {
-            if (condition == null)
-                continue;
-
             if (!condition.Check())
                 continue;
 
