@@ -12,7 +12,7 @@ public static class DictionaryExtensions
     /// Gets the value at the given key
     /// </summary>
     /// <remarks>
-    /// If the value is not found or is the wrong type, it will default to <see cref="defaultValue"/>
+    /// If the value is not found or is the wrong type, it will default to given value
     /// </remarks>
     public static T GetValueOrDefault<T>(this Dictionary<string, object> dictionary, string key, T defaultValue) 
     {
