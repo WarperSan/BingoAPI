@@ -83,7 +83,7 @@ public abstract class BaseCondition
     /// Adds a condition of the given type for the given action
     /// </summary>
     /// <remarks>
-    /// <see cref="T"/> must have a constructor with only <see cref="JObject"/> as the parameter
+    /// The given type must have a constructor with only <see cref="JObject"/> as the parameter
     /// </remarks>
     public static void AddCondition<T>(string action) where T : BaseCondition
     {
