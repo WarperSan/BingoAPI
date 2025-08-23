@@ -402,7 +402,10 @@ public abstract class BaseClient : IAsyncDisposable
         var isSocketConnected = await socket.HandleTimeout();
 
         if (!isSocketConnected)
+        {
+            Log.Debug("Connecting to the socket has timed out.");
             return false;
+        }
         
         var cts = new CancellationTokenSource();
         
@@ -413,7 +416,10 @@ public abstract class BaseClient : IAsyncDisposable
         var hasTimeout = await Request.HandleTimeout(() => IsInRoom);
 
         if (!hasTimeout)
+        {
+            Log.Debug("Waiting for handshake has timed out.");
             return false;
+        }
 
         Log.Debug("Connected.");
         return true;
