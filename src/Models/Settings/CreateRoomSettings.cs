@@ -41,7 +41,7 @@ public struct CreateRoomSettings
     /// <summary>
     /// Goals to generate the board from
     /// </summary>
-    public Goal[]? Goals { get; set; }
+    public Goal[] Goals { get; set; }
     
     /// <summary>
     /// Should the user be connected as a spectator or not
