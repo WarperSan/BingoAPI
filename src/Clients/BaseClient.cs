@@ -46,13 +46,13 @@ public abstract class BaseClient : IAsyncDisposable
     /// <returns>Code of the room or null if the room couldn't be created</returns>
     public async Task<bool> CreateRoom(CreateRoomSettings settings)
     {
-        Logger.Debug("Creating room...");
+        Log.Debug("Creating room...");
 
         var token = await Request.GetCORSToken(BINGO_URL);
 
         if (token == null)
         {
-            Logger.Error("CORS Token not found.");
+            Log.Error("CORS Token not found.");
             return false;
         }
         
@@ -79,7 +79,7 @@ public abstract class BaseClient : IAsyncDisposable
             return false;
         }
         
-        Logger.Debug("Room created.");
+        Log.Debug("Room created.");
         
         return await JoinRoom(new JoinRoomSettings
         {
@@ -96,7 +96,7 @@ public abstract class BaseClient : IAsyncDisposable
     /// <returns>Succeeded to join the room</returns>
     public async Task<bool> JoinRoom(JoinRoomSettings settings)
     {
-        Logger.Debug($"Joining room '{settings.Code}'...");
+        Log.Debug($"Joining room '{settings.Code}'...");
 
         var body = new
         {
@@ -121,11 +121,11 @@ public abstract class BaseClient : IAsyncDisposable
 
         if (socket == null)
         {
-            Logger.Error("Failed to create the socket.");
+            Log.Error("Failed to create the socket.");
             return false;
         }
 
-        Logger.Debug("Joined the room.");
+        Log.Debug("Joined the room.");
         return await Connect(socket);
     }
 
@@ -134,11 +134,11 @@ public abstract class BaseClient : IAsyncDisposable
     /// </summary>
     public async Task<SquareData[]?> GetBoard()
     {
-        Logger.Debug("Getting board...");
+        Log.Debug("Getting board...");
         
         if (!IsInRoom)
         {
-            Logger.Error("Tried to obtain the board before being connected.");
+            Log.Error("Tried to obtain the board before being connected.");
             return null;
         }
 
@@ -165,7 +165,7 @@ public abstract class BaseClient : IAsyncDisposable
             }
         }
 
-        Logger.Debug($"Board has '{count}' squares.");
+        Log.Debug($"Board has '{count}' squares.");
         return squares;
     }
 
@@ -176,11 +176,11 @@ public abstract class BaseClient : IAsyncDisposable
     /// <returns>Succeeded to change the team</returns>
     public async Task<bool> ChangeTeam(Team newTeam)
     {
-        Logger.Debug($"Changing team to '{newTeam}'...");
+        Log.Debug($"Changing team to '{newTeam}'...");
 
         if (IsInRoom)
         {
-            Logger.Error("Tried to change team before being connected.");
+            Log.Error("Tried to change team before being connected.");
             return false;
         }
 
@@ -198,7 +198,7 @@ public abstract class BaseClient : IAsyncDisposable
             return false;
         }
 
-        Logger.Debug("Changed team.");
+        Log.Debug("Changed team.");
         return true;
     }
 
@@ -206,7 +206,7 @@ public abstract class BaseClient : IAsyncDisposable
     {
         if (index is <= 0 or > 25)
         {
-            Logger.Error("Could not mark the square, as the given index is out of range.");
+            Log.Error("Could not mark the square, as the given index is out of range.");
             return null;
         }
         
@@ -228,11 +228,11 @@ public abstract class BaseClient : IAsyncDisposable
     /// <param name="index">Index of the square</param>
     public async Task<bool> MarkSquare(Team team, int index)
     {
-        Logger.Debug($"Marking the square '{index}' for team '{team}'...");
+        Log.Debug($"Marking the square '{index}' for team '{team}'...");
         
         if (!IsInRoom)
         {
-            Logger.Error("Tried to mark a square before being connected.");
+            Log.Error("Tried to mark a square before being connected.");
             return false;
         }
         
@@ -247,7 +247,7 @@ public abstract class BaseClient : IAsyncDisposable
             return false;
         }
 
-        Logger.Debug("Marked the square.");
+        Log.Debug("Marked the square.");
         return true;
     }
     
@@ -258,11 +258,11 @@ public abstract class BaseClient : IAsyncDisposable
     /// <param name="index">Index of the square</param>
     public async Task<bool> ClearSquare(Team team, int index)
     {
-        Logger.Debug($"Clearing the square '{index}' from team '{team}'...");
+        Log.Debug($"Clearing the square '{index}' from team '{team}'...");
         
         if (!IsInRoom)
         {
-            Logger.Error("Tried to clear a square before being connected.");
+            Log.Error("Tried to clear a square before being connected.");
             return false;
         }
 
@@ -277,7 +277,7 @@ public abstract class BaseClient : IAsyncDisposable
             return false;
         }
         
-        Logger.Debug("Cleared the square.");
+        Log.Debug("Cleared the square.");
         return true;
     }
 
@@ -287,11 +287,11 @@ public abstract class BaseClient : IAsyncDisposable
     /// <param name="message">Message to send</param>
     public async Task<bool> SendMessage(string message)
     {
-        Logger.Debug($"Sending message '{message}'...");
+        Log.Debug($"Sending message '{message}'...");
 
         if (!IsInRoom)
         {
-            Logger.Error("Tried to send a message before being connected.");
+            Log.Error("Tried to send a message before being connected.");
             return false;
         }
 
@@ -309,7 +309,7 @@ public abstract class BaseClient : IAsyncDisposable
             return false;
         }
         
-        Logger.Debug("Message sent.");
+        Log.Debug("Message sent.");
         return true;
     }
     
@@ -318,11 +318,11 @@ public abstract class BaseClient : IAsyncDisposable
     /// </summary>
     public async Task<bool> RevealCard()
     {
-        Logger.Debug("Revealing the card...");
+        Log.Debug("Revealing the card...");
 
         if (!IsInRoom)
         {
-            Logger.Error("Tried to reveal the card before being connected.");
+            Log.Error("Tried to reveal the card before being connected.");
             return false;
         }
 
@@ -339,7 +339,7 @@ public abstract class BaseClient : IAsyncDisposable
             return false;
         }
 
-        Logger.Debug("Card revealed.");
+        Log.Debug("Card revealed.");
         return true;
     }
 
@@ -348,11 +348,11 @@ public abstract class BaseClient : IAsyncDisposable
     /// </summary>
     public async Task<BaseEvent?[]> GetFeed()
     {
-        Logger.Debug("Getting feed...");
+        Log.Debug("Getting feed...");
 
         if (!IsInRoom)
         {
-            Logger.Error("Tried to get the feed of the room being connected.");
+            Log.Error("Tried to get the feed of the room being connected.");
             return [];
         }
 
@@ -376,7 +376,7 @@ public abstract class BaseClient : IAsyncDisposable
             }
         }
 
-        Logger.Debug($"Feed has {feed.Count} events.");
+        Log.Debug($"Feed has {feed.Count} events.");
         return feed.ToArray();
     }
 
@@ -397,7 +397,7 @@ public abstract class BaseClient : IAsyncDisposable
         if (IsInRoom)
             return false;
         
-        Logger.Debug("Connecting...");
+        Log.Debug("Connecting...");
 
         var isSocketConnected = await socket.HandleTimeout();
 
@@ -415,7 +415,7 @@ public abstract class BaseClient : IAsyncDisposable
         if (!hasTimeout)
             return false;
 
-        Logger.Debug("Connected.");
+        Log.Debug("Connected.");
         return true;
     }
 
@@ -428,7 +428,7 @@ public abstract class BaseClient : IAsyncDisposable
         if (!IsInRoom || _socket == null)
             return false;
         
-        Logger.Debug("Disconnecting...");
+        Log.Debug("Disconnecting...");
 
         try
         {
@@ -443,7 +443,7 @@ public abstract class BaseClient : IAsyncDisposable
         }
         catch (Exception e)
         {
-            Logger.Error($"Error closing WebSocket: {e.Message}");
+            Log.Error($"Error closing WebSocket: {e.Message}");
         }
 
         _ctSource?.Cancel();
@@ -458,7 +458,7 @@ public abstract class BaseClient : IAsyncDisposable
             catch (ObjectDisposedException) { /* Expected */ }
             catch (Exception ex)
             {
-                Logger.Error($"Error in receive task during disconnect: {ex.Message}");
+                Log.Error($"Error in receive task during disconnect: {ex.Message}");
             }
         }
 
@@ -473,7 +473,7 @@ public abstract class BaseClient : IAsyncDisposable
         RoomID = null;
         UUID = null;
 
-        Logger.Debug("Disconnected.");
+        Log.Debug("Disconnected.");
         
         return true;
     }

@@ -45,6 +45,6 @@ internal readonly struct Response
         // Content
         Content = req.downloadHandler?.text.Trim();
 
-        Logger.Debug($"[{req.responseCode}] {req.method} '{req.url}' {Content}");
+        Log.Debug($"[{req.responseCode}] {req.method} '{req.url}' {Content}");
     }
 }

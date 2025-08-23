@@ -39,7 +39,7 @@ public static class GoalManager
 
             if (name == null || rawCondition == null)
             {
-                Logger.Warning($"Skipping an invalid goal: {rawGoal}");
+                Log.Warning($"Skipping an invalid goal: {rawGoal}");
                 continue;
             }
 
@@ -47,7 +47,7 @@ public static class GoalManager
 
             if (condition == null)
             {
-                Logger.Warning($"Skipping an invalid condition: {rawCondition}");
+                Log.Warning($"Skipping an invalid condition: {rawCondition}");
                 continue;
             }
 

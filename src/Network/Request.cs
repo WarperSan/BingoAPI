@@ -8,9 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using BingoAPI.Configurations;
 using BingoAPI.Extensions;
+using BingoAPI.Helpers;
 using Newtonsoft.Json;
 using UnityEngine.Networking;
-using Logger = BingoAPI.Helpers.Logger;
 
 namespace BingoAPI.Network;
 
@@ -139,7 +139,7 @@ internal static class Request
         if (match.Success)
             return match.Groups[1].Value;
 
-        Logger.Error("Could not find the input 'csrfmiddlewaretoken'.");
+        Log.Error("Could not find the input 'csrfmiddlewaretoken'.");
         return null;
     }
     
@@ -160,7 +160,7 @@ internal static class Request
         }
         catch (Exception e)
         {
-            Logger.Error($"Error while trying to create a socket with '{socketKey ?? "null"}': {e.Message}");
+            Log.Error($"Error while trying to create a socket with '{socketKey ?? "null"}': {e.Message}");
             socket.Dispose();
             socket = null;
         }

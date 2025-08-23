@@ -5,7 +5,7 @@ namespace BingoAPI.Helpers;
 /// <summary>
 /// Class helping for logging stuff
 /// </summary>
-internal static class Logger
+internal static class Log
 {
     private static ManualLogSource? _logger;
 

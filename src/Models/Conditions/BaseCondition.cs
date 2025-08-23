@@ -60,7 +60,7 @@ public abstract class BaseCondition
                 return condition;
         }
 
-        Logger.Error($"Unhandled condition: {json}");
+        Log.Error($"Unhandled condition: {json}");
         return null;
     }
 
@@ -81,7 +81,7 @@ public abstract class BaseCondition
 
         if (constructor == null)
         {
-            Logger.Error($"Failed to add '{nameof(T)}', because no constructor is valid.");
+            Log.Error($"Failed to add '{nameof(T)}', because no constructor is valid.");
             return;
         }
 

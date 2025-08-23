@@ -8,9 +8,9 @@ internal class Plugin : BaseUnityPlugin
 {
     private void Awake()
     {
-        Helpers.Logger.SetLogger(Logger);
+        Helpers.Log.SetLogger(Logger);
         Configuration.Load(Config);
         
-        Helpers.Logger.Info($"{MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} has loaded!");
+        Helpers.Log.Info($"{MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} has loaded!");
     }
 }

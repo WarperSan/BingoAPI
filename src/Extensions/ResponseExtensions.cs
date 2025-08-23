@@ -17,11 +17,11 @@ internal static class ResponseExtensions
     {
         if (!response.IsError)
         {
-            Logger.Warning($"Tried to print the error '{errorMessage}', but the response finished with a success.");
+            Log.Warning($"Tried to print the error '{errorMessage}', but the response finished with a success.");
             return;
         }
         
-        Logger.Error($"[{response.Code}] {errorMessage}: ({response.Error})");
+        Log.Error($"[{response.Code}] {errorMessage}: ({response.Error})");
     }
 
     /// <summary>

@@ -60,7 +60,7 @@ public class EventClient : BaseClient
     {
         if (!IsInRoom)
         {
-            Logger.Warning("Receiving a disconnecting event without being in a room.");
+            Log.Warning("Receiving a disconnecting event without being in a room.");
             return;
         }
         
