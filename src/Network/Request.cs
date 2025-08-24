@@ -50,9 +50,11 @@ internal static class Request
     /// Sends a request to the given endpoint with the given method
     /// </summary>
     /// <returns>Response of the request</returns>
-    private static Task<Response> SendRequest(string endpoint, HttpMethod method) => InternalSendRequest(
-        new HttpRequestMessage(method, endpoint)
-    );
+    private static Task<Response> SendRequest(string endpoint, HttpMethod method) => InternalSendRequest(new HttpRequestMessage
+    {
+        RequestUri = new Uri(endpoint, UriKind.Relative),
+        Method = method
+    });
 
     /// <summary>
     /// Sends a request to the given endpoint with the given method and the given payload
@@ -60,7 +62,7 @@ internal static class Request
     /// <returns>Response of the request</returns>
     private static Task<Response> SendRequestJSON(string endpoint, HttpMethod method, object payload) => InternalSendRequest(new HttpRequestMessage
     {
-        RequestUri = new Uri(endpoint),
+        RequestUri = new Uri(endpoint, UriKind.Relative),
         Method = method,
         Content = new StringContent(
             JsonConvert.SerializeObject(payload),
