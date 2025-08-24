@@ -19,10 +19,6 @@ internal static class Log
         var message = data ?? "null";
 
         _logger?.Log(level, message.ToString());
-#if DEBUG
-        UnityEngine.Debug.Log($"[{level}] {message}");
-        System.Console.WriteLine($"[{level}] {message}");
-#endif
     }
 
     /// <summary>
