@@ -40,10 +40,14 @@ internal static class Request
         
         using HttpResponseMessage response = await _client.SendAsync(request);
         
-        return new Response(
-            response,
-            await response.Content.ReadAsStringAsync()
-        );
+        return new Response
+        {
+            URL = request.RequestUri.ToString(),
+            Code = response.StatusCode,
+            Content = await response.Content.ReadAsStringAsync(),
+            Error = response.ReasonPhrase,
+            IsError = !response.IsSuccessStatusCode
+        };
     }
 
     /// <summary>
