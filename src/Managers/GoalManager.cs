@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using BingoAPI.Entities.Conditions;
 using BingoAPI.Helpers;
@@ -14,6 +13,8 @@ namespace BingoAPI.Managers;
 /// </summary>
 public static class GoalManager
 {
+    private static readonly Dictionary<string, Goal> registeredGoals = [];
+    
     /// <summary>
     /// Parses the JSON at the given file into a list of goals
     /// </summary>
@@ -61,14 +62,19 @@ public static class GoalManager
         return goals.ToArray();
     }
 
+    /// <summary>
+    /// Adds the given goals to the list of available goals
+    /// </summary>
     public static void AddGoals(Goal[] goals)
     {
-        throw new NotImplementedException();
-    }
+        foreach (var goal in goals)
+        {
+            if (registeredGoals.TryAdd(goal.Name, goal))
+                continue;
 
-    public static bool AddGoal(string uuid, Goal goal)
-    {
-        throw new NotImplementedException();
+            Log.Warning($"A goal is already registered under the name '{goal.Name}'. This goal will overwrite the previous one.");
+            registeredGoals[goal.Name] = goal;
+        }
     }
     
     /// <summary>
@@ -76,14 +82,20 @@ public static class GoalManager
     /// </summary>
     public static Goal[] GetAll()
     {
-        throw new NotImplementedException();
+        var goals = new Goal[registeredGoals.Count];
+
+        var index = 0;
+        foreach (var (_, goal) in registeredGoals)
+        {
+            goals[index] = goal;
+            index++;
+        }
+
+        return goals;
     }
 
     /// <summary>
     /// Gets the registered <see cref="Goal"/> pointed to the given data
     /// </summary>
-    public static Goal? GetGoal(SquareData data)
-    {
-        throw new NotImplementedException();
-    }
+    public static Goal? GetGoal(SquareData data) => registeredGoals.GetValueOrDefault(data.Name ?? "");
 }
