@@ -32,8 +32,14 @@ internal static class Request
         _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Text.Html));
         _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_VERSION));
     }
-    
-    private static async Task<Response> InternalSendRequest(HttpRequestMessage request)
+
+    #region Send
+
+    /// <summary>
+    /// Sends the given request
+    /// </summary>
+    /// <returns>Compiled response</returns>
+    private static async Task<Response> SendRequest(HttpRequestMessage request)
     {
         if (_client == null)
             throw new NullReferenceException("No client was instanced.");
@@ -54,7 +60,7 @@ internal static class Request
     /// Sends a request to the given endpoint with the given method
     /// </summary>
     /// <returns>Response of the request</returns>
-    private static Task<Response> SendRequest(string endpoint, HttpMethod method) => InternalSendRequest(new HttpRequestMessage
+    private static Task<Response> SendRequest(string endpoint, HttpMethod method) => SendRequest(new HttpRequestMessage
     {
         RequestUri = new Uri(endpoint, UriKind.Relative),
         Method = method
@@ -64,7 +70,7 @@ internal static class Request
     /// Sends a request to the given endpoint with the given method and the given payload
     /// </summary>
     /// <returns>Response of the request</returns>
-    private static Task<Response> SendRequestJSON(string endpoint, HttpMethod method, object payload) => InternalSendRequest(new HttpRequestMessage
+    private static Task<Response> SendRequestJSON(string endpoint, HttpMethod method, object payload) => SendRequest(new HttpRequestMessage
     {
         RequestUri = new Uri(endpoint, UriKind.Relative),
         Method = method,
@@ -75,6 +81,10 @@ internal static class Request
         )
     });
 
+    #endregion
+
+    #region REST
+    
     /// <summary>
     /// Sends a <c>GET</c> request to the given endpoint
     /// </summary>
@@ -109,7 +119,7 @@ internal static class Request
 
         request.Headers.Add("X-CSRFToken", corsToken);
 
-        return InternalSendRequest(request);
+        return SendRequest(request);
     }
     
     /// <summary>
@@ -136,6 +146,8 @@ internal static class Request
         Log.Error("Could not find the input 'csrfmiddlewaretoken'.");
         return null;
     }
+    
+    #endregion
     
     /// <summary>
     /// Creates a socket to the given URI with the given credentials
