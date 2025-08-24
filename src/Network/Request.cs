@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Net.WebSockets;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using BingoAPI.Configurations;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using Newtonsoft.Json;
-using UnityEngine.Networking;
 
 namespace BingoAPI.Network;
 
@@ -19,111 +20,98 @@ namespace BingoAPI.Network;
 /// </summary>
 internal static class Request
 {
-    /// <summary>
-    /// Periodically checks if the callback is done or if it has timed out
-    /// </summary>
-    internal static async Task<bool> HandleTimeout(Func<bool> callback)
-    {
-        var delay = Configuration.Instance?.Network.NetworkDelayMS.Value ?? 25;
-        var timeout = Configuration.Instance?.Network.NetworkTimeoutMS.Value ?? 30_000;
-        
-        while (!callback.Invoke() && timeout > 0)
-        {
-            await Task.Delay(delay);
-            timeout -= delay;
-        }
+    private static HttpClient? _client;
 
-        return timeout > 0;
+    public static void Setup(string baseAddress)
+    {
+        _client = new HttpClient();
+
+        _client.BaseAddress = new Uri(baseAddress);
+        _client.Timeout = new TimeSpan(0, 0, 0, 0, 30_000);
+        
+        _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Text.Html));
+        _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_VERSION));
     }
     
-    private static async Task<Response> InternalSendRequest(UnityWebRequest request)
+    private static async Task<Response> InternalSendRequest(HttpRequestMessage request)
     {
-        request.SetRequestHeader("User-Agent", $"{MyPluginInfo.PLUGIN_GUID}/{MyPluginInfo.PLUGIN_VERSION}");
-
-        var requestOperation = request.SendWebRequest();
-        await HandleTimeout(() => requestOperation.isDone);
+        if (_client == null)
+            throw new NullReferenceException("No client was instanced.");
         
-        var response = new Response(request);
+        using HttpResponseMessage response = await _client.SendAsync(request);
         
-        request.Dispose();
-        
-        return response;
+        return new Response(
+            response,
+            await response.Content.ReadAsStringAsync()
+        );
     }
 
     /// <summary>
-    /// Sends a request to the given URI with the given method
+    /// Sends a request to the given endpoint with the given method
     /// </summary>
     /// <returns>Response of the request</returns>
-    private static Task<Response> SendRequest(string uri, string method, UploadHandler? uploadHandler) => InternalSendRequest(
-        new UnityWebRequest(
-            uri,
-            method,
-            new DownloadHandlerBuffer(),
-            uploadHandler
-        )
+    private static Task<Response> SendRequest(string endpoint, HttpMethod method) => InternalSendRequest(
+        new HttpRequestMessage(method, endpoint)
     );
 
     /// <summary>
-    /// Sends a request to the given URI with the given method and the given payload
+    /// Sends a request to the given endpoint with the given method and the given payload
     /// </summary>
     /// <returns>Response of the request</returns>
-    private static Task<Response> SendRequestJSON(string uri, string method, object payload)
+    private static Task<Response> SendRequestJSON(string endpoint, HttpMethod method, object payload) => InternalSendRequest(new HttpRequestMessage
     {
-        var json = JsonConvert.SerializeObject(payload);
-        var bytes = Encoding.UTF8.GetBytes(json);
-        var uploadHandler = new UploadHandlerRaw(bytes);
-        uploadHandler.contentType = "application/json";
-        
-        return SendRequest(uri, method, uploadHandler);
-    }
+        RequestUri = new Uri(endpoint),
+        Method = method,
+        Content = new StringContent(
+            JsonConvert.SerializeObject(payload),
+            Encoding.UTF8,
+            MediaTypeNames.Application.Json
+        )
+    });
 
     /// <summary>
-    /// Sends a <c>GET</c> request to the given URI
+    /// Sends a <c>GET</c> request to the given endpoint
     /// </summary>
-    public static Task<Response> Get(string uri) => SendRequest(uri, UnityWebRequest.kHttpVerbGET, null);
+    public static Task<Response> Get(string endpoint) => SendRequest(endpoint, HttpMethod.Get);
 
     /// <summary>
-    /// Sends a <c>POST</c> request to the given URI with the given payload
+    /// Sends a <c>POST</c> request to the given endpoint with the given payload
     /// </summary>
-    public static Task<Response> PostJSON(string uri, object payload) => SendRequestJSON(uri,  UnityWebRequest.kHttpVerbPOST, payload);
+    public static Task<Response> PostJSON(string endpoint, object payload) => SendRequestJSON(endpoint,  HttpMethod.Post, payload);
     
     /// <summary>
-    /// Sends a <c>PUT</c> request to the given URI with the given JSON payload
+    /// Sends a <c>PUT</c> request to the given endpoint with the given JSON payload
     /// </summary>
-    public static Task<Response> PutJSON(string uri, object payload) => SendRequestJSON(uri,  UnityWebRequest.kHttpVerbPUT, payload);
+    public static Task<Response> PutJSON(string endpoint, object payload) => SendRequestJSON(endpoint,  HttpMethod.Put, payload);
     
     /// <summary>
-    /// Sends a <c>POST</c> request to the given URI with the given x-www-form-urlencoded payload while using the given CORS token
+    /// Sends a <c>POST</c> request to the given endpoint with the given x-www-form-urlencoded payload while using the given CORS token
     /// </summary>
-    public static Task<Response> PostCORSForm(string uri, string corsToken, object payload)
+    public static Task<Response> PostCORSForm(string endpoint, string corsToken, object payload)
     {
         var formFields = new Dictionary<string, string>();
         
         foreach (var property in payload.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
             formFields[property.Name] = property.GetValue(payload)?.ToString() ?? "";
+        
+        var request = new HttpRequestMessage
+        {
+            RequestUri = new Uri(endpoint),
+            Method = HttpMethod.Post,
+            Content = new FormUrlEncodedContent(formFields),
+        };
 
-        var data = UnityWebRequest.SerializeSimpleForm(formFields);
-        var uploadHandler = new UploadHandlerRaw(data);
-        uploadHandler.contentType = "application/x-www-form-urlencoded";
-        
-        var request = new UnityWebRequest(
-            uri,
-            UnityWebRequest.kHttpVerbPOST,
-            new DownloadHandlerBuffer(),
-            uploadHandler
-        );
-        
-        request.SetRequestHeader("X-CSRFToken", corsToken);
-        
+        request.Headers.Add("X-CSRFToken", corsToken);
+
         return InternalSendRequest(request);
     }
     
     /// <summary>
-    /// Fetches the hidden CORS token from the given URI
+    /// Fetches the hidden CORS token from the given endpoint
     /// </summary>
-    public static async Task<string?> GetCORSToken(string uri)
+    public static async Task<string?> GetCORSToken(string endpoint)
     {
-        var response = await Get(uri);
+        var response = await Get(endpoint);
 
         if (response.IsError)
         {
@@ -132,7 +120,7 @@ internal static class Request
         }
         
         var match = Regex.Match(
-            response.Content ?? "",
+            response.Content,
             "<input[^>]*name=\"csrfmiddlewaretoken\"[^>]*value=\"(.*?)\"[^>]*>"
         );
 

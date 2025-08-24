@@ -1,5 +1,6 @@
-﻿using BingoAPI.Helpers;
-using UnityEngine.Networking;
+﻿using System.Net;
+using System.Net.Http;
+using BingoAPI.Helpers;
 
 namespace BingoAPI.Network;
 
@@ -16,7 +17,7 @@ internal readonly struct Response
     /// <summary>
     /// Numeric HTTP response code returned by the server
     /// </summary>
-    public readonly long Code;
+    public readonly HttpStatusCode Code;
     
     /// <summary>
     /// Human-readable string describing any system errors encountered
@@ -31,20 +32,22 @@ internal readonly struct Response
     /// <summary>
     /// Text returned as the response's body data
     /// </summary>
-    public readonly string? Content;
+    public readonly string Content;
     
-    public Response(UnityWebRequest req)
+    public Response(HttpResponseMessage response, string content)
     {
-        URL = req.url;
-        Code = req.responseCode;
+        var request = response.RequestMessage;
+        
+        URL = request.RequestUri.AbsoluteUri;
+        Code = response.StatusCode;
         
         // Error
-        Error = req.error;
-        IsError = req.result == UnityWebRequest.Result.ProtocolError;
+        Error = response.ReasonPhrase;
+        IsError = !response.IsSuccessStatusCode;
         
         // Content
-        Content = req.downloadHandler?.text.Trim();
+        Content = content;
 
-        Log.Debug($"[{req.responseCode}] {req.method} '{req.url}' {Content}");
+        Log.Debug($"{request.Method.Method} {request.RequestUri} {request.Version}\n{request.Headers}\n\n{request.Content}");
     }
 }

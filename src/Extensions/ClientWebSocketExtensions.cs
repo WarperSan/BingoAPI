@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BingoAPI.Helpers;
-using BingoAPI.Network;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -48,9 +47,4 @@ internal static class ClientWebSocketExtensions
             }
         }
     }
-    
-    /// <summary>
-    /// Handles the timeout for the given socket
-    /// </summary>
-    public static Task<bool> HandleTimeout(this ClientWebSocket socket) => Request.HandleTimeout(() => socket.State == WebSocketState.Open);
 }

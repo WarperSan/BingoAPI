@@ -18,10 +18,7 @@ namespace BingoAPI.Entities.Clients;
 /// </summary>
 public abstract class BaseClient : IAsyncDisposable
 {
-    private const string SOCKETS_URL = "wss://sockets.bingosync.com/broadcast";
-    private const string BINGO_URL = "https://bingosync.com";
-    
-    //public const string NEW_CARD_URL = BINGO_URL + "/api/new-card";
+    //public const string NEW_CARD_URL = "/api/new-card";
     
     /// <summary>
     /// Current room ID of this client
@@ -48,7 +45,7 @@ public abstract class BaseClient : IAsyncDisposable
     {
         Log.Debug("Creating room...");
 
-        var token = await Request.GetCORSToken(BINGO_URL);
+        var token = await Request.GetCORSToken("");
 
         if (token == null)
         {
@@ -71,7 +68,7 @@ public abstract class BaseClient : IAsyncDisposable
             csrfmiddlewaretoken = token
         };
         
-        var response = await Request.PostCORSForm(BINGO_URL + "/", token, body);
+        var response = await Request.PostCORSForm("/", token, body);
 
         if (response.IsError)
         {
@@ -106,7 +103,7 @@ public abstract class BaseClient : IAsyncDisposable
             is_spectator = settings.IsSpectator
         };
         
-        var response = await Request.PostJSON(BINGO_URL + "/api/join-room", body);
+        var response = await Request.PostJSON("/api/join-room", body);
 
         if (response.IsError)
         {
@@ -114,19 +111,8 @@ public abstract class BaseClient : IAsyncDisposable
             return false;
         }
         
-        var socket = await Request.CreateSocket(
-            SOCKETS_URL,
-            response.Json()?.Value<string>("socket_key")
-        );
-
-        if (socket == null)
-        {
-            Log.Error("Failed to create the socket.");
-            return false;
-        }
-
         Log.Debug("Joined the room.");
-        return await Connect(socket);
+        return await Connect(response.Json()?.Value<string>("socket_key") ?? "");
     }
 
     /// <summary>
@@ -142,7 +128,7 @@ public abstract class BaseClient : IAsyncDisposable
             return null;
         }
 
-        var response = await Request.Get(BINGO_URL + $"/room/{RoomID}/board");
+        var response = await Request.Get($"/room/{RoomID}/board");
 
         if (response.IsError)
         {
@@ -190,7 +176,7 @@ public abstract class BaseClient : IAsyncDisposable
             color = newTeam.GetName()
         };
         
-        var response = await Request.PutJSON(BINGO_URL + "/api/color", body);
+        var response = await Request.PutJSON("/api/color", body);
 
         if (response.IsError)
         {
@@ -218,7 +204,7 @@ public abstract class BaseClient : IAsyncDisposable
             remove_color = !isMarking
         };
         
-        return await Request.PutJSON(BINGO_URL + "/api/select", body);
+        return await Request.PutJSON("/api/select", body);
     }
     
     /// <summary>
@@ -301,7 +287,7 @@ public abstract class BaseClient : IAsyncDisposable
             text = message
         };
         
-        var response = await Request.PutJSON(BINGO_URL + "/api/chat", body);
+        var response = await Request.PutJSON("/api/chat", body);
 
         if (response.IsError)
         {
@@ -331,7 +317,7 @@ public abstract class BaseClient : IAsyncDisposable
             room = RoomID
         };
 
-        var response = await Request.PutJSON(BINGO_URL + "/api/revealed", body);
+        var response = await Request.PutJSON("/api/revealed", body);
 
         if (response.IsError)
         {
@@ -356,7 +342,7 @@ public abstract class BaseClient : IAsyncDisposable
             return [];
         }
 
-        var response = await Request.Get(BINGO_URL + $"/room/{RoomID}/feed");
+        var response = await Request.Get($"/room/{RoomID}/feed");
 
         if (response.IsError)
         {
@@ -392,30 +378,39 @@ public abstract class BaseClient : IAsyncDisposable
     /// Connects this client to the servers
     /// </summary>
     /// <returns>Succeeded to connect</returns>
-    protected virtual async Task<bool> Connect(ClientWebSocket socket)
+    protected virtual async Task<bool> Connect(string socketKey)
     {
         if (IsInRoom)
             return false;
         
         Log.Debug("Connecting...");
+        
+        var socket = await Request.CreateSocket(
+            "wss://sockets.bingosync.com/broadcast",
+            socketKey
+        );
 
-        var isSocketConnected = await socket.HandleTimeout();
-
-        if (!isSocketConnected)
+        if (socket == null)
         {
-            Log.Debug("Connecting to the socket has timed out.");
+            Log.Error("Failed to create the socket.");
             return false;
         }
-        
+
         var cts = new CancellationTokenSource();
         
         _socket = socket;
         _socketReceiveTask = _socket.HandleMessages(OnSocketReceived, cts.Token);
         _ctSource = cts;
 
-        var hasTimeout = await Request.HandleTimeout(() => IsInRoom);
-
-        if (!hasTimeout)
+        float timer = 30_000;
+        
+        while (!IsInRoom && timer > 0)
+        {
+            await Task.Delay(25, cts.Token);
+            timer -= 25;
+        }
+        
+        if (timer <= 0)
         {
             Log.Debug("Waiting for handshake has timed out.");
             return false;
