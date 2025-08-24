@@ -1,6 +1,4 @@
-﻿using BingoAPI.Entities.Conditions;
-
-namespace BingoAPI.Models;
+﻿namespace BingoAPI.Models;
 
 /// <summary>
 /// Data for a goal
@@ -14,9 +12,4 @@ public struct Goal
     /// Text to show when displaying this goal
     /// </summary>
     public string Name;
-
-    /// <summary>
-    /// Condition to fulfill in order to mark this goal
-    /// </summary>
-    public BaseCondition Condition;
 }
