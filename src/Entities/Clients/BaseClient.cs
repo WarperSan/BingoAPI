@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.WebSockets;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using BingoAPI.Entities.Events;
@@ -43,7 +44,7 @@ public abstract class BaseClient : IAsyncDisposable
     /// <returns>Code of the room or null if the room couldn't be created</returns>
     public async Task<bool> CreateRoom(CreateRoomSettings settings)
     {
-        Log.Debug("Creating room...");
+        Log.Info($"Creating the room '{settings.Name}'...");
 
         var token = await Request.GetCORSToken("");
 
@@ -75,12 +76,22 @@ public abstract class BaseClient : IAsyncDisposable
             response.PrintError("Failed to create a new room");
             return false;
         }
+
+        var match = Regex.Match(response.URL, "(?<=/room/)[a-zA-Z\\d]+");
+
+        if (!match.Success)
+        {
+            Log.Error($"Failed to find the room code from the URL '{response.URL}'.");
+            return false;
+        }
+
+        var code = match.Value;
         
-        Log.Debug("Room created.");
+        Log.Info($"Room '{settings.Name}' was created with the code '{code}'.");
         
         return await JoinRoom(new JoinRoomSettings
         {
-            Code = response.URL[^22..],
+            Code = code,
             Nickname = settings.Nickname,
             Password = settings.Password,
             IsSpectator = settings.IsSpectator
@@ -93,7 +104,7 @@ public abstract class BaseClient : IAsyncDisposable
     /// <returns>Succeeded to join the room</returns>
     public async Task<bool> JoinRoom(JoinRoomSettings settings)
     {
-        Log.Debug($"Joining room '{settings.Code}'...");
+        Log.Info($"Joining room '{settings.Code}'...");
 
         var body = new
         {
@@ -110,23 +121,33 @@ public abstract class BaseClient : IAsyncDisposable
             response.PrintError($"Failed to join room '{settings.Code}'");
             return false;
         }
+
+        var json = response.ParseJson<JObject>();
+        var socketKey = json?.Value<string>("socket_key");
+
+        if (socketKey == null)
+        {
+            Log.Error($"Expected 'socket_key': {response.Content}");
+            return false;
+        }
         
-        Log.Debug("Joined the room.");
-        return await Connect(response.Json()?.Value<string>("socket_key") ?? "");
+        Log.Info($"Room '{settings.Code}' was joined.");
+        return await Connect(socketKey);
     }
 
     /// <summary>
     /// Gets the current board of the room 
     /// </summary>
+    /// <returns>Board fetched or null if not found</returns>
     public async Task<SquareData[]?> GetBoard()
     {
-        Log.Debug("Getting board...");
-        
         if (!IsInRoom)
         {
             Log.Error("Tried to obtain the board before being connected.");
             return null;
         }
+        
+        Log.Info($"Fetching the board of the room '{RoomID}'...");
 
         var response = await Request.Get($"/room/{RoomID}/board");
 
@@ -136,22 +157,24 @@ public abstract class BaseClient : IAsyncDisposable
             return null;
         }
 
-        var json = response.Parse<JArray>();
-        var count = json?.Count ?? 0;
+        var json = response.ParseJson<JArray>();
 
-        var squares = new SquareData[count];
-
-        if (json != null)
+        if (json == null)
         {
-            var index = 0;
-            foreach (var square in json.Children())
-            {
-                squares[index] = new SquareData(square);
-                index++;
-            }
+            Log.Error($"Expected an array of squares: {response.Content}");
+            return null;
         }
 
-        Log.Debug($"Board has '{count}' squares.");
+        var squares = new SquareData[json.Count];
+        var index = 0;
+        
+        foreach (var square in json.Children())
+        {
+            squares[index] = new SquareData(square);
+            index++;
+        }
+
+        Log.Info($"Board of the room '{RoomID}' was fetched.");
         return squares;
     }
 
@@ -162,13 +185,13 @@ public abstract class BaseClient : IAsyncDisposable
     /// <returns>Succeeded to change the team</returns>
     public async Task<bool> ChangeTeam(Team newTeam)
     {
-        Log.Debug($"Changing team to '{newTeam}'...");
-
         if (IsInRoom)
         {
             Log.Error("Tried to change team before being connected.");
             return false;
         }
+
+        Log.Info($"Changing the team of the player '{UUID}' to '{newTeam}'...");
 
         var body = new
         {
@@ -184,56 +207,43 @@ public abstract class BaseClient : IAsyncDisposable
             return false;
         }
 
-        Log.Debug("Changed team.");
+        Log.Info($"Changed the team of the player '{UUID}'.");
         return true;
     }
 
-    private async Task<Response?> SelectSquare(Team team, int index, bool isMarking)
-    {
-        if (index is <= 0 or > 25)
-        {
-            Log.Error("Could not mark the square, as the given index is out of range.");
-            return null;
-        }
-        
-        var body = new
-        {
-            room = RoomID,
-            color = team.GetName(),
-            slot = index,
-            remove_color = !isMarking
-        };
-        
-        return await Request.PutJSON("/api/select", body);
-    }
-    
     /// <summary>
     /// Marks the square at the given index for a certain team
     /// </summary>
     /// <param name="team">Name of the team</param>
     /// <param name="index">Index of the square</param>
+    /// <returns>Succeeded to mark the square</returns>
     public async Task<bool> MarkSquare(Team team, int index)
     {
-        Log.Debug($"Marking the square '{index}' for team '{team}'...");
-        
         if (!IsInRoom)
         {
             Log.Error("Tried to mark a square before being connected.");
             return false;
         }
-        
-        var response = await SelectSquare(team, index, true);
 
-        if (!response.HasValue)
-            return false;
+        Log.Info($"Marking the square #{index} for the team '{team}'...");
 
-        if (response.Value.IsError)
+        var body = new
         {
-            response.Value.PrintError($"Failed to mark the square '{index}'");
+            room = RoomID,
+            color = team.GetName(),
+            slot = index,
+            remove_color = false
+        };
+        
+        var response = await Request.PutJSON("/api/select", body);
+
+        if (response.IsError)
+        {
+            response.PrintError($"Failed to mark the square '{index}'");
             return false;
         }
 
-        Log.Debug("Marked the square.");
+        Log.Info($"Marked the square #{index} for the team '{team}'.");
         return true;
     }
     
@@ -242,28 +252,34 @@ public abstract class BaseClient : IAsyncDisposable
     /// </summary>
     /// <param name="team">Name of the team</param>
     /// <param name="index">Index of the square</param>
+    /// <returns>Succeeded to clear the square</returns>
     public async Task<bool> ClearSquare(Team team, int index)
     {
-        Log.Debug($"Clearing the square '{index}' from team '{team}'...");
-        
         if (!IsInRoom)
         {
             Log.Error("Tried to clear a square before being connected.");
             return false;
         }
 
-        var response = await SelectSquare(team, index, false);
-
-        if (!response.HasValue)
-            return false;
-
-        if (response.Value.IsError)
+        Log.Info($"Clearing the square #{index} for the team '{team}'...");
+        
+        var body = new
         {
-            response.Value.PrintError($"Failed to clear the square '{index}'");
+            room = RoomID,
+            color = team.GetName(),
+            slot = index,
+            remove_color = true
+        };
+        
+        var response = await Request.PutJSON("/api/select", body);
+
+        if (response.IsError)
+        {
+            response.PrintError($"Failed to clear the square '{index}'");
             return false;
         }
         
-        Log.Debug("Cleared the square.");
+        Log.Info($"Cleared the square #{index} for the team '{team}'.");
         return true;
     }
 
@@ -271,15 +287,16 @@ public abstract class BaseClient : IAsyncDisposable
     /// Sends a message in the room
     /// </summary>
     /// <param name="message">Message to send</param>
+    /// <returns>Succeeded to send the message</returns>
     public async Task<bool> SendMessage(string message)
     {
-        Log.Debug($"Sending message '{message}'...");
-
         if (!IsInRoom)
         {
             Log.Error("Tried to send a message before being connected.");
             return false;
         }
+        
+        Log.Info($"Sending the following chat message as the player '{UUID}': '{message}'...");
 
         var body = new
         {
@@ -295,23 +312,24 @@ public abstract class BaseClient : IAsyncDisposable
             return false;
         }
         
-        Log.Debug("Message sent.");
+        Log.Info($"Sent the following chat message as the player '{UUID}': '{message}'.");
         return true;
     }
     
     /// <summary>
     /// Reveals the card for the entire room
     /// </summary>
+    /// <returns>Succeeded to reveal the card</returns>
     public async Task<bool> RevealCard()
     {
-        Log.Debug("Revealing the card...");
-
         if (!IsInRoom)
         {
             Log.Error("Tried to reveal the card before being connected.");
             return false;
         }
-
+       
+        Log.Info($"Revealing the card in the room '{RoomID}' as the player '{UUID}'...");
+        
         var body = new
         {
             room = RoomID
@@ -325,44 +343,59 @@ public abstract class BaseClient : IAsyncDisposable
             return false;
         }
 
-        Log.Debug("Card revealed.");
+        Log.Info($"Revealed the card in the room '{RoomID}' as the player '{UUID}'.");
         return true;
     }
 
     /// <summary>
     /// Gets the feed of every event in the room
     /// </summary>
-    public async Task<BaseEvent?[]> GetFeed()
+    /// <returns>Succeeded to get the feed</returns>
+    public async Task<BaseEvent[]?> GetFeed()
     {
-        Log.Debug("Getting feed...");
-
         if (!IsInRoom)
         {
             Log.Error("Tried to get the feed of the room being connected.");
-            return [];
+            return null;
         }
+
+        Log.Info($"Fetching the feed of the room '{RoomID}'...");
 
         var response = await Request.Get($"/room/{RoomID}/feed");
 
         if (response.IsError)
         {
             response.PrintError($"Failed to get the feed for the room '{RoomID}'");
-            return [];
+            return null;
         }
 
-        var jsonEvents = response.Json()?.GetValue("events");
-        var feed = new List<BaseEvent?>();
+        var json = response.ParseJson<JObject>();
+        var jsonEvents = json?.GetValue("events");
 
-        if (jsonEvents != null)
+        if (jsonEvents == null)
         {
-            foreach (var child in jsonEvents.Children())
-            {
-                var obj = child?.ToObject<JObject>();
-                feed.Add(obj != null ? BaseEvent.ParseEvent(obj) : null);
-            }
+            Log.Error($"Expected an array of events: {response.Content}");
+            return null;
+        }
+        
+        var feed = new List<BaseEvent>();
+
+        foreach (var child in jsonEvents.Children())
+        {
+            var obj = child?.ToObject<JObject>();
+            
+            if (obj == null)
+                continue;
+
+            var @event = BaseEvent.ParseEvent(obj);
+            
+            if (@event == null)
+                continue;
+            
+            feed.Add(@event);
         }
 
-        Log.Debug($"Feed has {feed.Count} events.");
+        Log.Info($"Fetched the feed of the room '{RoomID}'.");
         return feed.ToArray();
     }
 
@@ -383,7 +416,7 @@ public abstract class BaseClient : IAsyncDisposable
         if (IsInRoom)
             return false;
         
-        Log.Debug("Connecting...");
+        Log.Info("Connecting to the server...");
         
         var socket = await Request.CreateSocket(
             "wss://sockets.bingosync.com/broadcast",
@@ -412,11 +445,11 @@ public abstract class BaseClient : IAsyncDisposable
         
         if (timer <= 0)
         {
-            Log.Debug("Waiting for handshake has timed out.");
+            Log.Error("Waiting for handshake has timed out.");
             return false;
         }
 
-        Log.Debug("Connected.");
+        Log.Info("Connected to the server.");
         return true;
     }
 
@@ -429,7 +462,7 @@ public abstract class BaseClient : IAsyncDisposable
         if (!IsInRoom || _socket == null)
             return false;
         
-        Log.Debug("Disconnecting...");
+        Log.Info("Disconnecting from the server...");
 
         try
         {
@@ -474,8 +507,7 @@ public abstract class BaseClient : IAsyncDisposable
         RoomID = null;
         UUID = null;
 
-        Log.Debug("Disconnected.");
-        
+        Log.Info("Disconnected from the server.");
         return true;
     }
     

@@ -21,25 +21,11 @@ internal static class ResponseExtensions
             return;
         }
         
-        Log.Error($"[{response.Code}] {errorMessage}: ({response.Error})");
+        Log.Error($"[{response.Code}] {errorMessage}: {response.Error}");
     }
 
     /// <summary>
     /// Parses the content of this response to the given type
     /// </summary>
-    public static T? Parse<T>(this Response response)
-    {
-        if (response.IsError)
-            return default;
-
-        if (response.Content == null)
-            return default;
-        
-        return JsonConvert.DeserializeObject<T>(response.Content);
-    }
-    
-    /// <summary>
-    /// Parses the content of this response into a JSON object
-    /// </summary>
-    public static JObject? Json(this Response response) => response.Parse<JObject>();
+    public static T? ParseJson<T>(this Response response) => response.IsError ? default : JsonConvert.DeserializeObject<T>(response.Content);
 }
