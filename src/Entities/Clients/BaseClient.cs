@@ -136,6 +136,34 @@ public abstract class BaseClient : IAsyncDisposable
     }
 
     /// <summary>
+    /// Leaves the room
+    /// </summary>
+    /// <returns>Succeeded to leave the room</returns>
+    public async Task<bool> LeaveRoom()
+    {
+        if (!IsInRoom)
+        {
+            Log.Error("Tried to leave the room before being connected.");
+            return false;
+        }
+
+        var roomId = RoomID;
+        
+        Log.Info($"Leaving the room '{roomId}'...");
+
+        var hasDisconnected = await Disconnect();
+
+        if (!hasDisconnected)
+        {
+            Log.Error($"Failed to disconnected from the room '{roomId}'.");
+            return false;
+        }
+
+        Log.Info($"Left the room '{roomId}'.");
+        return true;
+    }
+    
+    /// <summary>
     /// Gets the current board of the room 
     /// </summary>
     /// <returns>Board fetched or null if not found</returns>
