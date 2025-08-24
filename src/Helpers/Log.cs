@@ -14,12 +14,7 @@ internal static class Log
     /// </summary>
     public static void SetLogger(ManualLogSource? logger) => _logger = logger;
 
-    private static void LogSelf(object? data, LogLevel level)
-    {
-        var message = data ?? "null";
-
-        _logger?.Log(level, message.ToString());
-    }
+    private static void LogSelf(object? data, LogLevel level) => _logger?.Log(level, data?.ToString() ?? "null");
 
     /// <summary>
     /// Logs information for developers that helps to debug the mod
