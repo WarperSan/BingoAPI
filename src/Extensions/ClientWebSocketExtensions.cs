@@ -27,7 +27,7 @@ internal static class ClientWebSocketExtensions
     /// <summary>
     /// Receives data on this socket, and notifies the given callback
     /// </summary>
-    public static async Task HandleMessages(this ClientWebSocket socket, Action<JObject?> onReceive, CancellationToken ct)
+    public static async Task HandleMessages(this ClientWebSocket socket, Action<JObject> onReceive, CancellationToken ct)
     {
         var buffer = new byte[1024];
 
@@ -36,6 +36,9 @@ internal static class ClientWebSocketExtensions
             var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
             var json = JsonConvert.DeserializeObject<JObject>(message);
+            
+            if (json == null)
+                continue;
 
             try
             {

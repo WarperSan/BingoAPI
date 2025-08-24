@@ -515,10 +515,9 @@ public abstract class BaseClient : IAsyncDisposable
     
     #region Events
 
-    private void OnSocketReceived(JObject? json)
+    private void OnSocketReceived(JObject json)
     {
-        if (json == null)
-            return;
+        Log.Debug($"Event received: {json}");
 
         var @event = BaseEvent.ParseEvent(json);
         
