@@ -29,7 +29,6 @@ internal static class Request
         _client.BaseAddress = new Uri(baseAddress);
         _client.Timeout = new TimeSpan(0, 0, 0, 0, 30_000);
         
-        _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Text.Html));
         _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_VERSION));
     }
 
@@ -44,16 +43,24 @@ internal static class Request
         if (_client == null)
             throw new NullReferenceException("No client was instanced.");
         
-        using HttpResponseMessage response = await _client.SendAsync(request);
+        var responseMessage = await _client.SendAsync(request);
         
-        return new Response
+        var response = new Response
         {
             URL = request.RequestUri.ToString(),
-            Code = response.StatusCode,
-            Content = await response.Content.ReadAsStringAsync(),
-            Error = response.ReasonPhrase,
-            IsError = !response.IsSuccessStatusCode
+            Code = responseMessage.StatusCode,
+            Content = await responseMessage.Content.ReadAsStringAsync(),
+            Error = responseMessage.ReasonPhrase,
+            IsError = !responseMessage.IsSuccessStatusCode
         };
+
+        Log.Debug($"{request.Method} {request.RequestUri}\n{request.Headers}\n{await request.Content.ReadAsStringAsync()}");
+        Log.Debug($"{response.Code} {response.URL}\n{responseMessage.Headers}\n{response.Content}");
+        
+        request.Dispose();
+        responseMessage.Dispose();
+        
+        return response;
     }
 
     /// <summary>
