@@ -12,7 +12,7 @@ internal static class TeamExtensions
     /// <summary>
     /// Fetches the name of the given team
     /// </summary>
-    public static string GetName(this Team team) => team.ToString().ToLower();
+    public static string GetName(this Team team) => team.ToString().ToLower().Replace(",", "");
 
     /// <summary>
     /// Fetches the team with the given name
