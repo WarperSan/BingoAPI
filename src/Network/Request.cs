@@ -42,6 +42,8 @@ internal static class Request
     {
         if (_client == null)
             throw new NullReferenceException("No client was instanced.");
+
+        var requestContent = request.Content != null ? await request.Content.ReadAsStringAsync() : "";
         
         var responseMessage = await _client.SendAsync(request);
         
@@ -54,7 +56,7 @@ internal static class Request
             IsError = !responseMessage.IsSuccessStatusCode
         };
 
-        Log.Debug($"{request.Method} {request.RequestUri}\n{request.Headers}\n{await request.Content.ReadAsStringAsync()}");
+        Log.Debug($"{request.Method} {request.RequestUri}\n{request.Headers}\n{requestContent}");
         Log.Debug($"{response.Code} {response.URL}\n{responseMessage.Headers}\n{response.Content}");
         
         request.Dispose();
