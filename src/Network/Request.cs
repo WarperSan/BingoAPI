@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mime;
@@ -111,9 +112,9 @@ internal static class Request
     public static Task<Response> PutJSON(string endpoint, object payload) => SendRequestJSON(endpoint,  HttpMethod.Put, payload);
     
     /// <summary>
-    /// Sends a <c>POST</c> request to the given endpoint with the given x-www-form-urlencoded payload while using the given CORS token
+    /// Sends a <c>POST</c> request to the given endpoint with the given x-www-form-urlencoded payload while using the given CORS tokens
     /// </summary>
-    public static Task<Response> PostCORSForm(string endpoint, string corsToken, object payload)
+    public static Task<Response> PostCORSForm(string endpoint, string publicToken, string hiddenToken, object payload)
     {
         var formFields = new Dictionary<string, string>();
         
@@ -122,26 +123,53 @@ internal static class Request
         
         var request = new HttpRequestMessage
         {
-            RequestUri = new Uri(endpoint),
+            RequestUri = new Uri(endpoint, UriKind.Relative),
             Method = HttpMethod.Post,
             Content = new FormUrlEncodedContent(formFields),
         };
 
-        request.Headers.Add("X-CSRFToken", corsToken);
+        request.Headers.Add("Cookie", $"csrftoken={publicToken}");
+        request.Headers.Add("X-CSRFToken", hiddenToken);
 
         return SendRequest(request);
     }
     
     /// <summary>
-    /// Fetches the hidden CORS token from the given endpoint
+    /// Fetches the public and hidden CORS token from the given endpoint
     /// </summary>
-    public static async Task<string?> GetCORSToken(string endpoint)
+    public static async Task<(string _public, string _hidden)?> GetCORSTokens(string endpoint)
     {
         var response = await Get(endpoint);
 
         if (response.IsError)
         {
-            response.PrintError("Failed to fetch CORS token");
+            response.PrintError("Failed to fetch CORS tokens");
+            return null;
+        }
+
+        if (_client == null)
+        {
+            Log.Error("The client was destroyed before processing the CORS tokens.");
+            return null;
+        }
+        
+        if (!response.Headers.TryGetValues("Set-Cookie", out var setCookie))
+        {
+            Log.Error("No cookie was set.");
+            return null;
+        }
+
+        var container = new CookieContainer();
+
+        foreach (var cookieHeader in setCookie)
+            container.SetCookies(_client.BaseAddress, cookieHeader);
+
+        var cookies = container.GetCookies(_client.BaseAddress);
+        var publicTokenCookie = cookies["csrftoken"];
+
+        if (publicTokenCookie == null)
+        {
+            Log.Error("Could not find the public CORS token.");
             return null;
         }
         
@@ -150,11 +178,13 @@ internal static class Request
             "<input[^>]*name=\"csrfmiddlewaretoken\"[^>]*value=\"(.*?)\"[^>]*>"
         );
 
-        if (match.Success)
-            return match.Groups[1].Value;
-
-        Log.Error("Could not find the input 'csrfmiddlewaretoken'.");
-        return null;
+        if (!match.Success)
+        {
+            Log.Error("Could not find the hidden CORS token.");
+            return null;
+        }
+        
+        return (publicTokenCookie.Value, match.Groups[1].Value);
     }
     
     #endregion

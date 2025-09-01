@@ -46,11 +46,11 @@ public abstract class BaseClient : IAsyncDisposable
     {
         Log.Info($"Creating the room '{settings.Name}'...");
 
-        var token = await Request.GetCORSToken("");
+        var tokens = await Request.GetCORSTokens("");
 
-        if (token == null)
+        if (!tokens.HasValue)
         {
-            Log.Error("CORS Token not found.");
+            Log.Error("CORS tokens not found.");
             return false;
         }
 
@@ -66,10 +66,10 @@ public abstract class BaseClient : IAsyncDisposable
             seed = settings.Seed,
             is_spectator = settings.IsSpectator,
             hide_card = settings.HideCard,
-            csrfmiddlewaretoken = token
+            csrfmiddlewaretoken = tokens.Value._hidden
         };
         
-        var response = await Request.PostCORSForm("/", token, body);
+        var response = await Request.PostCORSForm("/", tokens.Value._public, tokens.Value._hidden, body);
 
         if (response.IsError)
         {
@@ -77,7 +77,7 @@ public abstract class BaseClient : IAsyncDisposable
             return false;
         }
 
-        var match = Regex.Match(response.URL, "(?<=/room/)[a-zA-Z\\d]+");
+        var match = Regex.Match(response.URL, "(?<=/room/)[a-zA-Z\\d-_]+");
 
         if (!match.Success)
         {
