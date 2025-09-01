@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Http.Headers;
 
 namespace BingoAPI.Network;
 
@@ -18,6 +19,16 @@ internal struct Response
     public HttpStatusCode Code;
     
     /// <summary>
+    /// Headers returned by the server
+    /// </summary>
+    public HttpResponseHeaders Headers;
+    
+    /// <summary>
+    /// Text returned as the response's body data
+    /// </summary>
+    public string Content;
+    
+    /// <summary>
     /// Human-readable string describing any system errors encountered
     /// </summary>
     public string Error;
@@ -26,9 +37,4 @@ internal struct Response
     /// Computes the error status of the response
     /// </summary>
     public bool IsError;
-
-    /// <summary>
-    /// Text returned as the response's body data
-    /// </summary>
-    public string Content;
 }

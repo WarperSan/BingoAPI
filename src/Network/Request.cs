@@ -51,13 +51,14 @@ internal static class Request
         {
             URL = request.RequestUri.ToString(),
             Code = responseMessage.StatusCode,
+            Headers = responseMessage.Headers,
             Content = await responseMessage.Content.ReadAsStringAsync(),
             Error = responseMessage.ReasonPhrase,
             IsError = !responseMessage.IsSuccessStatusCode
         };
 
         Log.Debug($"{request.Method} {request.RequestUri}\n{request.Headers}\n{requestContent}");
-        Log.Debug($"{response.Code} {response.URL}\n{responseMessage.Headers}\n{response.Content}");
+        Log.Debug($"{response.Code} {response.URL}\n{response.Headers}\n{response.Content}");
         
         request.Dispose();
         responseMessage.Dispose();
