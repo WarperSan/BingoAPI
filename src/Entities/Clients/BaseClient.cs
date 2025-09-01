@@ -24,12 +24,12 @@ public abstract class BaseClient : IAsyncDisposable
     /// <summary>
     /// Current room ID of this client
     /// </summary>
-    protected string? RoomID { get; set; }
+    public string? RoomID { get; protected set; }
 
     /// <summary>
     /// Checks if this client is in a room
     /// </summary>
-    protected bool IsInRoom => RoomID != null;
+    public bool IsInRoom => RoomID != null;
     
     /// <summary>
     /// Current UUID of this player
