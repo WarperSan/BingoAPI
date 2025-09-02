@@ -6,9 +6,6 @@ namespace BingoAPI.Models;
 /// <summary>
 /// Data for a square
 /// </summary>
-/// <remarks>
-/// This is only used when joining a room. When a client creates a room, the data is contained in <see cref="Goal"/>
-/// </remarks>
 public readonly struct SquareData
 {
     /// <summary>
