@@ -1,5 +1,4 @@
 using BepInEx;
-using BingoAPI.Configurations;
 
 namespace BingoAPI;
 
@@ -9,7 +8,6 @@ internal class Plugin : BaseUnityPlugin
     private void Awake()
     {
         Helpers.Log.SetLogger(Logger);
-        Configuration.Load(Config);
 
         Network.Request.Setup("https://bingosync.com");
         
