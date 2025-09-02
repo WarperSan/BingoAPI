@@ -543,7 +543,7 @@ public abstract class BaseClient : IAsyncDisposable
     
     #region Events
 
-    private void OnSocketReceived(JObject json)
+    private void OnSocketReceived(string json)
     {
         Log.Debug($"Event received: {json}");
 

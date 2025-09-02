@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Entities.Events;
@@ -37,6 +38,22 @@ public abstract class BaseEvent
     #region Parsing
 
     private static readonly List<(string, Func<JObject, BaseEvent>)> parsingFallback = [];
+
+    /// <summary>
+    /// Parses the given JSON to the appropriate event
+    /// </summary>
+    public static BaseEvent? ParseEvent(string content)
+    {
+        var json = JsonConvert.DeserializeObject<JObject>(content);
+
+        if (json == null)
+        {
+            Log.Error($"Could not create a JSON object with the given event: {content}");
+            return null;
+        }
+
+        return ParseEvent(json);
+    }
 
     /// <summary>
     /// Parses the given JSON to the appropriate event
