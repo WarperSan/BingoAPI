@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 //using BingoAPI.Entities.Conditions.Composites;
-//using BingoAPI.Entities.Conditions.Decorators;
+using BingoAPI.Entities.Conditions.Decorators;
 using BingoAPI.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -49,8 +49,8 @@ public abstract class BaseCondition
                 //    return new OrCondition(json);
                 //case "SOME":
                 //    return new SomeCondition(json);
-                //case "NOT":
-                //    return new NotCondition(json);
+                case "NOT":
+                    return new NotCondition(json);
             }
 
             action = action?.ToLower();
