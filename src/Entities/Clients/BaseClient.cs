@@ -164,24 +164,24 @@ public abstract class BaseClient : IAsyncDisposable
     }
     
     /// <summary>
-    /// Gets the current board of the room 
+    /// Gets the current squares of the room 
     /// </summary>
-    /// <returns>Board fetched or null if not found</returns>
-    public async Task<SquareData[]?> GetBoard()
+    /// <returns>Squares fetched or null if not found</returns>
+    public async Task<SquareData[]?> GetSquares()
     {
         if (!IsInRoom)
         {
-            Log.Error("Tried to obtain the board before being connected.");
+            Log.Error("Tried to obtain the squares before being connected.");
             return null;
         }
         
-        Log.Info($"Fetching the board of the room '{RoomID}'...");
+        Log.Info($"Fetching the squares of the room '{RoomID}'...");
 
         var response = await Request.Get($"/room/{RoomID}/board");
 
         if (response.IsError)
         {
-            response.PrintError("Failed to obtain the board");
+            response.PrintError("Failed to obtain the squares");
             return null;
         }
 
@@ -202,7 +202,7 @@ public abstract class BaseClient : IAsyncDisposable
             index++;
         }
 
-        Log.Info($"Board of the room '{RoomID}' was fetched.");
+        Log.Info($"Squares of the room '{RoomID}' was fetched.");
         return squares;
     }
 
