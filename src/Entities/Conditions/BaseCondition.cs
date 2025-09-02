@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-//using BingoAPI.Entities.Conditions.Composites;
+using BingoAPI.Entities.Conditions.Composites;
 using BingoAPI.Entities.Conditions.Decorators;
 using BingoAPI.Helpers;
 using Newtonsoft.Json;
@@ -43,12 +43,12 @@ public abstract class BaseCondition
 
             switch (action?.ToUpper())
             {
-                //case "AND":
-                //    return new AndCondition(json);
-                //case "OR":
-                //    return new OrCondition(json);
-                //case "SOME":
-                //    return new SomeCondition(json);
+                case "AND":
+                    return new AndCondition(json);
+                case "OR":
+                    return new OrCondition(json);
+                case "SOME":
+                    return new SomeCondition(json);
                 case "NOT":
                     return new NotCondition(json);
             }
