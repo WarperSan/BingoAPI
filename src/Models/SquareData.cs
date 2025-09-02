@@ -34,7 +34,7 @@ public readonly struct SquareData
         var slot = obj?.Value<string>("slot")?.Replace("slot", "");
 
         Name = obj?.Value<string>("name");
-        Index = slot != null && int.TryParse(slot, out var index) ? index : 0;
+        Index = slot != null && int.TryParse(slot, out var index) ? index : -1;
         Teams = obj?.Value<string>("colors").GetTeams() ?? [];
     }
 }
