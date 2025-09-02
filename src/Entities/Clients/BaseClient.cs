@@ -62,7 +62,7 @@ public abstract class BaseClient : IAsyncDisposable
             game_type = 18, // Custom (Advanced)
             variant_type = settings.IsRandomized ? 172 : 18, // 172 = Randomized, 18 = Fixed Board
             custom_json = settings.Goals.GenerateJSON(),
-            lockout_mode = settings.IsLockout ? 2 : 1, // 1 = Non-Lockout, 2 = Lockout
+            lockout_mode = settings.IsLockout ? 2 : 1, // 2 = Lockout, 1 = Non-Lockout 
             seed = settings.Seed,
             is_spectator = settings.IsSpectator,
             hide_card = settings.HideCard,
