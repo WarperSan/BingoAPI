@@ -37,7 +37,7 @@ public abstract class BaseEvent
 
     #region Parsing
 
-    private static readonly List<(string, Func<JObject, BaseEvent>)> parsingFallback = [];
+    private static readonly Dictionary<string, Func<JObject, BaseEvent>> parsingFallback = [];
 
     /// <summary>
     /// Parses the given JSON to the appropriate event
@@ -60,7 +60,7 @@ public abstract class BaseEvent
     /// </summary>
     public static BaseEvent? ParseEvent(JObject json)
     {
-        var type = json.Value<string>("type");
+        var type = json.Value<string>("type") ?? "";
         
         switch (type)
         {
@@ -83,15 +83,10 @@ public abstract class BaseEvent
                 return new GoalEvent(json);
         }
 
-        type = type?.ToLower();
-
-        foreach (var (target, parser) in parsingFallback)
+        if (parsingFallback.TryGetValue(type, out var parser) && parser != null)
         {
-            if (type != target)
-                continue;
-
             var @event = parser.Invoke(json);
-            
+
             if (@event != null)
                 return @event;
         }
@@ -103,7 +98,7 @@ public abstract class BaseEvent
     /// <summary>
     /// Adds a parser for any event with the given type
     /// </summary>
-    public static void AddParser(string type, Func<JObject, BaseEvent> callback) => parsingFallback.Add((type.ToLower(), callback));
+    public static void AddParser(string type, Func<JObject, BaseEvent> callback) => parsingFallback.TryAdd(type, callback);
 
     #endregion
 }
