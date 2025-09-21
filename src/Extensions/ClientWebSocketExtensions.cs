@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using BingoAPI.Helpers;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Extensions;
 
@@ -34,6 +33,10 @@ internal static class ClientWebSocketExtensions
         while (!ct.IsCancellationRequested && socket.State == WebSocketState.Open)
         {
             var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+
+            if (result.MessageType != WebSocketMessageType.Text)
+                continue;
+
             var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
 
             try
