@@ -32,7 +32,7 @@ public abstract class BaseClient : IAsyncDisposable
     public bool IsInRoom => RoomID != null;
     
     /// <summary>
-    /// Current UUID of this player
+    /// Current UUID of this client
     /// </summary>
     public string? UUID { get; protected set; }
     
