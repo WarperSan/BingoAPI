@@ -41,7 +41,13 @@ public abstract class BaseCondition
         {
             var action = json.Value<string>("action");
 
-            switch (action?.ToUpper())
+            if (action == null)
+            {
+                Log.Error($"No action was specified for this condition: {json}");
+                return null;
+            }
+
+            switch (action.ToUpper())
             {
                 case "AND":
                     return new AndCondition(json);
