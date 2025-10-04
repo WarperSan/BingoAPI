@@ -17,9 +17,7 @@ public abstract class BaseCondition
     /// <summary>
     /// Constructor of a condition
     /// </summary>
-    /// <remarks>
-    /// Propagate the constructor, without changing it. It is necessary for <see cref="AddCondition{T}"/>
-    /// </remarks>
+    // ReSharper disable once UnusedParameter.Local
     protected BaseCondition(JObject json)
     {
     }
@@ -58,6 +56,7 @@ public abstract class BaseCondition
                     continue;
                 }
 
+                Log.Debug($"Added '{type}' with the action '{conditionAttr.Action}'.");
                 loadedConditions.TryAdd(conditionAttr.Action, json => (BaseCondition)constructor.Invoke([json]));
             }
         }
