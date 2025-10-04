@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using BingoAPI.Entities.Conditions.Composites;
 using BingoAPI.Entities.Conditions.Decorators;
 using BingoAPI.Helpers;
@@ -30,8 +31,38 @@ public abstract class BaseCondition
 
     #region Parsing
 
-    private static readonly List<(string, Func<JObject, BaseCondition>)> parsingFallback = [];
+    private static readonly Dictionary<string, Func<JObject, BaseCondition>> loadedConditions = [];
 
+    /// <summary>
+    ///     Loads every <see cref="BaseCondition"/> with the attribute <see cref="ConditionAttribute"/>
+    /// </summary>
+    internal static void LoadConditions()
+    {
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            foreach (var type in assembly.GetTypes())
+            {
+                if (!typeof(BaseCondition).IsAssignableFrom(type))
+                    continue;
+                
+                var conditionAttr = type.GetCustomAttribute<ConditionAttribute>();
+                
+                if (conditionAttr == null)
+                    continue;
+                
+                var constructor = type.GetConstructor([typeof(JObject)]);
+
+                if (constructor == null)
+                {
+                    Log.Error($"Failed to add '{type}', because no constructor is valid.");
+                    continue;
+                }
+
+                loadedConditions.TryAdd(conditionAttr.Action, json => (BaseCondition)constructor.Invoke([json]));
+            }
+        }
+    }
+    
     /// <summary>
     /// Parses the given JSON to the appropriate condition
     /// </summary>
@@ -59,18 +90,8 @@ public abstract class BaseCondition
                     return new NotCondition(json);
             }
 
-            action = action?.ToLower();
-
-            foreach (var (target, parser) in parsingFallback)
-            {
-                if (action != target)
-                    continue;
-
-                var condition = parser.Invoke(json);
-            
-                if (condition != null)
-                    return condition;
-            }
+            if (loadedConditions.TryGetValue(action.ToLower(), out var parser))
+                return parser.Invoke(json);
         }
         catch (Exception e)
         {
@@ -80,30 +101,6 @@ public abstract class BaseCondition
         
         Log.Error($"Unhandled condition: {json}");
         return null;
-    }
-
-    /// <summary>
-    /// Adds a parser for any condition with the given action
-    /// </summary>
-    public static void AddParser(string action, Func<JObject, BaseCondition> callback) => parsingFallback.Add((action.ToLower(), callback));
-
-    /// <summary>
-    /// Adds a condition of the given type for the given action
-    /// </summary>
-    /// <remarks>
-    /// The given type must have a constructor with only <see cref="JObject"/> as the parameter
-    /// </remarks>
-    public static void AddCondition<T>(string action) where T : BaseCondition
-    {
-        var constructor = typeof(T).GetConstructor([typeof(JObject)]);
-
-        if (constructor == null)
-        {
-            Log.Error($"Failed to add '{nameof(T)}', because no constructor is valid.");
-            return;
-        }
-
-        AddParser(action, json => (T)constructor.Invoke([json]));
     }
 
     /// <summary>
