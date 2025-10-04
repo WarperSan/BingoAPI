@@ -14,7 +14,7 @@ internal sealed class SomeCondition : BaseCompositeCondition
     {
         var parameters = ParseParameters(json);
 
-        amount = parameters.GetValueOrDefault("amount", 1u);
+        amount = parameters.GetRequiredValue<uint>("amount");
     }
 
     /// <inheritdoc/>
