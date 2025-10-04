@@ -13,4 +13,9 @@ internal class Plugin : BaseUnityPlugin
         
         Helpers.Log.Info($"{MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} has loaded!");
     }
+
+    private void Start()
+    {
+        Entities.Conditions.BaseCondition.LoadConditions();
+    }
 }
