@@ -12,7 +12,7 @@ public readonly struct SquareData
     /// Text displayed by this square
     /// </summary>
     public readonly string? Name;
-    
+
     /// <summary>
     /// Index of this square
     /// </summary>
@@ -20,7 +20,7 @@ public readonly struct SquareData
     /// This index is 1-based
     /// </remarks>
     public readonly int Index;
-    
+
     /// <summary>
     /// Teams owning this square
     /// </summary>

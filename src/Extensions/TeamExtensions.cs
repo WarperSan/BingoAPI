@@ -20,9 +20,9 @@ internal static class TeamExtensions
     public static Team GetTeam(this string? name)
     {
         if (string.IsNullOrEmpty(name))
-            return Team.BLANK;
+            return Team.Blank;
 
-        return Enum.TryParse(name.ToUpper(), out Team team) ? team : Team.BLANK;
+        return Enum.TryParse(name.ToUpper(), out Team team) ? team : Team.Blank;
     }
 
     /// <summary>
@@ -33,6 +33,6 @@ internal static class TeamExtensions
         if (string.IsNullOrEmpty(name))
             return [];
 
-        return name.Split(" ").Select(GetTeam).Where(team => team != Team.BLANK).ToArray();
+        return name.Split(" ").Select(GetTeam).Where(team => team != Team.Blank).ToArray();
     }
 }
