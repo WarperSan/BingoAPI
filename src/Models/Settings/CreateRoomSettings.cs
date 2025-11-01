@@ -11,15 +11,15 @@ public struct CreateRoomSettings
     /// Name of the room
     /// </summary>
     public string Name { get; set; }
-    
+
     /// <summary>
     /// Password of the room
     /// </summary>
     public string Password { get; set; }
-    
+
     /// <inheritdoc cref="JoinRoomSettings.Nickname"/>
     public string Nickname { get; set; }
-    
+
     /// <summary>
     /// Should the room be randomized or not
     /// </summary>
@@ -42,12 +42,12 @@ public struct CreateRoomSettings
     /// Goals to generate the board from
     /// </summary>
     public GoalData[] Goals { get; set; }
-    
+
     /// <summary>
     /// Should the user be connected as a spectator or not
     /// </summary>
     public bool IsSpectator { get; set; }
-    
+
     /// <summary>
     /// Should the card be hidden at the start of the game or not
     /// </summary>
