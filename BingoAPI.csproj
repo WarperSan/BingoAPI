@@ -17,6 +17,7 @@
 
         <!-- Enable Nullable for better IDE null-checking -->
         <Nullable>enable</Nullable>
+        <DocumentationFile>bin\$(Configuration)\netstandard2.1\BingoAPI.xml</DocumentationFile>
     </PropertyGroup>
 
     <!-- Set NuGet Sources -->
@@ -36,10 +37,6 @@
         viewing Private Information in stack traces.
         -->
         <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <DocumentationFile>bin\Release\netstandard2.1\BingoAPI.xml</DocumentationFile>
     </PropertyGroup>
 
     <!-- Primary Package References -->
