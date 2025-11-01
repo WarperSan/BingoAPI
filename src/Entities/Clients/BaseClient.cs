@@ -20,7 +20,7 @@ namespace BingoAPI.Entities.Clients;
 public abstract class BaseClient : IAsyncDisposable
 {
     //public const string NEW_CARD_URL = "/api/new-card";
-    
+
     /// <summary>
     /// Current room ID of this client
     /// </summary>
@@ -30,20 +30,26 @@ public abstract class BaseClient : IAsyncDisposable
     /// Checks if this client is in a room
     /// </summary>
     public bool IsInRoom => RoomID != null;
-    
+
     /// <summary>
     /// Current UUID of this client
     /// </summary>
     public string? UUID { get; protected set; }
-    
+
     #region API
-    
+
     /// <summary>
     /// Creates a room with the given settings
     /// </summary>
     /// <returns>Code of the room or null if the room couldn't be created</returns>
     public async Task<bool> CreateRoom(CreateRoomSettings settings)
     {
+        const int CUSTOM_GAME_TYPE = 18;
+        const int RANDOMIZED_VARIANT_TYPE = 172;
+        const int FIXED_BOARD_VARIANT_TYPE = 18;
+        const int LOCKOUT_MODE = 2;
+        const int NON_LOCKOUT_MODE = 1;
+
         Log.Info($"Creating the room '{settings.Name}'...");
 
         var tokens = await Request.GetCORSTokens("");
@@ -59,8 +65,8 @@ public abstract class BaseClient : IAsyncDisposable
             room_name = settings.Name,
             passphrase = settings.Password,
             nickname = MyPluginInfo.PLUGIN_GUID,
-            game_type = 18, // Custom (Advanced)
-            variant_type = settings.IsRandomized ? 172 : 18, // 172 = Randomized, 18 = Fixed Board
+            game_type = CUSTOM_GAME_TYPE,
+            variant_type = settings.IsRandomized ? RANDOMIZED_VARIANT_TYPE : FIXED_BOARD_VARIANT_TYPE,
             custom_json = settings.Goals.GenerateJSON(),
             lockout_mode = settings.IsLockout ? 2 : 1, // 2 = Lockout, 1 = Non-Lockout 
             seed = settings.Seed,
@@ -68,8 +74,13 @@ public abstract class BaseClient : IAsyncDisposable
             hide_card = settings.HideCard,
             csrfmiddlewaretoken = tokens.Value._hidden
         };
-        
-        var response = await Request.PostCORSForm("/", tokens.Value._public, tokens.Value._hidden, body);
+
+        var response = await Request.PostCORSForm(
+            "/",
+            tokens.Value._public,
+            tokens.Value._hidden,
+            body
+        );
 
         if (response.IsError)
         {
@@ -86,9 +97,9 @@ public abstract class BaseClient : IAsyncDisposable
         }
 
         var code = match.Value;
-        
+
         Log.Info($"Room '{settings.Name}' was created with the code '{code}'.");
-        
+
         return await JoinRoom(new JoinRoomSettings
         {
             Code = code,
@@ -113,7 +124,7 @@ public abstract class BaseClient : IAsyncDisposable
             nickname = settings.Nickname,
             is_spectator = settings.IsSpectator
         };
-        
+
         var response = await Request.PostJSON("/api/join-room", body);
 
         if (response.IsError)
@@ -130,7 +141,7 @@ public abstract class BaseClient : IAsyncDisposable
             Log.Error($"Expected 'socket_key': {response.Content}");
             return false;
         }
-        
+
         Log.Info($"Room '{settings.Code}' was joined.");
         return await Connect(socketKey);
     }
@@ -148,7 +159,7 @@ public abstract class BaseClient : IAsyncDisposable
         }
 
         var roomId = RoomID;
-        
+
         Log.Info($"Leaving the room '{roomId}'...");
 
         var hasDisconnected = await Disconnect();
@@ -162,7 +173,7 @@ public abstract class BaseClient : IAsyncDisposable
         Log.Info($"Left the room '{roomId}'.");
         return true;
     }
-    
+
     /// <summary>
     /// Gets the current squares of the room 
     /// </summary>
@@ -174,7 +185,7 @@ public abstract class BaseClient : IAsyncDisposable
             Log.Error("Tried to obtain the squares before being connected.");
             return null;
         }
-        
+
         Log.Info($"Fetching the squares of the room '{RoomID}'...");
 
         var response = await Request.Get($"/room/{RoomID}/board");
@@ -195,7 +206,7 @@ public abstract class BaseClient : IAsyncDisposable
 
         var squares = new SquareData[json.Count];
         var index = 0;
-        
+
         foreach (var square in json.Children())
         {
             squares[index] = new SquareData(square);
@@ -226,7 +237,7 @@ public abstract class BaseClient : IAsyncDisposable
             room = RoomID,
             color = newTeam.GetName()
         };
-        
+
         var response = await Request.PutJSON("/api/color", body);
 
         if (response.IsError)
@@ -262,7 +273,7 @@ public abstract class BaseClient : IAsyncDisposable
             slot = index,
             remove_color = false
         };
-        
+
         var response = await Request.PutJSON("/api/select", body);
 
         if (response.IsError)
@@ -274,7 +285,7 @@ public abstract class BaseClient : IAsyncDisposable
         Log.Info($"Marked the square #{index} for the team '{team}'.");
         return true;
     }
-    
+
     /// <summary>
     /// Clears the square at the given index for a certain team
     /// </summary>
@@ -290,7 +301,7 @@ public abstract class BaseClient : IAsyncDisposable
         }
 
         Log.Info($"Clearing the square #{index} for the team '{team}'...");
-        
+
         var body = new
         {
             room = RoomID,
@@ -298,7 +309,7 @@ public abstract class BaseClient : IAsyncDisposable
             slot = index,
             remove_color = true
         };
-        
+
         var response = await Request.PutJSON("/api/select", body);
 
         if (response.IsError)
@@ -306,7 +317,7 @@ public abstract class BaseClient : IAsyncDisposable
             response.PrintError($"Failed to clear the square '{index}'");
             return false;
         }
-        
+
         Log.Info($"Cleared the square #{index} for the team '{team}'.");
         return true;
     }
@@ -323,7 +334,7 @@ public abstract class BaseClient : IAsyncDisposable
             Log.Error("Tried to send a message before being connected.");
             return false;
         }
-        
+
         Log.Info($"Sending the following chat message as the player '{UUID}': '{message}'...");
 
         var body = new
@@ -331,7 +342,7 @@ public abstract class BaseClient : IAsyncDisposable
             room = RoomID,
             text = message
         };
-        
+
         var response = await Request.PutJSON("/api/chat", body);
 
         if (response.IsError)
@@ -339,11 +350,11 @@ public abstract class BaseClient : IAsyncDisposable
             response.PrintError($"Failed to send the message '{message}'");
             return false;
         }
-        
+
         Log.Info($"Sent the following chat message as the player '{UUID}': '{message}'.");
         return true;
     }
-    
+
     /// <summary>
     /// Reveals the card for the entire room
     /// </summary>
@@ -355,9 +366,9 @@ public abstract class BaseClient : IAsyncDisposable
             Log.Error("Tried to reveal the card before being connected.");
             return false;
         }
-       
+
         Log.Info($"Revealing the card in the room '{RoomID}' as the player '{UUID}'...");
-        
+
         var body = new
         {
             room = RoomID
@@ -405,21 +416,21 @@ public abstract class BaseClient : IAsyncDisposable
             Log.Error($"Expected an array of events: {response.Content}");
             return null;
         }
-        
+
         var feed = new List<BaseEvent>();
 
         foreach (var child in jsonEvents.Children())
         {
             var obj = child?.ToObject<JObject>();
-            
+
             if (obj == null)
                 continue;
 
             var @event = BaseEvent.ParseEvent(obj);
-            
+
             if (@event == null)
                 continue;
-            
+
             feed.Add(@event);
         }
 
@@ -430,7 +441,7 @@ public abstract class BaseClient : IAsyncDisposable
     #endregion
 
     #region Socket
-    
+
     private ClientWebSocket? _socket;
     private Task? _socketReceiveTask;
     private CancellationTokenSource? _ctSource;
@@ -443,9 +454,9 @@ public abstract class BaseClient : IAsyncDisposable
     {
         if (IsInRoom)
             return false;
-        
+
         Log.Info("Connecting to the server...");
-        
+
         var socket = await Request.CreateSocket(
             "wss://sockets.bingosync.com/broadcast",
             socketKey
@@ -458,19 +469,19 @@ public abstract class BaseClient : IAsyncDisposable
         }
 
         var cts = new CancellationTokenSource();
-        
+
         _socket = socket;
         _socketReceiveTask = _socket.HandleMessages(OnSocketReceived, cts.Token);
         _ctSource = cts;
 
         float timer = 30_000;
-        
+
         while (!IsInRoom && timer > 0)
         {
             await Task.Delay(25, cts.Token);
             timer -= 25;
         }
-        
+
         if (timer <= 0)
         {
             Log.Error("Waiting for handshake has timed out.");
@@ -489,7 +500,7 @@ public abstract class BaseClient : IAsyncDisposable
     {
         if (!IsInRoom || _socket == null)
             return false;
-        
+
         Log.Info("Disconnecting from the server...");
 
         try
@@ -516,8 +527,12 @@ public abstract class BaseClient : IAsyncDisposable
             {
                 await _socketReceiveTask;
             }
-            catch (OperationCanceledException) { /* Expected */ }
-            catch (ObjectDisposedException) { /* Expected */ }
+            catch (OperationCanceledException)
+            { /* Expected */
+            }
+            catch (ObjectDisposedException)
+            { /* Expected */
+            }
             catch (Exception ex)
             {
                 Log.Error($"Error in receive task during disconnect: {ex.Message}");
@@ -538,9 +553,9 @@ public abstract class BaseClient : IAsyncDisposable
         Log.Info("Disconnected from the server.");
         return true;
     }
-    
+
     #endregion
-    
+
     #region Events
 
     private void OnSocketReceived(string json)
@@ -548,10 +563,10 @@ public abstract class BaseClient : IAsyncDisposable
         Log.Debug($"Event received: {json}");
 
         var @event = BaseEvent.ParseEvent(json);
-        
+
         if (@event == null)
             return;
-        
+
         OnEvent(@event);
 
         if (IsInRoom || @event is not ConnectedEvent connectedEvent)
@@ -565,7 +580,7 @@ public abstract class BaseClient : IAsyncDisposable
     /// Called when this client receives an event
     /// </summary>
     protected abstract void OnEvent(BaseEvent baseEvent);
-    
+
     #endregion
 
     #region IAsyncDisposable
