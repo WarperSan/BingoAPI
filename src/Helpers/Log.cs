@@ -25,12 +25,12 @@ internal static class Log
     /// Logs information for players to know important steps of the mod
     /// </summary>
     public static void Info(object? data) => LogSelf(data, LogLevel.Message);
-    
+
     /// <summary>
     /// Logs information for players to warn them about an unwanted state
     /// </summary>
     public static void Warning(object? data) => LogSelf(data, LogLevel.Warning);
-    
+
     /// <summary>
     /// Logs information for players to notify them of an error
     /// </summary>
