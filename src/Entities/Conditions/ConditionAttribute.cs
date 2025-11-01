@@ -6,6 +6,7 @@ namespace BingoAPI.Entities.Conditions;
 ///     Attribute that holds information about <see cref="BaseCondition"/>
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+// ReSharper disable once ClassNeverInstantiated.Global
 public sealed class ConditionAttribute : Attribute
 {
     /// <summary>
