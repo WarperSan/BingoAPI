@@ -12,7 +12,7 @@ internal static class GoalDataExtensions
     /// Generates the JSON for the given goals
     /// </summary>
     /// <returns></returns>
-    public static string GenerateJSON(this GoalData[] goals)
+    public static string GenerateJson(this GoalData[] goals)
     {
         var builder = new StringBuilder();
 
@@ -21,9 +21,9 @@ internal static class GoalDataExtensions
         for (var i = 0; i < goals.Length; i++)
         {
             var goal = goals[i];
-            
+
             builder.Append("{");
-            
+
             builder.Append($"\"name\":\"{goal.Name}\"");
 
             builder.Append("}");
@@ -31,7 +31,7 @@ internal static class GoalDataExtensions
             if (i != goals.Length - 1)
                 builder.Append(",");
         }
-        
+
         builder.Append("]");
 
         return builder.ToString();

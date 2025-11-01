@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using BingoAPI.Models;
 
 namespace BingoAPI.Extensions;
@@ -22,7 +22,7 @@ internal static class TeamExtensions
         if (string.IsNullOrEmpty(name))
             return Team.BLANK;
 
-        return Enum.TryParse(name.ToUpper(), out Team _team) ? _team : Team.BLANK;
+        return Enum.TryParse(name.ToUpper(), out Team team) ? team : Team.BLANK;
     }
 
     /// <summary>
@@ -33,18 +33,6 @@ internal static class TeamExtensions
         if (string.IsNullOrEmpty(name))
             return [];
 
-        var teams = new List<Team>();
-
-        foreach (var color in name.Split(" "))
-        {
-            var _team = color.GetTeam();
-            
-            if (_team == Team.BLANK)
-                continue;
-            
-            teams.Add(_team);
-        }
-
-        return teams.ToArray();
+        return name.Split(" ").Select(GetTeam).Where(team => team != Team.BLANK).ToArray();
     }
 }

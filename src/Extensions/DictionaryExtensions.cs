@@ -18,28 +18,30 @@ public static class DictionaryExtensions
 
         if (rawValue is T typedValue)
         {
-             value = typedValue;
-             return true;
+            value = typedValue;
+            return true;
         }
-        
-        try {
+
+        try
+        {
             value = (T?)Convert.ChangeType(rawValue, typeof(T));
             return true;
-        } 
-        catch (InvalidCastException) {
+        }
+        catch (InvalidCastException)
+        {
         }
 
         value = default;
         return false;
     }
-    
+
     /// <summary>
     /// Gets the value at the given key
     /// </summary>
     /// <remarks>
     /// If the value is not found or is the wrong type, it will default to given value
     /// </remarks>
-    public static T GetValueOrDefault<T>(this Dictionary<string, object> dictionary, string key, T defaultValue)
+    public static T GetOptionalValue<T>(this Dictionary<string, object> dictionary, string key, T defaultValue)
     {
         if (!GetValue<T>(dictionary, key, out var value))
             return defaultValue;

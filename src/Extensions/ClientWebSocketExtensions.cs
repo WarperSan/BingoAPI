@@ -20,9 +20,13 @@ internal static class ClientWebSocketExtensions
     {
         var jsonMessage = JsonConvert.SerializeObject(value);
         var buffer = Encoding.UTF8.GetBytes(jsonMessage);
-        await socket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+
+        await socket.SendAsync(new ArraySegment<byte>(buffer),
+            WebSocketMessageType.Text,
+            true,
+            CancellationToken.None);
     }
-    
+
     /// <summary>
     /// Receives data on this socket, and notifies the given callback
     /// </summary>

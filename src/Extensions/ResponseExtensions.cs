@@ -19,7 +19,7 @@ internal static class ResponseExtensions
             Log.Warning($"Tried to print the error '{errorMessage}', but the response finished with a success.");
             return;
         }
-        
+
         Log.Error($"[{response.Code}] {errorMessage}: {response.Error}");
     }
 
