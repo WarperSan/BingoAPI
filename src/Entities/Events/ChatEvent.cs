@@ -11,7 +11,7 @@ public sealed class ChatEvent : BaseEvent
     /// Content of the message sent
     /// </summary>
     public readonly string Text;
-    
+
     internal ChatEvent(JObject json) : base(json)
     {
         Text = json.Value<string>("text") ?? "";

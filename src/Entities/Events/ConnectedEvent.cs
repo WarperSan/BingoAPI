@@ -11,7 +11,7 @@ public sealed class ConnectedEvent : BaseEvent
     /// Identifier of the room joined
     /// </summary>
     public readonly string RoomId;
-    
+
     internal ConnectedEvent(JObject json) : base(json)
     {
         RoomId = json.Value<string>("room") ?? "";

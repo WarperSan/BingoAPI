@@ -12,12 +12,12 @@ public sealed class GoalEvent : BaseEvent
     /// Square modified by this event
     /// </summary>
     public readonly SquareData Square;
-    
+
     /// <summary>
     /// Defines if the selected square has been cleared or marked
     /// </summary>
     public readonly bool HasBeenCleared;
-    
+
     internal GoalEvent(JObject json) : base(json)
     {
         var goal = json.GetValue("square");

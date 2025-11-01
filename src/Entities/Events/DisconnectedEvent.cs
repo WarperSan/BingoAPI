@@ -11,7 +11,7 @@ public sealed class DisconnectedEvent : BaseEvent
     /// Identifier of the room left
     /// </summary>
     public readonly string RoomId;
-    
+
     internal DisconnectedEvent(JObject json) : base(json)
     {
         RoomId = json.Value<string>("room") ?? "";

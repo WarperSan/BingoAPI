@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
@@ -17,12 +16,12 @@ public abstract class BaseEvent
     /// Player responsible for this event
     /// </summary>
     public readonly PlayerData Player;
-    
+
     /// <summary>
     /// Team responsible for this event
     /// </summary>
     public readonly Team Team;
-    
+
     /// <summary>
     /// Time when this event was sent
     /// </summary>
@@ -36,8 +35,6 @@ public abstract class BaseEvent
     }
 
     #region Parsing
-
-    private static readonly Dictionary<string, Func<JObject, BaseEvent>> parsingFallback = [];
 
     /// <summary>
     /// Parses the given JSON to the appropriate event
@@ -61,12 +58,12 @@ public abstract class BaseEvent
     public static BaseEvent? ParseEvent(JObject json)
     {
         var type = json.Value<string>("type") ?? "";
-        
+
         switch (type)
         {
             case "connection":
                 var eventType = json.Value<string>("event_type");
-                
+
                 switch (eventType)
                 {
                     case "connected":
@@ -83,22 +80,8 @@ public abstract class BaseEvent
                 return new GoalEvent(json);
         }
 
-        if (parsingFallback.TryGetValue(type, out var parser) && parser != null)
-        {
-            var @event = parser.Invoke(json);
-
-            if (@event != null)
-                return @event;
-        }
-        
         Log.Error($"Unhandled event: {json}");
         return null;
     }
-    
-    /// <summary>
-    /// Adds a parser for any event with the given type
-    /// </summary>
-    public static void AddParser(string type, Func<JObject, BaseEvent> callback) => parsingFallback.TryAdd(type, callback);
-
     #endregion
 }
