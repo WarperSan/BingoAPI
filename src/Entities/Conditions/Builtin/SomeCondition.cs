@@ -1,38 +1,42 @@
 ﻿using BingoAPI.Extensions;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Entities.Conditions.Composites;
+namespace BingoAPI.Entities.Conditions.Builtin;
 
 /// <summary>
 /// Condition that is valid when at least the given amount of the conditions are valid
 /// </summary>
-internal sealed class SomeCondition : BaseCompositeCondition
+[Condition("SOME")]
+internal sealed class SomeCondition : BaseCondition
 {
-    private readonly uint amount;
-
+    private readonly uint _amount;
+    private readonly BaseCondition[] _conditions;
+    
     public SomeCondition(JObject json) : base(json)
     {
+        _conditions = ParseConditions(json);
+        
         var parameters = ParseParameters(json);
 
-        amount = parameters.GetRequiredValue<uint>("amount");
+        _amount = parameters.GetRequiredValue<uint>("amount");
     }
 
     /// <inheritdoc/>
     public override bool Check()
     {
-        if (Conditions.Length < amount)
+        if (_conditions.Length < _amount)
             return false;
 
         var currentAmount = 0;
 
-        foreach (var condition in Conditions)
+        foreach (var condition in _conditions)
         {
             if (!condition.Check())
                 continue;
 
             currentAmount++;
 
-            if (currentAmount >= amount)
+            if (currentAmount >= _amount)
                 return true;
         }
 

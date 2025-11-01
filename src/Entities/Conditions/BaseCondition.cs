@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using BingoAPI.Entities.Conditions.Composites;
-using BingoAPI.Entities.Conditions.Decorators;
 using BingoAPI.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -21,7 +19,7 @@ public abstract class BaseCondition
     protected BaseCondition(JObject json)
     {
     }
-    
+
     /// <summary>
     /// Checks if this condition is met
     /// </summary>
@@ -29,7 +27,7 @@ public abstract class BaseCondition
 
     #region Parsing
 
-    private static readonly Dictionary<string, Func<JObject, BaseCondition>> loadedConditions = [];
+    private static readonly Dictionary<string, Func<JObject, BaseCondition>> LoadedConditions = [];
 
     /// <summary>
     ///     Loads every <see cref="BaseCondition"/> with the attribute <see cref="ConditionAttribute"/>
@@ -42,12 +40,12 @@ public abstract class BaseCondition
             {
                 if (!typeof(BaseCondition).IsAssignableFrom(type))
                     continue;
-                
+
                 var conditionAttr = type.GetCustomAttribute<ConditionAttribute>();
-                
+
                 if (conditionAttr == null)
                     continue;
-                
+
                 var constructor = type.GetConstructor([typeof(JObject)]);
 
                 if (constructor == null)
@@ -56,12 +54,20 @@ public abstract class BaseCondition
                     continue;
                 }
 
-                Log.Debug($"Added '{type}' with the action '{conditionAttr.Action}'.");
-                loadedConditions.TryAdd(conditionAttr.Action, json => (BaseCondition)constructor.Invoke([json]));
+                var success = LoadedConditions.TryAdd(
+                    conditionAttr.Action,
+                    json => (BaseCondition)constructor.Invoke([json])
+                );
+                
+                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                if (success)
+                    Log.Debug($"Added '{type.FullName}' with the action '{conditionAttr.Action}'.");
+                else
+                    Log.Debug($"Couldn't add '{type.FullName}', because another action uses the action '{conditionAttr.Action}'.");
             }
         }
     }
-    
+
     /// <summary>
     /// Parses the given JSON to the appropriate condition
     /// </summary>
@@ -77,19 +83,7 @@ public abstract class BaseCondition
                 return null;
             }
 
-            switch (action.ToUpper())
-            {
-                case "AND":
-                    return new AndCondition(json);
-                case "OR":
-                    return new OrCondition(json);
-                case "SOME":
-                    return new SomeCondition(json);
-                case "NOT":
-                    return new NotCondition(json);
-            }
-
-            if (loadedConditions.TryGetValue(action.ToLower(), out var parser))
+            if (LoadedConditions.TryGetValue(action, out var parser))
                 return parser.Invoke(json);
         }
         catch (Exception e)
@@ -97,7 +91,7 @@ public abstract class BaseCondition
             Log.Error($"Error while parsing condition ('{e.Message}'): {json}");
             return null;
         }
-        
+
         Log.Error($"Unhandled condition: {json}");
         return null;
     }
@@ -120,10 +114,10 @@ public abstract class BaseCondition
                 continue;
 
             var newCondition = ParseCondition(child);
-            
+
             if (newCondition == null)
                 continue;
-            
+
             conditions.Add(newCondition);
         }
 
@@ -146,7 +140,7 @@ public abstract class BaseCondition
         {
             if (property?.Value is not JValue value)
                 continue;
-            
+
             if (value.Value == null)
                 continue;
 
