@@ -10,7 +10,7 @@ internal class Plugin : BaseUnityPlugin
         Helpers.Log.SetLogger(Logger);
 
         Network.Request.Setup("https://bingosync.com");
-        
+
         Helpers.Log.Info($"{MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} has loaded!");
     }
 
