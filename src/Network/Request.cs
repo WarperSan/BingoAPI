@@ -28,8 +28,8 @@ internal static class Request
         _client = new HttpClient();
 
         _client.BaseAddress = new Uri(baseAddress);
-        _client.Timeout = new TimeSpan(0, 0, 0, 0, 30_000);
-        
+        _client.Timeout = TimeSpan.FromMilliseconds(30_000);
+
         _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_VERSION));
     }
 
@@ -45,25 +45,17 @@ internal static class Request
             throw new NullReferenceException("No client was instanced.");
 
         var requestContent = request.Content != null ? await request.Content.ReadAsStringAsync() : "";
-        
+
         var responseMessage = await _client.SendAsync(request);
-        
-        var response = new Response
-        {
-            URL = request.RequestUri.ToString(),
-            Code = responseMessage.StatusCode,
-            Headers = responseMessage.Headers,
-            Content = await responseMessage.Content.ReadAsStringAsync(),
-            Error = responseMessage.ReasonPhrase,
-            IsError = !responseMessage.IsSuccessStatusCode
-        };
+
+        var response = await Response.Create(request, responseMessage);
 
         Log.Debug($"{request.Method} {request.RequestUri}\n{request.Headers}\n{requestContent}");
         Log.Debug($"{response.Code} {response.URL}\n{response.Headers}\n{response.Content}");
-        
+
         request.Dispose();
         responseMessage.Dispose();
-        
+
         return response;
     }
 
@@ -81,7 +73,7 @@ internal static class Request
     /// Sends a request to the given endpoint with the given method and the given payload
     /// </summary>
     /// <returns>Response of the request</returns>
-    private static Task<Response> SendRequestJSON(string endpoint, HttpMethod method, object payload) => SendRequest(new HttpRequestMessage
+    private static Task<Response> SendRequestJson(string endpoint, HttpMethod method, object payload) => SendRequest(new HttpRequestMessage
     {
         RequestUri = new Uri(endpoint, UriKind.Relative),
         Method = method,
@@ -95,7 +87,7 @@ internal static class Request
     #endregion
 
     #region REST
-    
+
     /// <summary>
     /// Sends a <c>GET</c> request to the given endpoint
     /// </summary>
@@ -104,28 +96,33 @@ internal static class Request
     /// <summary>
     /// Sends a <c>POST</c> request to the given endpoint with the given payload
     /// </summary>
-    public static Task<Response> PostJSON(string endpoint, object payload) => SendRequestJSON(endpoint,  HttpMethod.Post, payload);
-    
+    public static Task<Response> PostJson(string endpoint, object payload) => SendRequestJson(endpoint, HttpMethod.Post, payload);
+
     /// <summary>
     /// Sends a <c>PUT</c> request to the given endpoint with the given JSON payload
     /// </summary>
-    public static Task<Response> PutJSON(string endpoint, object payload) => SendRequestJSON(endpoint,  HttpMethod.Put, payload);
-    
+    public static Task<Response> PutJson(string endpoint, object payload) => SendRequestJson(endpoint, HttpMethod.Put, payload);
+
     /// <summary>
     /// Sends a <c>POST</c> request to the given endpoint with the given x-www-form-urlencoded payload while using the given CORS tokens
     /// </summary>
-    public static Task<Response> PostCORSForm(string endpoint, string publicToken, string hiddenToken, object payload)
+    public static Task<Response> PostCorsForm(
+        string endpoint,
+        string publicToken,
+        string hiddenToken,
+        object payload
+    )
     {
         var formFields = new Dictionary<string, string>();
-        
+
         foreach (var property in payload.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
             formFields[property.Name] = property.GetValue(payload)?.ToString() ?? "";
-        
+
         var request = new HttpRequestMessage
         {
             RequestUri = new Uri(endpoint, UriKind.Relative),
             Method = HttpMethod.Post,
-            Content = new FormUrlEncodedContent(formFields),
+            Content = new FormUrlEncodedContent(formFields)
         };
 
         request.Headers.Add("Cookie", $"csrftoken={publicToken}");
@@ -133,11 +130,11 @@ internal static class Request
 
         return SendRequest(request);
     }
-    
+
     /// <summary>
     /// Fetches the public and hidden CORS token from the given endpoint
     /// </summary>
-    public static async Task<(string _public, string _hidden)?> GetCORSTokens(string endpoint)
+    public static async Task<(string _public, string _hidden)?> GetCorsTokens(string endpoint)
     {
         var response = await Get(endpoint);
 
@@ -152,7 +149,7 @@ internal static class Request
             Log.Error("The client was destroyed before processing the CORS tokens.");
             return null;
         }
-        
+
         if (!response.Headers.TryGetValues("Set-Cookie", out var setCookie))
         {
             Log.Error("No cookie was set.");
@@ -172,7 +169,7 @@ internal static class Request
             Log.Error("Could not find the public CORS token.");
             return null;
         }
-        
+
         var match = Regex.Match(
             response.Content,
             "<input[^>]*name=\"csrfmiddlewaretoken\"[^>]*value=\"(.*?)\"[^>]*>"
@@ -183,12 +180,12 @@ internal static class Request
             Log.Error("Could not find the hidden CORS token.");
             return null;
         }
-        
+
         return (publicTokenCookie.Value, match.Groups[1].Value);
     }
-    
+
     #endregion
-    
+
     /// <summary>
     /// Creates a socket to the given URI with the given credentials
     /// </summary>

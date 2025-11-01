@@ -1,40 +1,58 @@
 ﻿using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace BingoAPI.Network;
 
 /// <summary>
-/// Structure that holds every useful information about a response
+/// Wrapper that exposes every useful information about a response
 /// </summary>
-internal struct Response
+internal record Response
 {
     /// <summary>
     /// Target URL for the request to communicate with
     /// </summary>
-    public string URL;
-    
+    public readonly string URL;
+
     /// <summary>
     /// Numeric HTTP response code returned by the server
     /// </summary>
-    public HttpStatusCode Code;
-    
+    public readonly HttpStatusCode Code;
+
     /// <summary>
     /// Headers returned by the server
     /// </summary>
-    public HttpResponseHeaders Headers;
-    
+    public readonly HttpResponseHeaders Headers;
+
     /// <summary>
     /// Text returned as the response's body data
     /// </summary>
-    public string Content;
-    
+    public readonly string Content;
+
     /// <summary>
     /// Human-readable string describing any system errors encountered
     /// </summary>
-    public string Error;
+    public readonly string Error;
 
     /// <summary>
     /// Computes the error status of the response
     /// </summary>
-    public bool IsError;
+    public readonly bool IsError;
+
+    private Response(HttpRequestMessage request, HttpResponseMessage response, string responseContent)
+    {
+        URL = request.RequestUri.ToString();
+        Code = response.StatusCode;
+        Headers = response.Headers;
+        Content = responseContent;
+        Error = response.ReasonPhrase;
+        IsError = !response.IsSuccessStatusCode;
+    }
+
+    public static async Task<Response> Create(HttpRequestMessage request, HttpResponseMessage response) => new(
+        request,
+        response,
+        await response.Content.ReadAsStringAsync()
+    );
 }

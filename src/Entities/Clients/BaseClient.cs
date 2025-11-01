@@ -34,6 +34,7 @@ public abstract class BaseClient : IAsyncDisposable
     /// <summary>
     /// Current UUID of this client
     /// </summary>
+    // ReSharper disable once InconsistentNaming
     public string? UUID { get; protected set; }
 
     #region API
@@ -52,7 +53,7 @@ public abstract class BaseClient : IAsyncDisposable
 
         Log.Info($"Creating the room '{settings.Name}'...");
 
-        var tokens = await Request.GetCORSTokens("");
+        var tokens = await Request.GetCorsTokens("");
 
         if (!tokens.HasValue)
         {
@@ -67,15 +68,15 @@ public abstract class BaseClient : IAsyncDisposable
             nickname = MyPluginInfo.PLUGIN_GUID,
             game_type = CUSTOM_GAME_TYPE,
             variant_type = settings.IsRandomized ? RANDOMIZED_VARIANT_TYPE : FIXED_BOARD_VARIANT_TYPE,
-            custom_json = settings.Goals.GenerateJSON(),
-            lockout_mode = settings.IsLockout ? 2 : 1, // 2 = Lockout, 1 = Non-Lockout 
+            custom_json = settings.Goals.GenerateJson(),
+            lockout_mode = settings.IsLockout ? LOCKOUT_MODE : NON_LOCKOUT_MODE,
             seed = settings.Seed,
             is_spectator = settings.IsSpectator,
             hide_card = settings.HideCard,
             csrfmiddlewaretoken = tokens.Value._hidden
         };
 
-        var response = await Request.PostCORSForm(
+        var response = await Request.PostCorsForm(
             "/",
             tokens.Value._public,
             tokens.Value._hidden,
@@ -125,7 +126,7 @@ public abstract class BaseClient : IAsyncDisposable
             is_spectator = settings.IsSpectator
         };
 
-        var response = await Request.PostJSON("/api/join-room", body);
+        var response = await Request.PostJson("/api/join-room", body);
 
         if (response.IsError)
         {
@@ -238,7 +239,7 @@ public abstract class BaseClient : IAsyncDisposable
             color = newTeam.GetName()
         };
 
-        var response = await Request.PutJSON("/api/color", body);
+        var response = await Request.PutJson("/api/color", body);
 
         if (response.IsError)
         {
@@ -274,7 +275,7 @@ public abstract class BaseClient : IAsyncDisposable
             remove_color = false
         };
 
-        var response = await Request.PutJSON("/api/select", body);
+        var response = await Request.PutJson("/api/select", body);
 
         if (response.IsError)
         {
@@ -310,7 +311,7 @@ public abstract class BaseClient : IAsyncDisposable
             remove_color = true
         };
 
-        var response = await Request.PutJSON("/api/select", body);
+        var response = await Request.PutJson("/api/select", body);
 
         if (response.IsError)
         {
@@ -343,7 +344,7 @@ public abstract class BaseClient : IAsyncDisposable
             text = message
         };
 
-        var response = await Request.PutJSON("/api/chat", body);
+        var response = await Request.PutJson("/api/chat", body);
 
         if (response.IsError)
         {
@@ -374,7 +375,7 @@ public abstract class BaseClient : IAsyncDisposable
             room = RoomID
         };
 
-        var response = await Request.PutJSON("/api/revealed", body);
+        var response = await Request.PutJson("/api/revealed", body);
 
         if (response.IsError)
         {
