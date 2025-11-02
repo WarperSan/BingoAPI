@@ -9,18 +9,18 @@ namespace BingoAPI.Entities.Conditions.Builtin;
 [Condition("NOT")]
 internal sealed class NotCondition : BaseCondition
 {
-    private readonly BaseCondition _condition;
+    private readonly BaseCondition? _condition;
 
     public NotCondition(JObject json) : base(json)
     {
-        var conditions = ParseConditions(json);
+        var rawCondition = json.Value<JObject>("condition");
 
-        if (conditions.Length < 1)
-            throw new ArgumentException("Expected at least one condition.");
+        if (rawCondition == null)
+            throw new ArgumentException($"Expected 'condition': {json}");
 
-        _condition = conditions[0];
+        _condition = ParseCondition(rawCondition);
     }
 
     /// <inheritdoc/>
-    public override bool Check() => !_condition.Check();
+    public override bool Check() => !_condition?.Check() ?? false;
 }
