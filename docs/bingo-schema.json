@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Schema used for Bingo goals",
+  "$id": "https://github.com/WarperSan/BingoAPI/schema.json",
+  "$defs": {
+    "goal": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "condition": {
+          "type": "object",
+          "$dynamicRef": "#conditions"
+        }
+      },
+      "required": [
+        "name",
+        "condition"
+      ]
+    },
+    "conditions": {
+      "type": "object",
+      "$dynamicAnchor": "conditions",
+      "not": true,
+      "$comment": "If this is triggered, the reference was lost."
+    },
+    "and-condition": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "const": "AND"
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "conditions": {
+            "type": "array",
+            "items": {
+              "$dynamicRef": "#/$defs/conditions"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "conditions"
+        ]
+      }
+    },
+    "or-condition": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "const": "OR"
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "conditions": {
+            "type": "array",
+            "items": {
+              "$dynamicRef": "#/$defs/conditions"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "conditions"
+        ]
+      }
+    },
+    "some-condition": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "const": "SOME"
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "conditions": {
+            "type": "array",
+            "items": {
+              "$dynamicRef": "#/$defs/conditions"
+            },
+            "minItems": 1
+          },
+          "params": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "default": 1,
+                "minimum": 1
+              }
+            }
+          }
+        },
+        "required": [
+          "conditions"
+        ]
+      }
+    },
+    "not-condition": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "const": "NOT"
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "condition": {
+            "$dynamicRef": "#/$defs/conditions"
+          }
+        },
+        "required": [
+          "condition"
+        ]
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "$ref": "#/$defs/goal"
+      }
+    }
+  }
+}
