@@ -27,47 +27,6 @@ public abstract class BaseCondition
 
     #region Parsing
 
-    private static readonly Dictionary<string, Func<JObject, BaseCondition>> LoadedConditions = [];
-
-    /// <summary>
-    ///     Loads every <see cref="BaseCondition"/> with the attribute <see cref="ConditionAttribute"/>
-    /// </summary>
-    internal static void LoadConditions()
-    {
-        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-        {
-            foreach (var type in assembly.GetTypes())
-            {
-                if (!typeof(BaseCondition).IsAssignableFrom(type))
-                    continue;
-
-                var conditionAttr = type.GetCustomAttribute<ConditionAttribute>();
-
-                if (conditionAttr == null)
-                    continue;
-
-                var constructor = type.GetConstructor([typeof(JObject)]);
-
-                if (constructor == null)
-                {
-                    Log.Error($"Failed to add '{type}', because no constructor is valid.");
-                    continue;
-                }
-
-                var success = LoadedConditions.TryAdd(
-                    conditionAttr.Action,
-                    json => (BaseCondition)constructor.Invoke([json])
-                );
-                
-                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (success)
-                    Log.Debug($"Added '{type.FullName}' with the action '{conditionAttr.Action}'.");
-                else
-                    Log.Debug($"Couldn't add '{type.FullName}', because another action uses the action '{conditionAttr.Action}'.");
-            }
-        }
-    }
-
     /// <summary>
     /// Parses the given JSON to the appropriate condition
     /// </summary>
@@ -83,8 +42,10 @@ public abstract class BaseCondition
                 return null;
             }
 
-            if (LoadedConditions.TryGetValue(action, out var parser))
-                return parser.Invoke(json);
+            var condition = ConditionAttribute.GetCondition(action, json);
+            
+            if (condition != null)
+                return condition;
         }
         catch (Exception e)
         {

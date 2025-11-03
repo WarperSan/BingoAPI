@@ -16,6 +16,6 @@ internal class Plugin : BaseUnityPlugin
 
     private void Start()
     {
-        Entities.Conditions.BaseCondition.LoadConditions();
+        Entities.Conditions.ConditionAttribute.LoadConditions();
     }
 }
