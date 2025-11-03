@@ -136,14 +136,9 @@
       }
     }
   },
-  "type": "object",
-  "properties": {
-    "goals": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "$ref": "#/$defs/goal"
-      }
-    }
+  "type": "array",
+  "items": {
+    "type": "object",
+    "$ref": "#/$defs/goal"
   }
 }
