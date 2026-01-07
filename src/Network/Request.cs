@@ -23,11 +23,11 @@ internal static class Request
 {
     private static HttpClient? _client;
 
-    public static void Setup(string baseAddress)
+    public static void Setup()
     {
         _client = new HttpClient();
 
-        _client.BaseAddress = new Uri(baseAddress);
+        _client.BaseAddress = new Uri("https://bingosync.com");
         _client.Timeout = TimeSpan.FromMilliseconds(30_000);
 
         _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_VERSION));
