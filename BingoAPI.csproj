@@ -4,7 +4,6 @@
     <PropertyGroup>
         <AssemblyName>BingoAPI</AssemblyName>
         <Product>BingoAPI</Product>
-        <Authors>WarperSan</Authors>
     </PropertyGroup>
 
     <!-- Project Properties -->
@@ -15,6 +14,22 @@
 
         <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\BingoAPI.xml</DocumentationFile>
     </PropertyGroup>
+	
+	<!-- NuGet Metadata -->
+	<PropertyGroup>
+		<PackageId>WarperSan.BingoAPI</PackageId>
+		<PackageTags></PackageTags>
+		<Title>BingoAPI</Title>
+		<Description></Description>
+		<Authors>WarperSan</Authors>
+
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<RepositoryUrl>https://github.com/WarperSan/BingoAPI</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+	</PropertyGroup>
 
     <!-- Primary Package References -->
     <ItemGroup>
@@ -24,11 +39,5 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Update="Resources\icon.png">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 </Project>
