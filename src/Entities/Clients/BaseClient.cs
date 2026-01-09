@@ -61,7 +61,7 @@ public abstract class BaseClient : IAsyncDisposable
 		{
 			room_name = settings.Name,
 			passphrase = settings.Password,
-			nickname = MyPluginInfo.PLUGIN_GUID,
+			nickname = Metadata.GUID,
 			game_type = CUSTOM_GAME_TYPE,
 			variant_type = settings.IsRandomized ? RANDOMIZED_VARIANT_TYPE : FIXED_BOARD_VARIANT_TYPE,
 			custom_json = settings.Goals.GenerateJson(),
@@ -172,7 +172,7 @@ public abstract class BaseClient : IAsyncDisposable
 	}
 
 	/// <summary>
-	/// Gets the current squares of the room 
+	/// Gets the current squares of the room
 	/// </summary>
 	/// <returns>Squares fetched or null if not found</returns>
 	public async Task<SquareData[]?> GetSquares()

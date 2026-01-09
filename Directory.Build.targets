@@ -1,32 +1,28 @@
 <Project>
-    <Target Name="AddGeneratedFile" BeforeTargets="BeforeCompile;CoreCompile" Inputs="$(MSBuildAllProjects)" Outputs="$(IntermediateOutputPath)MyPluginInfo.cs">
+	<Target Name="GenerateMetadata" BeforeTargets="BeforeCompile;CoreCompile">
+		<PropertyGroup>
+			<GUID Condition="'$(GUID)' == ''" >dev.$([System.String]::Copy('$(Authors)').ToLower()).$([System.String]::Copy('$(AssemblyName)').ToLower())</GUID>
 
-        <PropertyGroup>
-            <PluginGUID Condition="'$(PluginGUID)' == ''">dev.$([System.String]::Copy('$(Authors)').ToLower()).$([System.String]::Copy('$(AssemblyName)').ToLower())</PluginGUID>
-            <PluginName Condition="'$(PluginName)' == ''">$(Product)</PluginName>
-            <PluginVersion Condition="'$(PluginVersion)' == ''">$(Version)</PluginVersion>
-
-            <GeneratedText><![CDATA[
+			<GeneratedText><![CDATA[
 #pragma warning disable CS1591
 
 namespace $(RootNamespace)
 {
-    public class MyPluginInfo
+    public static class Metadata
     {
-      public const string PLUGIN_GUID = "$(PluginGUID)"%3B
-      public const string PLUGIN_NAME = "$(PluginName)"%3B
-      public const string PLUGIN_VERSION = "$(PluginVersion)"%3B
+      public const string GUID = "$(GUID)"%3B
+      public const string VERSION = "$(Version)"%3B
     }
 }
 ]]></GeneratedText>
-            <GeneratedFilePath>$(IntermediateOutputPath)MyPluginInfo.cs</GeneratedFilePath>
-        </PropertyGroup>
+			<GeneratedFilePath>$(IntermediateOutputPath)/Metadata.cs</GeneratedFilePath>
+		</PropertyGroup>
 
-        <ItemGroup>
-            <Compile Include="$(GeneratedFilePath)"/>
-            <FileWrites Include="$(GeneratedFilePath)"/>
-        </ItemGroup>
+		<ItemGroup>
+			<Compile Include="$(GeneratedFilePath)"/>
+			<FileWrites Include="$(GeneratedFilePath)"/>
+		</ItemGroup>
 
-        <WriteLinesToFile Lines="$(GeneratedText)" File="$(GeneratedFilePath)" WriteOnlyWhenDifferent="true" Overwrite="true"/>
-    </Target>
+		<WriteLinesToFile Lines="$(GeneratedText)" File="$(GeneratedFilePath)" WriteOnlyWhenDifferent="true" Overwrite="true"/>
+	</Target>
 </Project>
