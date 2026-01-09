@@ -22,7 +22,7 @@ internal static class TeamExtensions
 	    if (name == null)
             return Team.Blank;
 
-        return Enum.TryParse(name.ToUpper(), out Team team) ? team : Team.Blank;
+        return Enum.TryParse(name.Trim().ToUpper(), out Team team) ? team : Team.Blank;
     }
 
     /// <summary>
