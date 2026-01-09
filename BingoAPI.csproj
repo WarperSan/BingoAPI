@@ -11,9 +11,9 @@
 	<!-- NuGet Metadata -->
 	<PropertyGroup>
 		<PackageId>WarperSan.BingoAPI</PackageId>
-		<PackageTags></PackageTags>
+		<PackageTags>Bingo;BingoSync</PackageTags>
 		<Title>BingoAPI</Title>
-		<Description></Description>
+		<Description>Library that allows to communicate with BingoSync's servers through code</Description>
 		<Authors>WarperSan</Authors>
 
 		<PackageIcon>icon.png</PackageIcon>
