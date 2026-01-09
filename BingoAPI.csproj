@@ -1,20 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <!-- Package Properties -->
+	<!-- Project Properties -->
     <PropertyGroup>
         <AssemblyName>BingoAPI</AssemblyName>
         <Product>BingoAPI</Product>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<RootNamespace>BingoAPI</RootNamespace>
     </PropertyGroup>
 
-    <!-- Project Properties -->
-    <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
-        <RootNamespace>BingoAPI</RootNamespace>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-
-        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\BingoAPI.xml</DocumentationFile>
-    </PropertyGroup>
-	
 	<!-- NuGet Metadata -->
 	<PropertyGroup>
 		<PackageId>WarperSan.BingoAPI</PackageId>
@@ -31,7 +24,7 @@
 		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
 
-    <!-- Primary Package References -->
+    <!-- Dependencies -->
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
