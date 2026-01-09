@@ -21,16 +21,16 @@ namespace BingoAPI.Network;
 /// </summary>
 internal static class Request
 {
-    private static HttpClient? _client;
+    private static readonly HttpClient? Client;
 
-    public static void Setup()
+    static Request()
     {
-        _client = new HttpClient();
+        Client = new HttpClient();
 
-        _client.BaseAddress = new Uri("https://bingosync.com");
-        _client.Timeout = TimeSpan.FromMilliseconds(30_000);
+        Client.BaseAddress = new Uri("https://bingosync.com");
+        Client.Timeout = TimeSpan.FromMilliseconds(30_000);
 
-        _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_VERSION));
+        Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_VERSION));
     }
 
     #region Send
@@ -41,12 +41,12 @@ internal static class Request
     /// <returns>Compiled response</returns>
     private static async Task<Response> SendRequest(HttpRequestMessage request)
     {
-        if (_client == null)
+        if (Client == null)
             throw new NullReferenceException("No client was instanced.");
 
         var requestContent = request.Content != null ? await request.Content.ReadAsStringAsync() : "";
 
-        var responseMessage = await _client.SendAsync(request);
+        var responseMessage = await Client.SendAsync(request);
 
         var response = await Response.Create(request, responseMessage);
 
@@ -144,7 +144,7 @@ internal static class Request
             return null;
         }
 
-        if (_client == null)
+        if (Client == null)
         {
             Log.Error("The client was destroyed before processing the CORS tokens.");
             return null;
@@ -159,9 +159,9 @@ internal static class Request
         var container = new CookieContainer();
 
         foreach (var cookieHeader in setCookie)
-            container.SetCookies(_client.BaseAddress, cookieHeader);
+            container.SetCookies(Client.BaseAddress, cookieHeader);
 
-        var cookies = container.GetCookies(_client.BaseAddress);
+        var cookies = container.GetCookies(Client.BaseAddress);
         var publicTokenCookie = cookies["csrftoken"];
 
         if (publicTokenCookie == null)
