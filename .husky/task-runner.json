@@ -6,7 +6,8 @@
       "group": "pre-commit",
       "command": "dotnet",
       "args": [
-        "dotnet-format",
+        "format",
+        "BingoAPI.sln",
         "--include",
         "${staged}"
       ],
