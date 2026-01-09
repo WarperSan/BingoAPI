@@ -1,6 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
 using BingoAPI.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,104 +9,104 @@ namespace BingoAPI.Entities.Conditions;
 /// </summary>
 public abstract class BaseCondition
 {
-    /// <summary>
-    /// Constructor of a condition
-    /// </summary>
-    // ReSharper disable once UnusedParameter.Local
-    protected BaseCondition(JObject json)
-    {
-    }
+	/// <summary>
+	/// Constructor of a condition
+	/// </summary>
+	// ReSharper disable once UnusedParameter.Local
+	protected BaseCondition(JObject json)
+	{
+	}
 
-    /// <summary>
-    /// Checks if this condition is met
-    /// </summary>
-    public abstract bool Check();
+	/// <summary>
+	/// Checks if this condition is met
+	/// </summary>
+	public abstract bool Check();
 
-    #region Parsing
+	#region Parsing
 
-    /// <summary>
-    /// Parses the given JSON to the appropriate condition
-    /// </summary>
-    public static BaseCondition? ParseCondition(JObject json)
-    {
-        try
-        {
-            var action = json.Value<string>("action");
+	/// <summary>
+	/// Parses the given JSON to the appropriate condition
+	/// </summary>
+	public static BaseCondition? ParseCondition(JObject json)
+	{
+		try
+		{
+			var action = json.Value<string>("action");
 
-            if (action == null)
-            {
-                Log.Error($"No action was specified for this condition: {json}");
-                return null;
-            }
+			if (action == null)
+			{
+				Log.Error($"No action was specified for this condition: {json}");
+				return null;
+			}
 
-            var condition = ConditionAttribute.GetCondition(action, json);
-            
-            if (condition != null)
-                return condition;
-        }
-        catch (Exception e)
-        {
-            Log.Error($"Error while parsing condition ('{e.Message}'): {json}");
-            return null;
-        }
+			var condition = ConditionAttribute.GetCondition(action, json);
 
-        Log.Error($"Unhandled condition: {json}");
-        return null;
-    }
+			if (condition != null)
+				return condition;
+		}
+		catch (Exception e)
+		{
+			Log.Error($"Error while parsing condition ('{e.Message}'): {json}");
+			return null;
+		}
 
-    /// <summary>
-    /// Parses the 'conditions' field from this object
-    /// </summary>
-    protected static BaseCondition[] ParseConditions(JObject obj)
-    {
-        var rawConditions = obj.Value<JArray>("conditions");
+		Log.Error($"Unhandled condition: {json}");
+		return null;
+	}
 
-        if (rawConditions == null)
-            throw new JsonException($"Expected 'conditions': {obj}");
+	/// <summary>
+	/// Parses the 'conditions' field from this object
+	/// </summary>
+	protected static BaseCondition[] ParseConditions(JObject obj)
+	{
+		var rawConditions = obj.Value<JArray>("conditions");
 
-        var conditions = new List<BaseCondition>();
+		if (rawConditions == null)
+			throw new JsonException($"Expected 'conditions': {obj}");
 
-        foreach (var rawCondition in rawConditions)
-        {
-            if (rawCondition is not JObject child)
-                continue;
+		var conditions = new List<BaseCondition>();
 
-            var newCondition = ParseCondition(child);
+		foreach (var rawCondition in rawConditions)
+		{
+			if (rawCondition is not JObject child)
+				continue;
 
-            if (newCondition == null)
-                continue;
+			var newCondition = ParseCondition(child);
 
-            conditions.Add(newCondition);
-        }
+			if (newCondition == null)
+				continue;
 
-        return conditions.ToArray();
-    }
+			conditions.Add(newCondition);
+		}
 
-    /// <summary>
-    /// Parses the 'params' field from this object
-    /// </summary>
-    protected static Dictionary<string, object> ParseParameters(JObject obj)
-    {
-        var rawParams = obj.Value<JObject>("params");
+		return conditions.ToArray();
+	}
 
-        if (rawParams == null)
-            throw new JsonException($"Expected 'params': {obj}");
+	/// <summary>
+	/// Parses the 'params' field from this object
+	/// </summary>
+	protected static Dictionary<string, object> ParseParameters(JObject obj)
+	{
+		var rawParams = obj.Value<JObject>("params");
 
-        var parameters = new Dictionary<string, object>();
+		if (rawParams == null)
+			throw new JsonException($"Expected 'params': {obj}");
 
-        foreach (var property in rawParams.Properties())
-        {
-            if (property?.Value is not JValue value)
-                continue;
+		var parameters = new Dictionary<string, object>();
 
-            if (value.Value == null)
-                continue;
+		foreach (var property in rawParams.Properties())
+		{
+			if (property?.Value is not JValue value)
+				continue;
 
-            parameters[property.Name] = value.Value;
-        }
+			if (value.Value == null)
+				continue;
 
-        return parameters;
-    }
+			parameters[property.Name] = value.Value;
+		}
 
-    #endregion
+		return parameters;
+	}
+
+	#endregion
 }

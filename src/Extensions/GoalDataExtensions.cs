@@ -8,32 +8,32 @@ namespace BingoAPI.Extensions;
 /// </summary>
 internal static class GoalDataExtensions
 {
-    /// <summary>
-    /// Generates the JSON for the given goals
-    /// </summary>
-    /// <returns></returns>
-    public static string GenerateJson(this GoalData[] goals)
-    {
-        var builder = new StringBuilder();
+	/// <summary>
+	/// Generates the JSON for the given goals
+	/// </summary>
+	/// <returns></returns>
+	public static string GenerateJson(this GoalData[] goals)
+	{
+		var builder = new StringBuilder();
 
-        builder.Append("[");
+		builder.Append("[");
 
-        for (var i = 0; i < goals.Length; i++)
-        {
-            var goal = goals[i];
+		for (var i = 0; i < goals.Length; i++)
+		{
+			var goal = goals[i];
 
-            builder.Append("{");
+			builder.Append("{");
 
-            builder.Append($"\"name\":\"{goal.Name}\"");
+			builder.Append($"\"name\":\"{goal.Name}\"");
 
-            builder.Append("}");
+			builder.Append("}");
 
-            if (i != goals.Length - 1)
-                builder.Append(",");
-        }
+			if (i != goals.Length - 1)
+				builder.Append(",");
+		}
 
-        builder.Append("]");
+		builder.Append("]");
 
-        return builder.ToString();
-    }
+		return builder.ToString();
+	}
 }

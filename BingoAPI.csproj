@@ -1,32 +1,36 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <!-- Package Properties -->
+	<!-- Project Properties -->
     <PropertyGroup>
         <AssemblyName>BingoAPI</AssemblyName>
         <Product>BingoAPI</Product>
-        <Version>1.0.0</Version>
-        <Authors>WarperSan</Authors>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<RootNamespace>BingoAPI</RootNamespace>
     </PropertyGroup>
 
-    <!-- Project Properties -->
-    <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
-        <RootNamespace>BingoAPI</RootNamespace>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<!-- NuGet Metadata -->
+	<PropertyGroup>
+		<PackageId>WarperSan.BingoAPI</PackageId>
+		<PackageTags>Bingo;BingoSync</PackageTags>
+		<Title>BingoAPI</Title>
+		<Description>Library that allows to communicate with BingoSync's servers through code</Description>
+		<Authors>WarperSan</Authors>
 
-        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\BingoAPI.xml</DocumentationFile>
-    </PropertyGroup>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 
-    <!-- Primary Package References -->
+		<RepositoryUrl>https://github.com/WarperSan/BingoAPI</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+	</PropertyGroup>
+
+    <!-- Dependencies -->
     <ItemGroup>
-        <PackageReference Include="BepInEx.Core" Version="5.*" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-        <PackageReference Include="UnityEngine.Modules" Version="2022.3.9" IncludeAssets="compile" PrivateAssets="all"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Update="Resources\icon.png">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
+        <PackageReference Include="MinVer" Version="6.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 </Project>

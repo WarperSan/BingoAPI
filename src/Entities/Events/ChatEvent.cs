@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Entities.Events;
 
@@ -7,13 +7,13 @@ namespace BingoAPI.Entities.Events;
 /// </summary>
 public sealed class ChatEvent : BaseEvent
 {
-    /// <summary>
-    /// Content of the message sent
-    /// </summary>
-    public readonly string Text;
+	/// <summary>
+	/// Content of the message sent
+	/// </summary>
+	public readonly string Text;
 
-    internal ChatEvent(JObject json) : base(json)
-    {
-        Text = json.Value<string>("text") ?? "";
-    }
+	internal ChatEvent(JObject json) : base(json)
+	{
+		Text = json.Value<string>("text") ?? "";
+	}
 }
