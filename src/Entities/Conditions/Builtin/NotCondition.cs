@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Entities.Conditions.Builtin;
 
@@ -8,18 +8,18 @@ namespace BingoAPI.Entities.Conditions.Builtin;
 [Condition("NOT")]
 internal sealed class NotCondition : BaseCondition
 {
-    private readonly BaseCondition? _condition;
+	private readonly BaseCondition? _condition;
 
-    public NotCondition(JObject json) : base(json)
-    {
-        var rawCondition = json.Value<JObject>("condition");
+	public NotCondition(JObject json) : base(json)
+	{
+		var rawCondition = json.Value<JObject>("condition");
 
-        if (rawCondition == null)
-            throw new ArgumentException($"Expected 'condition': {json}");
+		if (rawCondition == null)
+			throw new ArgumentException($"Expected 'condition': {json}");
 
-        _condition = ParseCondition(rawCondition);
-    }
+		_condition = ParseCondition(rawCondition);
+	}
 
-    /// <inheritdoc/>
-    public override bool Check() => !_condition?.Check() ?? false;
+	/// <inheritdoc/>
+	public override bool Check() => !_condition?.Check() ?? false;
 }

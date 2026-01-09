@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Entities.Events;
 
@@ -7,7 +7,7 @@ namespace BingoAPI.Entities.Events;
 /// </summary>
 public sealed class ColorEvent : BaseEvent
 {
-    internal ColorEvent(JObject json) : base(json)
-    {
-    }
+	internal ColorEvent(JObject json) : base(json)
+	{
+	}
 }

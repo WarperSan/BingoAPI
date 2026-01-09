@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Entities.Conditions.Builtin;
 
@@ -8,13 +8,13 @@ namespace BingoAPI.Entities.Conditions.Builtin;
 [Condition("AND")]
 internal sealed class AndCondition : BaseCondition
 {
-    private readonly BaseCondition[] _conditions;
-    
-    public AndCondition(JObject json) : base(json)
-    {
-        _conditions = ParseConditions(json);
-    }
+	private readonly BaseCondition[] _conditions;
 
-    /// <inheritdoc/>
-    public override bool Check() => _conditions.All(condition => condition.Check());
+	public AndCondition(JObject json) : base(json)
+	{
+		_conditions = ParseConditions(json);
+	}
+
+	/// <inheritdoc/>
+	public override bool Check() => _conditions.All(condition => condition.Check());
 }

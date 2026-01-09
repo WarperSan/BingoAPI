@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Entities.Events;
 
@@ -7,13 +7,13 @@ namespace BingoAPI.Entities.Events;
 /// </summary>
 public sealed class DisconnectedEvent : BaseEvent
 {
-    /// <summary>
-    /// Identifier of the room left
-    /// </summary>
-    public readonly string RoomId;
+	/// <summary>
+	/// Identifier of the room left
+	/// </summary>
+	public readonly string RoomId;
 
-    internal DisconnectedEvent(JObject json) : base(json)
-    {
-        RoomId = json.Value<string>("room") ?? "";
-    }
+	internal DisconnectedEvent(JObject json) : base(json)
+	{
+		RoomId = json.Value<string>("room") ?? "";
+	}
 }

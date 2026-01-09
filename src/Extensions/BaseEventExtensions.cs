@@ -8,8 +8,8 @@ namespace BingoAPI.Extensions;
 /// </summary>
 internal static class BaseEventExtensions
 {
-    /// <summary>
-    /// Checks if this event was caused by the given client
-    /// </summary>
-    public static bool IsFromLocal(this BaseEvent @event, BaseClient client) => client.UUID == @event.Player.UUID;
+	/// <summary>
+	/// Checks if this event was caused by the given client
+	/// </summary>
+	public static bool IsFromLocal(this BaseEvent @event, BaseClient client) => client.UUID == @event.Player.UUID;
 }
