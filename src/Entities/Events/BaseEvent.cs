@@ -1,5 +1,4 @@
-﻿using System;
-using BingoAPI.Extensions;
+﻿using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
 using Newtonsoft.Json;

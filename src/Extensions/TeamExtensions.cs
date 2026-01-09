@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using BingoAPI.Models;
+﻿using BingoAPI.Models;
 
 namespace BingoAPI.Extensions;
 

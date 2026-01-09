@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BingoAPI.Extensions;
+﻿namespace BingoAPI.Extensions;
 
 /// <summary>
 /// Provides extension methods for <see cref="Dictionary{TKey,TValue}"/>

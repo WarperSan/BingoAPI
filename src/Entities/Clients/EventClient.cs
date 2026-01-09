@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using BingoAPI.Entities.Events;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
