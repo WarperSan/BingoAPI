@@ -80,7 +80,7 @@ internal static class Request
         Content = new StringContent(
             JsonConvert.SerializeObject(payload),
             Encoding.UTF8,
-            MediaTypeNames.Application.Json
+            "application/json"
         )
     });
 

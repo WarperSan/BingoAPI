@@ -56,10 +56,16 @@ public sealed class ConditionAttribute : Attribute
                     continue;
                 }
 
-                var success = LoadedConditions.TryAdd(
-                    conditionAttr.Action,
-                    json => (BaseCondition)constructor.Invoke([json])
-                );
+                var success = false;
+
+                if (LoadedConditions.ContainsKey(conditionAttr.Action))
+                {
+	                LoadedConditions.Add(
+		                conditionAttr.Action,
+		                json => (BaseCondition)constructor.Invoke([json])
+		            );
+	                success = true;
+                }
                 
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (success)
