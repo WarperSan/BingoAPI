@@ -1,38 +1,37 @@
-﻿using BepInEx.Logging;
+﻿using Microsoft.Extensions.Logging;
+#pragma warning disable CA2254
 
 namespace BingoAPI.Helpers;
 
 /// <summary>
 /// Class helping for logging stuff
 /// </summary>
-internal static class Log
+public static class Log
 {
-    private static ManualLogSource? _logger;
+	private static ILogger? _logger;
+	
+	/// <summary>
+	/// Sets the <see cref="ILogger"/> to use
+	/// </summary>
+	public static void SetLogger(ILogger logger) => _logger = logger;
 
-    /// <summary>
-    /// Assigns the current logger to the given logger
-    /// </summary>
-    public static void SetLogger(ManualLogSource? logger) => _logger = logger;
-
-    private static void LogSelf(object? data, LogLevel level) => _logger?.Log(level, data?.ToString() ?? "null");
-
-    /// <summary>
-    /// Logs information for developers that helps to debug the mod
-    /// </summary>
-    public static void Debug(object? data) => LogSelf(data, LogLevel.Debug);
+	/// <summary>
+	/// Logs information for developers that helps to debug the mod
+	/// </summary>
+	internal static void Debug(string? message) => _logger?.LogDebug(message);
 
     /// <summary>
     /// Logs information for players to know important steps of the mod
     /// </summary>
-    public static void Info(object? data) => LogSelf(data, LogLevel.Message);
+    internal static void Info(string? message) => _logger?.LogInformation(message);
 
     /// <summary>
     /// Logs information for players to warn them about an unwanted state
     /// </summary>
-    public static void Warning(object? data) => LogSelf(data, LogLevel.Warning);
+    internal static void Warning(string? message) => _logger?.LogWarning(message);
 
     /// <summary>
     /// Logs information for players to notify them of an error
     /// </summary>
-    public static void Error(object? data) => LogSelf(data, LogLevel.Error);
+    internal static void Error(string? message) => _logger?.LogError(message);
 }
