@@ -1,3 +1,5 @@
+using BingoAPI.Clients;
+
 namespace BingoAPI.Settings;
 
 /// <summary>

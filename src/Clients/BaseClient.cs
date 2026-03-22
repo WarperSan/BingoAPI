@@ -44,9 +44,8 @@ public abstract class BaseClient : IDisposable
 	private readonly BingoSyncApiHandler _apiHandler;
 
 	/// <summary>
-	/// Creates a room with the given settings
+	/// Creates a room from the given settings
 	/// </summary>
-	/// <returns>Code of the room or null if the room couldn't be created</returns>
 	public async Task<bool> CreateRoom(CreateRoomSettings settings)
 	{
 		Log.Info($"Creating the room '{settings.Name}'...");
@@ -70,7 +69,6 @@ public abstract class BaseClient : IDisposable
 	/// <summary>
 	/// Joins the room with the given settings
 	/// </summary>
-	/// <returns>Succeeded to join the room</returns>
 	public async Task<bool> JoinRoom(JoinRoomSettings settings)
 	{
 		Log.Info($"Joining room '{settings.Code}'...");
@@ -87,7 +85,6 @@ public abstract class BaseClient : IDisposable
 	/// <summary>
 	/// Leaves the room
 	/// </summary>
-	/// <returns>Succeeded to leave the room</returns>
 	public async Task<bool> LeaveRoom()
 	{
 		if (!IsInRoom)
@@ -112,10 +109,7 @@ public abstract class BaseClient : IDisposable
 		return true;
 	}
 
-	/// <summary>
-	/// Gets the current squares of the room
-	/// </summary>
-	/// <returns>Squares fetched or null if not found</returns>
+	/// <inheritdoc cref="BingoSyncApiHandler.GetSquares(string)"/>
 	public async Task<SquareData[]?> GetSquares()
 	{
 		if (RoomID == null)
@@ -135,8 +129,6 @@ public abstract class BaseClient : IDisposable
 	/// <summary>
 	/// Changes the team of this client in the room
 	/// </summary>
-	/// <param name="newTeam">Team to change to</param>
-	/// <returns>Succeeded to change the team</returns>
 	public async Task<bool> ChangeTeam(Team newTeam)
 	{
 		if (RoomID == null)
@@ -158,9 +150,6 @@ public abstract class BaseClient : IDisposable
 	/// <summary>
 	/// Marks the square at the given index for a certain team
 	/// </summary>
-	/// <param name="team">Name of the team</param>
-	/// <param name="index">Index of the square</param>
-	/// <returns>Succeeded to mark the square</returns>
 	public async Task<bool> MarkSquare(Team team, int index)
 	{
 		if (RoomID == null)
@@ -182,9 +171,6 @@ public abstract class BaseClient : IDisposable
 	/// <summary>
 	/// Clears the square at the given index for a certain team
 	/// </summary>
-	/// <param name="team">Name of the team</param>
-	/// <param name="index">Index of the square</param>
-	/// <returns>Succeeded to clear the square</returns>
 	public async Task<bool> ClearSquare(Team team, int index)
 	{
 		if (RoomID == null)
@@ -206,8 +192,6 @@ public abstract class BaseClient : IDisposable
 	/// <summary>
 	/// Sends a message in the room
 	/// </summary>
-	/// <param name="message">Message to send</param>
-	/// <returns>Succeeded to send the message</returns>
 	public async Task<bool> SendMessage(string message)
 	{
 		if (RoomID == null)
@@ -229,7 +213,6 @@ public abstract class BaseClient : IDisposable
 	/// <summary>
 	/// Reveals the card for the entire room
 	/// </summary>
-	/// <returns>Succeeded to reveal the card</returns>
 	public async Task<bool> RevealCard()
 	{
 		if (RoomID == null)
@@ -251,13 +234,12 @@ public abstract class BaseClient : IDisposable
 	/// <summary>
 	/// Gets the feed of every event in the room
 	/// </summary>
-	/// <returns>Succeeded to get the feed</returns>
-	public async Task<BaseEvent[]?> GetFeed()
+	public async Task<BaseEvent[]> GetFeed()
 	{
 		if (RoomID == null)
 		{
 			Log.Error("Tried to get the feed of the room being connected.");
-			return null;
+			return [];
 		}
 
 		Log.Info($"Fetching the feed of the room '{RoomID}'...");

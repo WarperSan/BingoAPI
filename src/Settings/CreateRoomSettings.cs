@@ -1,3 +1,4 @@
+using BingoAPI.Clients;
 using BingoAPI.Models;
 
 namespace BingoAPI.Settings;
