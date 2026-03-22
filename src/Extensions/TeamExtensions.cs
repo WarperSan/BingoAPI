@@ -20,7 +20,17 @@ internal static class TeamExtensions
 		if (name == null)
 			return Team.Blank;
 
-		return Enum.TryParse(name.Trim().ToUpper(), out Team team) ? team : Team.Blank;
+		name = name.ToLower();
+
+		foreach (var teamName in Enum.GetNames(typeof(Team)))
+		{
+			if (teamName.ToLower() != name)
+				continue;
+
+			return (Team)Enum.Parse(typeof(Team), teamName);
+		}
+
+		return Team.Blank;
 	}
 
 	/// <summary>
