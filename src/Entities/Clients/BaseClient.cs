@@ -221,7 +221,7 @@ public abstract class BaseClient : IAsyncDisposable
 	/// <returns>Succeeded to change the team</returns>
 	public async Task<bool> ChangeTeam(Team newTeam)
 	{
-		if (IsInRoom)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to change team before being connected.");
 			return false;
