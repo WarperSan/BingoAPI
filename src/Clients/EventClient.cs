@@ -117,6 +117,61 @@ public class EventClient : BaseClient
 
 	#endregion
 
+	#region General External Callbacks
+
+	/// <summary>
+	/// Called when any client sends a message
+	/// </summary>
+	public event Action<PlayerData, string, ulong>? OnChatted
+	{
+		add
+		{
+			OnSelfChatted += value;
+			OnOtherChatted += value;
+		}
+		remove
+		{
+			OnSelfChatted -= value;
+			OnOtherChatted -= value;
+		}
+	}
+
+	/// <summary>
+	/// Called when any client marks a goal
+	/// </summary>
+	public event Action<PlayerData, SquareData>? OnMarked
+	{
+		add
+		{
+			OnSelfMarked += value;
+			OnOtherMarked += value;
+		}
+		remove
+		{
+			OnSelfMarked -= value;
+			OnOtherMarked -= value;
+		}
+	}
+
+	/// <summary>
+	/// Called when any client clears a goal
+	/// </summary>
+	public event Action<PlayerData, SquareData>? OnCleared
+	{
+		add
+		{
+			OnSelfCleared += value;
+			OnOtherCleared += value;
+		}
+		remove
+		{
+			OnSelfCleared -= value;
+			OnOtherCleared -= value;
+		}
+	}
+
+	#endregion
+
 	#region External Callbacks
 
 	/// <summary>
