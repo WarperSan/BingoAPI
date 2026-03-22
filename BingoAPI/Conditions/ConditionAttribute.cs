@@ -32,7 +32,7 @@ public sealed class ConditionAttribute : Attribute
 	/// <summary>
 	///     Loads every <see cref="BaseCondition"/> with the attribute <see cref="ConditionAttribute"/>
 	/// </summary>
-	public static void LoadConditions()
+	internal static void LoadConditions()
 	{
 		foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 		{
