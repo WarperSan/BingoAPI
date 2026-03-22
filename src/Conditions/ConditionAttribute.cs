@@ -2,7 +2,7 @@ using System.Reflection;
 using BingoAPI.Helpers;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Entities.Conditions;
+namespace BingoAPI.Conditions;
 
 /// <summary>
 ///     Attribute that holds information about <see cref="BaseCondition"/>

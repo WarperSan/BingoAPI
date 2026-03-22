@@ -1,19 +1,19 @@
 using System.Net.WebSockets;
 using System.Text.RegularExpressions;
-using BingoAPI.Entities.Events;
+using BingoAPI.Events;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
-using BingoAPI.Models.Settings;
+using BingoAPI.Settings;
 using BingoAPI.Network;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Entities.Clients;
+namespace BingoAPI.Clients;
 
 /// <summary>
 /// Class that represents the bare minimum for a client
 /// </summary>
-public abstract class BaseClient : IAsyncDisposable
+public abstract class BaseClient : IDisposable
 {
 	//public const string NEW_CARD_URL = "/api/new-card";
 
@@ -442,6 +442,7 @@ public abstract class BaseClient : IAsyncDisposable
 	private ClientWebSocket? _socket;
 	private Task? _socketReceiveTask;
 	private CancellationTokenSource? _ctSource;
+	private TaskCompletionSource<bool>? _connectTcs;
 
 	/// <summary>
 	/// Connects this client to the servers
@@ -468,21 +469,35 @@ public abstract class BaseClient : IAsyncDisposable
 		var cts = new CancellationTokenSource();
 
 		_socket = socket;
-		_socketReceiveTask = _socket.HandleMessages(OnSocketReceived, cts.Token);
+		_socketReceiveTask = _socket.HandleMessages(OnSocketReceived, cts.Token)
+		                            .ContinueWith(OnReceiveTaskEnded, TaskScheduler.Default);
 		_ctSource = cts;
 
-		float timer = 30_000;
+		_connectTcs = new TaskCompletionSource<bool>(
+			TaskCreationOptions.RunContinuationsAsynchronously
+		);
 
-		while (!IsInRoom && timer > 0)
+		try
 		{
-			await Task.Delay(25, cts.Token);
-			timer -= 25;
-		}
+			var connected = await _connectTcs.Task.WaitAsync(
+				TimeSpan.FromSeconds(30),
+				cts.Token
+			);
 
-		if (timer <= 0)
+			if (!connected)
+			{
+				Log.Error("Handshake was rejected by the server.");
+				return false;
+			}
+		}
+		catch (TimeoutException)
 		{
 			Log.Error("Waiting for handshake has timed out.");
 			return false;
+		}
+		finally
+		{
+			_connectTcs = null;
 		}
 
 		Log.Info("Connected to the server.");
@@ -502,6 +517,9 @@ public abstract class BaseClient : IAsyncDisposable
 
 		try
 		{
+			_connectTcs?.TrySetResult(false);
+			_connectTcs = null;
+
 			if (_socket.State == WebSocketState.Open)
 			{
 				await _socket.CloseAsync(
@@ -551,6 +569,31 @@ public abstract class BaseClient : IAsyncDisposable
 		return true;
 	}
 
+	private void OnReceiveTaskEnded(Task task)
+	{
+		if (!IsInRoom)
+			return;
+
+		Log.Warning("Socket receive task ended unexpectedly. Cleaning up.");
+
+		RoomID = null;
+		UUID = null;
+
+		_socket?.Dispose();
+		_socket = null;
+		_ctSource?.Dispose();
+		_ctSource = null;
+		_socketReceiveTask = null;
+
+		OnUnexpectedDisconnect();
+	}
+
+	/// <summary>
+	/// Called when the socket drops without an explicit <see cref="Disconnect"/> call.
+	/// Override in subclasses to fire events or attempt reconnection.
+	/// </summary>
+	protected virtual void OnUnexpectedDisconnect() { }
+
 	#endregion
 
 	#region Events
@@ -571,6 +614,7 @@ public abstract class BaseClient : IAsyncDisposable
 
 		RoomID = connectedEvent.RoomId;
 		UUID = connectedEvent.Player.UUID;
+		_connectTcs?.TrySetResult(true);
 	}
 
 	/// <summary>
@@ -580,10 +624,11 @@ public abstract class BaseClient : IAsyncDisposable
 
 	#endregion
 
-	#region IAsyncDisposable
-
-	/// <inheritdoc/>
-	public async ValueTask DisposeAsync() => await Disconnect();
-
-	#endregion
+	/// <inheritdoc />
+	public void Dispose()
+	{
+		_socket?.Dispose();
+		_socketReceiveTask?.Dispose();
+		_ctSource?.Dispose();
+	}
 }

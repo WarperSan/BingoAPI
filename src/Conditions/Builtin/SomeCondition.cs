@@ -1,7 +1,7 @@
 using BingoAPI.Extensions;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Entities.Conditions.Builtin;
+namespace BingoAPI.Conditions.Builtin;
 
 /// <summary>
 /// Condition that is valid when at least the given amount of the conditions are valid

@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Entities.Conditions.Builtin;
+namespace BingoAPI.Conditions.Builtin;
 
 /// <summary>
 /// Condition that is valid when all the conditions are valid

@@ -4,7 +4,7 @@ using BingoAPI.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Entities.Events;
+namespace BingoAPI.Events;
 
 /// <summary>
 /// Class that represents the events sent from the server

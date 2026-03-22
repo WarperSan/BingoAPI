@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Entities.Events;
+namespace BingoAPI.Events;
 
 /// <summary>
 /// Event used when a player sends a message into chat

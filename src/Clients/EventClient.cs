@@ -1,9 +1,9 @@
-using BingoAPI.Entities.Events;
+using BingoAPI.Events;
 using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
 
-namespace BingoAPI.Entities.Clients;
+namespace BingoAPI.Clients;
 
 /// <summary>
 /// Client that converts received <see cref="BaseEvent"/> into calls

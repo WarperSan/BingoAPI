@@ -1,6 +1,4 @@
-using BingoAPI.Entities.Clients;
-
-namespace BingoAPI.Models.Settings;
+namespace BingoAPI.Settings;
 
 /// <summary>
 /// Data used to join a room when calling <see cref="BaseClient.JoinRoom"/>

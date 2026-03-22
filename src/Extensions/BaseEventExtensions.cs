@@ -1,5 +1,5 @@
-using BingoAPI.Entities.Clients;
-using BingoAPI.Entities.Events;
+using BingoAPI.Clients;
+using BingoAPI.Events;
 
 namespace BingoAPI.Extensions;
 
