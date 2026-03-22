@@ -1,11 +1,8 @@
-using System.Text.RegularExpressions;
 using BingoAPI.Events;
-using BingoAPI.Extensions;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
 using BingoAPI.Settings;
 using BingoAPI.Network;
-using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Clients;
 
@@ -19,12 +16,12 @@ public abstract class BaseClient : IDisposable
 	/// <summary>
 	/// Current room ID of this client
 	/// </summary>
-	public string? RoomID { get; protected set; }
+	public string? RoomId { get; protected set; }
 
 	/// <summary>
 	/// Checks if this client is in a room
 	/// </summary>
-	public bool IsInRoom => RoomID != null;
+	public bool IsInRoom => RoomId != null;
 
 	/// <summary>
 	/// Current UUID of this client
@@ -93,7 +90,7 @@ public abstract class BaseClient : IDisposable
 			return false;
 		}
 
-		var roomId = RoomID;
+		var roomId = RoomId;
 
 		Log.Info($"Leaving the room '{roomId}'...");
 
@@ -112,17 +109,17 @@ public abstract class BaseClient : IDisposable
 	/// <inheritdoc cref="BingoSyncApiHandler.GetSquares(string)"/>
 	public async Task<SquareData[]?> GetSquares()
 	{
-		if (RoomID == null)
+		if (RoomId == null)
 		{
 			Log.Error("Tried to obtain the squares before being connected.");
 			return null;
 		}
 
-		Log.Info($"Fetching the squares of the room '{RoomID}'...");
+		Log.Info($"Fetching the squares of the room '{RoomId}'...");
 
-		var squares = await _apiHandler.GetSquares(RoomID);
+		var squares = await _apiHandler.GetSquares(RoomId);
 
-		Log.Info($"Squares of the room '{RoomID}' was fetched.");
+		Log.Info($"Squares of the room '{RoomId}' was fetched.");
 		return squares;
 	}
 
@@ -131,7 +128,7 @@ public abstract class BaseClient : IDisposable
 	/// </summary>
 	public async Task<bool> ChangeTeam(Team newTeam)
 	{
-		if (RoomID == null)
+		if (RoomId == null)
 		{
 			Log.Error("Tried to change team before being connected.");
 			return false;
@@ -139,7 +136,7 @@ public abstract class BaseClient : IDisposable
 
 		Log.Info($"Changing the team of the player '{UUID}' to '{newTeam}'...");
 
-		var success = await _apiHandler.ChangeTeam(RoomID, newTeam);
+		var success = await _apiHandler.ChangeTeam(RoomId, newTeam);
 
 		if (success)
 			Log.Info($"Changed the team of the player '{UUID}'.");
@@ -152,7 +149,7 @@ public abstract class BaseClient : IDisposable
 	/// </summary>
 	public async Task<bool> MarkSquare(Team team, int index)
 	{
-		if (RoomID == null)
+		if (RoomId == null)
 		{
 			Log.Error("Tried to mark a square before being connected.");
 			return false;
@@ -160,7 +157,7 @@ public abstract class BaseClient : IDisposable
 
 		Log.Info($"Marking the square #{index} for the team '{team}'...");
 
-		var success = await _apiHandler.MarkSquare(RoomID, team, index);
+		var success = await _apiHandler.MarkSquare(RoomId, team, index);
 
 		if (success)
 			Log.Info($"Marked the square #{index} for the team '{team}'.");
@@ -173,7 +170,7 @@ public abstract class BaseClient : IDisposable
 	/// </summary>
 	public async Task<bool> ClearSquare(Team team, int index)
 	{
-		if (RoomID == null)
+		if (RoomId == null)
 		{
 			Log.Error("Tried to clear a square before being connected.");
 			return false;
@@ -181,7 +178,7 @@ public abstract class BaseClient : IDisposable
 
 		Log.Info($"Clearing the square #{index} for the team '{team}'...");
 
-		var success = await _apiHandler.ClearSquare(RoomID, team, index);
+		var success = await _apiHandler.ClearSquare(RoomId, team, index);
 
 		if (success)
 			Log.Info($"Cleared the square #{index} for the team '{team}'.");
@@ -194,7 +191,7 @@ public abstract class BaseClient : IDisposable
 	/// </summary>
 	public async Task<bool> SendMessage(string message)
 	{
-		if (RoomID == null)
+		if (RoomId == null)
 		{
 			Log.Error("Tried to send a message before being connected.");
 			return false;
@@ -202,7 +199,7 @@ public abstract class BaseClient : IDisposable
 
 		Log.Info($"Sending the following chat message as the player '{UUID}': '{message}'...");
 
-		var success = await _apiHandler.SendMessage(RoomID, message);
+		var success = await _apiHandler.SendMessage(RoomId, message);
 
 		if (success)
 			Log.Info($"Sent the following chat message as the player '{UUID}': '{message}'.");
@@ -215,18 +212,18 @@ public abstract class BaseClient : IDisposable
 	/// </summary>
 	public async Task<bool> RevealCard()
 	{
-		if (RoomID == null)
+		if (RoomId == null)
 		{
 			Log.Error("Tried to reveal the card before being connected.");
 			return false;
 		}
 
-		Log.Info($"Revealing the card in the room '{RoomID}' as the player '{UUID}'...");
+		Log.Info($"Revealing the card in the room '{RoomId}' as the player '{UUID}'...");
 
-		var success = await _apiHandler.RevealCard(RoomID);
+		var success = await _apiHandler.RevealCard(RoomId);
 
 		if (success)
-			Log.Info($"Revealed the card in the room '{RoomID}' as the player '{UUID}'.");
+			Log.Info($"Revealed the card in the room '{RoomId}' as the player '{UUID}'.");
 
 		return success;
 	}
@@ -236,20 +233,20 @@ public abstract class BaseClient : IDisposable
 	/// </summary>
 	public async Task<BaseEvent[]> GetFeed()
 	{
-		if (RoomID == null)
+		if (RoomId == null)
 		{
 			Log.Error("Tried to get the feed of the room being connected.");
 			return [];
 		}
 
-		Log.Info($"Fetching the feed of the room '{RoomID}'...");
+		Log.Info($"Fetching the feed of the room '{RoomId}'...");
 
-		var events = await _apiHandler.GetFeed(RoomID);
+		var events = await _apiHandler.GetFeed(RoomId);
 
 		if (events == null)
 			return [];
 
-		Log.Info($"Fetched the feed of the room '{RoomID}'.");
+		Log.Info($"Fetched the feed of the room '{RoomId}'.");
 		return events;
 	}
 
@@ -295,7 +292,7 @@ public abstract class BaseClient : IDisposable
 
 		Log.Info("Disconnected from the server.");
 
-		RoomID = null;
+		RoomId = null;
 		UUID = null;
 
 		Log.Info("Disconnected from the server.");
@@ -312,7 +309,7 @@ public abstract class BaseClient : IDisposable
 	{
 		if (!IsInRoom && baseEvent is ConnectedEvent connectedEvent)
 		{
-			RoomID = connectedEvent.RoomId;
+			RoomId = connectedEvent.RoomId;
 			UUID = connectedEvent.Player.UUID;
 		}
 
