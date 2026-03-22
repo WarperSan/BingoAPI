@@ -40,7 +40,7 @@ internal sealed class BingoSyncApiHandler
 		{
 			room_name = settings.Name,
 			passphrase = settings.Password,
-			nickname = Metadata.GUID,
+			nickname = Plugin.Id,
 			game_type = CUSTOM_GAME_TYPE,
 			variant_type = settings.IsRandomized ? RANDOMIZED_VARIANT_TYPE : FIXED_BOARD_VARIANT_TYPE,
 			custom_json = settings.Goals.GenerateJson(),

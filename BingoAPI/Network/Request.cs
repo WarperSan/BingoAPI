@@ -24,7 +24,7 @@ internal static class Request
 		Client.BaseAddress = new Uri("https://bingosync.com");
 		Client.Timeout = TimeSpan.FromMilliseconds(30_000);
 
-		Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(Metadata.GUID, Metadata.VERSION));
+		Client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(Plugin.Id, Plugin.Version));
 	}
 
 	#region Send
