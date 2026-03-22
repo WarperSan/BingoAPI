@@ -33,7 +33,16 @@ internal static class ClientWebSocketExtensions
 
 		while (!ct.IsCancellationRequested && socket.State == WebSocketState.Open)
 		{
-			var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+			WebSocketReceiveResult result;
+
+			try
+			{
+				result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), ct);
+			}
+			catch (OperationCanceledException)
+			{
+				break;
+			}
 
 			if (result.MessageType != WebSocketMessageType.Text)
 				continue;
