@@ -32,7 +32,7 @@ public sealed class ConditionAttribute : Attribute
 	/// <summary>
 	///     Loads every <see cref="BaseCondition"/> with the attribute <see cref="ConditionAttribute"/>
 	/// </summary>
-	internal static void LoadConditions()
+	public static void LoadConditions()
 	{
 		foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 		{
@@ -54,22 +54,17 @@ public sealed class ConditionAttribute : Attribute
 					continue;
 				}
 
-				var success = false;
-
 				if (LoadedConditions.ContainsKey(conditionAttr.Action))
 				{
-					LoadedConditions.Add(
-						conditionAttr.Action,
-						json => (BaseCondition)constructor.Invoke([json])
-					);
-					success = true;
+					Log.Debug($"Couldn't add '{type.FullName}', because another action uses the action '{conditionAttr.Action}'.");
+					continue;
 				}
 
-				// ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-				if (success)
-					Log.Debug($"Added '{type.FullName}' with the action '{conditionAttr.Action}'.");
-				else
-					Log.Debug($"Couldn't add '{type.FullName}', because another action uses the action '{conditionAttr.Action}'.");
+				LoadedConditions.Add(
+					conditionAttr.Action,
+					json => (BaseCondition)constructor.Invoke([json])
+				);
+				Log.Debug($"Added '{type.FullName}' with the action '{conditionAttr.Action}'.");
 			}
 		}
 	}
