@@ -43,15 +43,13 @@ public class EventClient : BaseClient
 
 	private void OnConnectedEvent(ConnectedEvent @event)
 	{
-		if (IsInRoom)
+		if (@event.IsFromLocal(this))
 		{
-			OnOtherConnect(@event.RoomId, @event.Player);
-			OnOtherConnected?.Invoke(@event.RoomId, @event.Player);
+			OnSelfConnected?.Invoke(@event.RoomId, @event.Player);
 			return;
 		}
 
-		OnSelfConnect(@event.RoomId, @event.Player);
-		OnSelfConnected?.Invoke(@event.RoomId, @event.Player);
+		OnOtherConnected?.Invoke(@event.RoomId, @event.Player);
 	}
 
 	private void OnDisconnectedEvent(DisconnectedEvent @event)
@@ -62,7 +60,6 @@ public class EventClient : BaseClient
 			return;
 		}
 
-		OnOtherDisconnect(@event.RoomId, @event.Player);
 		OnOtherDisconnected?.Invoke(@event.RoomId, @event.Player);
 	}
 
@@ -70,12 +67,10 @@ public class EventClient : BaseClient
 	{
 		if (@event.IsFromLocal(this))
 		{
-			OnSelfMessageReceived(@event.Text, @event.Timestamp);
 			OnSelfChatted?.Invoke(@event.Player, @event.Text, @event.Timestamp);
 			return;
 		}
 
-		OnOtherMessageReceived(@event.Player, @event.Text, @event.Timestamp);
 		OnOtherChatted?.Invoke(@event.Player, @event.Text, @event.Timestamp);
 	}
 
@@ -83,12 +78,10 @@ public class EventClient : BaseClient
 	{
 		if (@event.IsFromLocal(this))
 		{
-			OnSelfTeamChange(@event.Player.Team);
 			OnSelfTeamChanged?.Invoke(@event.Player, @event.Player.Team);
 			return;
 		}
 
-		OnOtherTeamChange(@event.Player, @event.Player.Team);
 		OnOtherTeamChanged?.Invoke(@event.Player, @event.Player.Team);
 	}
 
@@ -96,12 +89,10 @@ public class EventClient : BaseClient
 	{
 		if (@event.IsFromLocal(this))
 		{
-			OnSelfClear(@event.Square);
 			OnSelfCleared?.Invoke(@event.Player, @event.Square);
 			return;
 		}
 
-		OnOtherClear(@event.Player, @event.Square);
 		OnOtherCleared?.Invoke(@event.Player, @event.Square);
 	}
 
@@ -109,12 +100,10 @@ public class EventClient : BaseClient
 	{
 		if (@event.IsFromLocal(this))
 		{
-			OnSelfMark(@event.Square);
 			OnSelfMarked?.Invoke(@event.Player, @event.Square);
 			return;
 		}
 
-		OnOtherMark(@event.Player, @event.Square);
 		OnOtherMarked?.Invoke(@event.Player, @event.Square);
 	}
 
@@ -127,6 +116,22 @@ public class EventClient : BaseClient
 
 	#endregion
 
+	#region Delegates
+
+	public delegate void ConnectionCallback(string? roomId, PlayerData player);
+
+	public delegate void DisconnectionCallback(string? roomId, PlayerData player);
+
+	public delegate void MarkCallback(PlayerData player, SquareData square);
+
+	public delegate void ClearCallback(PlayerData player, SquareData square);
+
+	public delegate void ChatCallback(PlayerData player, string content, ulong timestamp);
+
+	public delegate void TeamCallback(PlayerData player, Team newTeam);
+
+	#endregion
+
 	#region Alias Callbacks
 
 	/// <summary>
@@ -135,7 +140,7 @@ public class EventClient : BaseClient
 	/// <remarks>
 	/// This is equivalent to <see cref="OnSelfChatted"/> and <see cref="OnOtherChatted"/>
 	/// </remarks>
-	public event Action<PlayerData, string, ulong>? OnChatted
+	public event ChatCallback? OnChatted
 	{
 		add
 		{
@@ -155,7 +160,7 @@ public class EventClient : BaseClient
 	/// <remarks>
 	/// This is equivalent to <see cref="OnSelfMarked"/> and <see cref="OnOtherMarked"/>
 	/// </remarks>
-	public event Action<PlayerData, SquareData>? OnMarked
+	public event MarkCallback? OnMarked
 	{
 		add
 		{
@@ -175,7 +180,7 @@ public class EventClient : BaseClient
 	/// <remarks>
 	/// This is equivalent to <see cref="OnSelfCleared"/> and <see cref="OnOtherCleared"/>
 	/// </remarks>
-	public event Action<PlayerData, SquareData>? OnCleared
+	public event ClearCallback? OnCleared
 	{
 		add
 		{
@@ -191,131 +196,67 @@ public class EventClient : BaseClient
 
 	#endregion
 
-	#region External Callbacks
+	#region Callbacks
 
 	/// <summary>
-	/// Called when this client gets connected
+	/// Called when this client gets connected to a room
 	/// </summary>
-	public event Action<string?, PlayerData>? OnSelfConnected;
+	public event ConnectionCallback? OnSelfConnected;
 
 	/// <summary>
-	/// Called when this client gets disconnected
+	/// Called when this client gets disconnected from a room
 	/// </summary>
 	public event Action? OnSelfDisconnected;
 
 	/// <summary>
-	/// Called when this client marks a goal
+	/// Called when this client has marked a square
 	/// </summary>
-	public event Action<PlayerData, SquareData>? OnSelfMarked;
+	public event MarkCallback? OnSelfMarked;
 
 	/// <summary>
-	/// Called when this client clears a goal
+	/// Called when this client has cleared a square
 	/// </summary>
-	public event Action<PlayerData, SquareData>? OnSelfCleared;
+	public event ClearCallback? OnSelfCleared;
 
 	/// <summary>
-	/// Called when this client sends a message
+	/// Called when this client has sent a message in a room
 	/// </summary>
-	public event Action<PlayerData, string, ulong>? OnSelfChatted;
+	public event ChatCallback? OnSelfChatted;
 
 	/// <summary>
-	/// Called when this client changes team
+	/// Called when this client has changed team
 	/// </summary>
-	public event Action<PlayerData, Team>? OnSelfTeamChanged;
+	public event TeamCallback? OnSelfTeamChanged;
 
 	/// <summary>
 	/// Called when another client gets connected
 	/// </summary>
-	public event Action<string?, PlayerData>? OnOtherConnected;
+	public event ConnectionCallback? OnOtherConnected;
 
 	/// <summary>
 	/// Called when another client gets disconnected
 	/// </summary>
-	public event Action<string?, PlayerData>? OnOtherDisconnected;
+	public event DisconnectionCallback? OnOtherDisconnected;
 
 	/// <summary>
-	/// Called when another client marks a goal
+	/// Called when another client has marked a square
 	/// </summary>
-	public event Action<PlayerData, SquareData>? OnOtherMarked;
+	public event MarkCallback? OnOtherMarked;
 
 	/// <summary>
-	/// Called when another client clears a goal
+	/// Called when another client has cleared a square
 	/// </summary>
-	public event Action<PlayerData, SquareData>? OnOtherCleared;
+	public event ClearCallback? OnOtherCleared;
 
 	/// <summary>
-	/// Called when another client sends a message
+	/// Called when another client has sent a message in a room
 	/// </summary>
-	public event Action<PlayerData, string, ulong>? OnOtherChatted;
+	public event ChatCallback? OnOtherChatted;
 
 	/// <summary>
-	/// Called when another client changes team
+	/// Called when another client has changed team
 	/// </summary>
-	public event Action<PlayerData, Team>? OnOtherTeamChanged;
-
-	#endregion
-
-	#region Internal Callbacks
-
-	/// <summary>
-	/// Invoked after this client has connected to the room.
-	/// </summary>
-	protected virtual void OnSelfConnect(string? roomId, PlayerData player) { }
-
-	/// <summary>
-	/// Invoked after another client has connected to the room.
-	/// </summary>
-	protected virtual void OnOtherConnect(string? roomId, PlayerData player) { }
-
-	/// <summary>
-	/// Invoked after this client has disconnected from the room.
-	/// </summary>
-	protected virtual void OnSelfDisconnect() { }
-
-	/// <summary>
-	/// Invoked after another client has disconnected from the room.
-	/// </summary>
-	protected virtual void OnOtherDisconnect(string? roomId, PlayerData player) { }
-
-	/// <summary>
-	/// Invoked after this client has marked a square.
-	/// </summary>
-	protected virtual void OnSelfMark(SquareData square) { }
-
-	/// <summary>
-	/// Invoked after another client has marked a square.
-	/// </summary>
-	protected virtual void OnOtherMark(PlayerData player, SquareData square) { }
-
-	/// <summary>
-	/// Invoked after this client has cleared a square.
-	/// </summary>
-	protected virtual void OnSelfClear(SquareData square) { }
-
-	/// <summary>
-	/// Invoked after another client has cleared a square.
-	/// </summary>
-	protected virtual void OnOtherClear(PlayerData player, SquareData square) { }
-
-	/// <summary>
-	/// Invoked after this client has sent a message in the room.
-	/// </summary>
-	protected virtual void OnSelfMessageReceived(string content, ulong timestamp) { }
-
-	/// <summary>
-	/// Invoked after another client has sent a message in the room.
-	/// </summary>
-	protected virtual void OnOtherMessageReceived(PlayerData player, string content, ulong timestamp) { }
-
-	/// <summary>
-	/// Invoked after this client has changed team.
-	/// </summary>
-	protected virtual void OnSelfTeamChange(Team newTeam) { }
-
-	/// <summary>
-	/// Invoked after another client has changed team.
-	/// </summary>
-	protected virtual void OnOtherTeamChange(PlayerData player, Team newTeam) { }
+	public event TeamCallback? OnOtherTeamChanged;
 
 	#endregion
 
@@ -329,7 +270,6 @@ public class EventClient : BaseClient
 		if (!disconnected)
 			return false;
 
-		OnSelfDisconnect();
 		OnSelfDisconnected?.Invoke();
 		return true;
 	}
