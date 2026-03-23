@@ -22,7 +22,7 @@ internal sealed class EventDispatcher
 	{
 		Log.Debug($"Event received:\n{data}");
 
-		var @event = BaseEvent.ParseEvent(data);
+		var @event = EventParser.ParseEvent(data);
 
 		if (@event == null)
 			return;

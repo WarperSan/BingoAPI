@@ -285,7 +285,7 @@ internal sealed class BingoSyncApiHandler
 			if (obj == null)
 				continue;
 
-			var @event = BaseEvent.ParseEvent(obj);
+			var @event = EventParser.ParseEvent(obj);
 
 			if (@event == null)
 				continue;
