@@ -39,7 +39,7 @@ public abstract class BaseCondition
 				return null;
 			}
 
-			var condition = ConditionAttribute.GetCondition(action, json);
+			var condition = ConditionRegistry.Create(action, json);
 
 			if (condition != null)
 				return condition;

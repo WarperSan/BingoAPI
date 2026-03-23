@@ -13,7 +13,7 @@ public partial class Plugin : BaseUnityPlugin
 
 	private void Start()
 	{
-		Conditions.ConditionAttribute.LoadConditions();
+		Conditions.ConditionRegistry.Refresh();
 	}
 
 	private void OnDestroy()
