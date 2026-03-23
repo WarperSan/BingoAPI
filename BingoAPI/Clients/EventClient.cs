@@ -35,6 +35,9 @@ public class EventClient : BaseClient
 				else
 					OnGoalMarked(goal);
 				break;
+			default:
+				OnUnhandledEvent(baseEvent);
+				break;
 		}
 	}
 
@@ -115,13 +118,23 @@ public class EventClient : BaseClient
 		OnOtherMarked?.Invoke(@event.Player, @event.Square);
 	}
 
+	/// <summary>
+	/// Called when a <see cref="BaseEvent"/> was not handled by <see cref="EventClient"/>
+	/// </summary>
+	protected virtual void OnUnhandledEvent(BaseEvent baseEvent)
+	{
+	}
+
 	#endregion
 
-	#region General External Callbacks
+	#region Alias Callbacks
 
 	/// <summary>
 	/// Called when any client sends a message
 	/// </summary>
+	/// <remarks>
+	/// This is equivalent to <see cref="OnSelfChatted"/> and <see cref="OnOtherChatted"/>
+	/// </remarks>
 	public event Action<PlayerData, string, ulong>? OnChatted
 	{
 		add
@@ -139,6 +152,9 @@ public class EventClient : BaseClient
 	/// <summary>
 	/// Called when any client marks a goal
 	/// </summary>
+	/// <remarks>
+	/// This is equivalent to <see cref="OnSelfMarked"/> and <see cref="OnOtherMarked"/>
+	/// </remarks>
 	public event Action<PlayerData, SquareData>? OnMarked
 	{
 		add
@@ -156,6 +172,9 @@ public class EventClient : BaseClient
 	/// <summary>
 	/// Called when any client clears a goal
 	/// </summary>
+	/// <remarks>
+	/// This is equivalent to <see cref="OnSelfCleared"/> and <see cref="OnOtherCleared"/>
+	/// </remarks>
 	public event Action<PlayerData, SquareData>? OnCleared
 	{
 		add
@@ -175,32 +194,32 @@ public class EventClient : BaseClient
 	#region External Callbacks
 
 	/// <summary>
-	/// Called when the local client gets connected
+	/// Called when this client gets connected
 	/// </summary>
 	public event Action<string?, PlayerData>? OnSelfConnected;
 
 	/// <summary>
-	/// Called when the local client gets disconnected
+	/// Called when this client gets disconnected
 	/// </summary>
 	public event Action? OnSelfDisconnected;
 
 	/// <summary>
-	/// Called when the local client marks a goal
+	/// Called when this client marks a goal
 	/// </summary>
 	public event Action<PlayerData, SquareData>? OnSelfMarked;
 
 	/// <summary>
-	/// Called when the local client clears a goal
+	/// Called when this client clears a goal
 	/// </summary>
 	public event Action<PlayerData, SquareData>? OnSelfCleared;
 
 	/// <summary>
-	/// Called when the local client sends a message
+	/// Called when this client sends a message
 	/// </summary>
 	public event Action<PlayerData, string, ulong>? OnSelfChatted;
 
 	/// <summary>
-	/// Called when the local client changes team
+	/// Called when this client changes team
 	/// </summary>
 	public event Action<PlayerData, Team>? OnSelfTeamChanged;
 
