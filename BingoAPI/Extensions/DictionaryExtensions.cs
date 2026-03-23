@@ -32,31 +32,34 @@ public static class DictionaryExtensions
 		return false;
 	}
 
-	/// <summary>
-	/// Gets the value at the given key
-	/// </summary>
-	/// <remarks>
-	/// If the value is not found or is the wrong type, it will default to given value
-	/// </remarks>
-	public static T GetOptionalValue<T>(this Dictionary<string, object> dictionary, string key, T defaultValue)
+	extension(Dictionary<string, object> dictionary)
 	{
-		if (!GetValue<T>(dictionary, key, out var value))
-			return defaultValue;
+		/// <summary>
+		/// Gets the value at the given key
+		/// </summary>
+		/// <remarks>
+		/// If the value is not found or is the wrong type, it will default to given value
+		/// </remarks>
+		public T GetOptionalValue<T>(string key, T defaultValue)
+		{
+			if (!GetValue<T>(dictionary, key, out var value))
+				return defaultValue;
 
-		return value ?? defaultValue;
-	}
+			return value ?? defaultValue;
+		}
 
-	/// <summary>
-	///     Gets the value at the given key
-	/// </summary>
-	/// <remarks>
-	///     If the value found is of the wrong type or is missing, an exception is raised
-	/// </remarks>
-	public static T GetRequiredValue<T>(this Dictionary<string, object> dictionary, string key)
-	{
-		if (GetValue<T>(dictionary, key, out var value) && value != null)
-			return value;
+		/// <summary>
+		///     Gets the value at the given key
+		/// </summary>
+		/// <remarks>
+		///     If the value found is of the wrong type or is missing, an exception is raised
+		/// </remarks>
+		public T GetRequiredValue<T>(string key)
+		{
+			if (GetValue<T>(dictionary, key, out var value) && value != null)
+				return value;
 
-		throw new NullReferenceException($"The key '{key}' is required to be of type '{typeof(T)}'.");
+			throw new NullReferenceException($"The key '{key}' is required to be of type '{typeof(T)}'.");
+		}
 	}
 }

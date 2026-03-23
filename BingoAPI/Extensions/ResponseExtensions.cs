@@ -9,22 +9,25 @@ namespace BingoAPI.Extensions;
 /// </summary>
 internal static class ResponseExtensions
 {
-	/// <summary>
-	/// Prints the error of this response with the given message
-	/// </summary>
-	public static void PrintError(this Response response, string errorMessage)
+	extension(Response response)
 	{
-		if (!response.IsError)
+		/// <summary>
+		/// Prints the error of this response with the given message
+		/// </summary>
+		public void PrintError(string errorMessage)
 		{
-			Log.Warning($"Tried to print the error '{errorMessage}', but the response finished with a success.");
-			return;
+			if (!response.IsError)
+			{
+				Log.Warning($"Tried to print the error '{errorMessage}', but the response finished with a success.");
+				return;
+			}
+
+			Log.Error($"[{response.Code}] {errorMessage}: {response.Error}");
 		}
 
-		Log.Error($"[{response.Code}] {errorMessage}: {response.Error}");
+		/// <summary>
+		/// Parses the content of this response to the given type
+		/// </summary>
+		public T? ParseJson<T>() => response.IsError ? default : JsonConvert.DeserializeObject<T>(response.Content);
 	}
-
-	/// <summary>
-	/// Parses the content of this response to the given type
-	/// </summary>
-	public static T? ParseJson<T>(this Response response) => response.IsError ? default : JsonConvert.DeserializeObject<T>(response.Content);
 }

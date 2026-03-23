@@ -12,35 +12,38 @@ internal static class TeamExtensions
 	/// </summary>
 	public static string GetName(this Team team) => team.ToString().ToLower().Replace(",", "");
 
-	/// <summary>
-	/// Fetches the team with the given name
-	/// </summary>
-	public static Team GetTeam(this string? name)
+	extension(string? name)
 	{
-		if (name == null)
-			return Team.Blank;
-
-		name = name.ToLower();
-
-		foreach (var teamName in Enum.GetNames(typeof(Team)))
+		/// <summary>
+		/// Fetches the team with the given name
+		/// </summary>
+		public Team GetTeam()
 		{
-			if (teamName.ToLower() != name)
-				continue;
+			if (name == null)
+				return Team.Blank;
 
-			return (Team)Enum.Parse(typeof(Team), teamName);
+			name = name.ToLower();
+
+			foreach (var teamName in Enum.GetNames(typeof(Team)))
+			{
+				if (teamName.ToLower() != name)
+					continue;
+
+				return (Team)Enum.Parse(typeof(Team), teamName);
+			}
+
+			return Team.Blank;
 		}
 
-		return Team.Blank;
-	}
+		/// <summary>
+		/// Fetches the teams with the given name
+		/// </summary>
+		public Team[] GetTeams()
+		{
+			if (name == null)
+				return [];
 
-	/// <summary>
-	/// Fetches the teams with the given name
-	/// </summary>
-	public static Team[] GetTeams(this string? name)
-	{
-		if (name == null)
-			return [];
-
-		return name.Trim().Split(' ').Select(GetTeam).Where(team => team != Team.Blank).ToArray();
+			return name.Trim().Split(' ').Select(GetTeam).Where(team => team != Team.Blank).ToArray();
+		}
 	}
 }
