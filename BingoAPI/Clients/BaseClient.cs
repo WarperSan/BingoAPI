@@ -52,7 +52,10 @@ public abstract class BaseClient : IDisposable
 		var code = await _apiHandler.CreateRoom(settings);
 
 		if (code == null)
+		{
+			Log.Error("Failed to create a room.");
 			return false;
+		}
 
 		Log.Info($"Room '{settings.Name}' was created with the code '{code}'.");
 
@@ -75,7 +78,10 @@ public abstract class BaseClient : IDisposable
 		var socketKey = await _apiHandler.JoinRoom(settings);
 
 		if (socketKey == null)
+		{
+			Log.Error($"Failed to join the room '{settings.Code}'.");
 			return false;
+		}
 
 		Log.Info($"Room '{settings.Code}' was joined.");
 		return await Connect(socketKey);
@@ -98,14 +104,14 @@ public abstract class BaseClient : IDisposable
 
 		var hasDisconnected = await Disconnect();
 
-		if (!hasDisconnected)
+		if (hasDisconnected)
 		{
-			Log.Error($"Failed to disconnected from the room '{roomId}'.");
-			return false;
+			Log.Info($"Left the room '{roomId}'.");
+			return true;
 		}
 
-		Log.Info($"Left the room '{roomId}'.");
-		return true;
+		Log.Error($"Failed to disconnected from the room '{roomId}'.");
+		return false;
 	}
 
 	/// <inheritdoc cref="BingoSyncApiHandler.GetSquares(string)"/>
@@ -138,12 +144,16 @@ public abstract class BaseClient : IDisposable
 
 		Log.Info($"Changing the team of the player '{UUID}' to '{newTeam}'...");
 
-		var success = await _apiHandler.ChangeTeam(RoomId, newTeam);
+		var hasChanged = await _apiHandler.ChangeTeam(RoomId, newTeam);
 
-		if (success)
+		if (hasChanged)
+		{
 			Log.Info($"Changed the team of the player '{UUID}'.");
+			return true;
+		}
 
-		return success;
+		Log.Error($"Failed to change team of the player '{UUID}'.");
+		return false;
 	}
 
 	/// <summary>
@@ -159,12 +169,16 @@ public abstract class BaseClient : IDisposable
 
 		Log.Info($"Marking the square #{index} for the team '{team}'...");
 
-		var success = await _apiHandler.MarkSquare(RoomId, team, index);
+		var hasMarked = await _apiHandler.MarkSquare(RoomId, team, index);
 
-		if (success)
+		if (hasMarked)
+		{
 			Log.Info($"Marked the square #{index} for the team '{team}'.");
+			return true;
+		}
 
-		return success;
+		Log.Error($"Failed to mark the square #{index} for the team '{team}'.");
+		return false;
 	}
 
 	/// <summary>
@@ -180,12 +194,16 @@ public abstract class BaseClient : IDisposable
 
 		Log.Info($"Clearing the square #{index} for the team '{team}'...");
 
-		var success = await _apiHandler.ClearSquare(RoomId, team, index);
+		var hasCleared = await _apiHandler.ClearSquare(RoomId, team, index);
 
-		if (success)
+		if (hasCleared)
+		{
 			Log.Info($"Cleared the square #{index} for the team '{team}'.");
+			return true;
+		}
 
-		return success;
+		Log.Error($"Failed to clear the square #{index} for the team '{team}'.");
+		return false;
 	}
 
 	/// <summary>
@@ -201,12 +219,16 @@ public abstract class BaseClient : IDisposable
 
 		Log.Info($"Sending the following chat message as the player '{UUID}': '{message}'...");
 
-		var success = await _apiHandler.SendMessage(RoomId, message);
+		var hasSent = await _apiHandler.SendMessage(RoomId, message);
 
-		if (success)
+		if (hasSent)
+		{
 			Log.Info($"Sent the following chat message as the player '{UUID}': '{message}'.");
+			return true;
+		}
 
-		return success;
+		Log.Error($"Failed to sent the following chat message as the player '{UUID}': '{message}'.");
+		return false;
 	}
 
 	/// <summary>
@@ -222,12 +244,16 @@ public abstract class BaseClient : IDisposable
 
 		Log.Info($"Revealing the card in the room '{RoomId}' as the player '{UUID}'...");
 
-		var success = await _apiHandler.RevealCard(RoomId);
+		var hasRevealed = await _apiHandler.RevealCard(RoomId);
 
-		if (success)
+		if (hasRevealed)
+		{
 			Log.Info($"Revealed the card in the room '{RoomId}' as the player '{UUID}'.");
+			return true;
+		}
 
-		return success;
+		Log.Error($"Failed to reveal the card in the room '{RoomId}' as the player '{UUID}'.");
+		return false;
 	}
 
 	/// <summary>
@@ -237,7 +263,7 @@ public abstract class BaseClient : IDisposable
 	{
 		if (!IsInRoom)
 		{
-			Log.Error("Tried to get the feed of the room being connected.");
+			Log.Error("Tried to get the feed of the room before being connected.");
 			return [];
 		}
 
@@ -246,7 +272,10 @@ public abstract class BaseClient : IDisposable
 		var events = await _apiHandler.GetFeed(RoomId);
 
 		if (events == null)
+		{
+			Log.Error($"Failed to fetch the feed of the room '{RoomId}'.");
 			return [];
+		}
 
 		Log.Info($"Fetched the feed of the room '{RoomId}'.");
 		return events;
@@ -265,18 +294,23 @@ public abstract class BaseClient : IDisposable
 	protected virtual async Task<bool> Connect(string socketKey)
 	{
 		if (IsInRoom)
+		{
+			Log.Error("Tried to connect to the server while being connected.");
 			return false;
+		}
 
 		Log.Info("Connecting to the server...");
 
-		var success = await _socketHandler.Connect(socketKey, _eventDispatcher.OnMessageReceived);
+		var hasConnected = await _socketHandler.Connect(socketKey, _eventDispatcher.OnMessageReceived);
 
-		if (success)
+		if (hasConnected)
+		{
 			Log.Info("Connected to the server.");
-		else
-			Log.Error("Failed to create the socket.");
+			return true;
+		}
 
-		return success;
+		Log.Error("Failed to create the socket.");
+		return false;
 	}
 
 	/// <summary>
@@ -286,7 +320,10 @@ public abstract class BaseClient : IDisposable
 	protected virtual async Task<bool> Disconnect()
 	{
 		if (!IsInRoom)
+		{
+			Log.Error("Tried to disconnect from the server before being connected.");
 			return false;
+		}
 
 		Log.Info("Disconnecting from the server...");
 
@@ -296,8 +333,6 @@ public abstract class BaseClient : IDisposable
 
 		RoomId = null;
 		UUID = null;
-
-		Log.Info("Disconnected from the server.");
 		return true;
 	}
 
