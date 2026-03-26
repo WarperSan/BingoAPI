@@ -17,7 +17,7 @@ public abstract class BaseClient : IDisposable
 	/// <summary>
 	/// Current room ID of this client
 	/// </summary>
-	public string? RoomId { get; protected set; }
+	public string? RoomId { get; private set; }
 
 	/// <summary>
 	/// Checks if this client is in a room
@@ -28,8 +28,7 @@ public abstract class BaseClient : IDisposable
 	/// <summary>
 	/// Current UUID of this client
 	/// </summary>
-	// ReSharper disable once InconsistentNaming
-	public string? UUID { get; protected set; }
+	public string? UUID { get; private set; }
 
 	protected BaseClient()
 	{
