@@ -3,6 +3,7 @@ using BingoAPI.Helpers;
 using BingoAPI.Models;
 using BingoAPI.Settings;
 using BingoAPI.Network;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BingoAPI.Clients;
 
@@ -21,6 +22,7 @@ public abstract class BaseClient : IDisposable
 	/// <summary>
 	/// Checks if this client is in a room
 	/// </summary>
+	[MemberNotNullWhen(true, nameof(RoomId))]
 	public bool IsInRoom => RoomId != null;
 
 	/// <summary>
@@ -109,7 +111,7 @@ public abstract class BaseClient : IDisposable
 	/// <inheritdoc cref="BingoSyncApiHandler.GetSquares(string)"/>
 	public async Task<SquareData[]?> GetSquares()
 	{
-		if (RoomId == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to obtain the squares before being connected.");
 			return null;
@@ -128,7 +130,7 @@ public abstract class BaseClient : IDisposable
 	/// </summary>
 	public async Task<bool> ChangeTeam(Team newTeam)
 	{
-		if (RoomId == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to change team before being connected.");
 			return false;
@@ -149,7 +151,7 @@ public abstract class BaseClient : IDisposable
 	/// </summary>
 	public async Task<bool> MarkSquare(Team team, int index)
 	{
-		if (RoomId == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to mark a square before being connected.");
 			return false;
@@ -170,7 +172,7 @@ public abstract class BaseClient : IDisposable
 	/// </summary>
 	public async Task<bool> ClearSquare(Team team, int index)
 	{
-		if (RoomId == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to clear a square before being connected.");
 			return false;
@@ -191,7 +193,7 @@ public abstract class BaseClient : IDisposable
 	/// </summary>
 	public async Task<bool> SendMessage(string message)
 	{
-		if (RoomId == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to send a message before being connected.");
 			return false;
@@ -212,7 +214,7 @@ public abstract class BaseClient : IDisposable
 	/// </summary>
 	public async Task<bool> RevealCard()
 	{
-		if (RoomId == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to reveal the card before being connected.");
 			return false;
@@ -233,7 +235,7 @@ public abstract class BaseClient : IDisposable
 	/// </summary>
 	public async Task<BaseEvent[]> GetFeed()
 	{
-		if (RoomId == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to get the feed of the room being connected.");
 			return [];
