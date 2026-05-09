@@ -1,7 +1,9 @@
+using System.Net.Http.Headers;
 using System.Net.WebSockets;
 using BingoAPI.Extensions;
 using BingoAPI.Models;
 using BingoAPI.Networking.DTOs;
+using Newtonsoft.Json;
 
 namespace BingoAPI.Networking;
 
@@ -10,7 +12,37 @@ namespace BingoAPI.Networking;
 /// </summary>
 internal sealed class BingoApiClient : IDisposable
 {
-	private readonly BingoHttpClient _client = new();
+	private readonly HttpClient _client;
+	private readonly RequestBuilder _builder;
+
+	public BingoApiClient()
+	{
+		_client = new HttpClient();
+		_client.BaseAddress = new Uri("https://bingosync.com");
+		_client.Timeout = TimeSpan.FromSeconds(30);
+
+		_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(
+			Plugin.Id,
+			Plugin.Version
+		));
+
+		_builder = new RequestBuilder();
+	}
+
+	/// <summary>
+	/// Parses the JSON response
+	/// </summary>
+	private static async Task<T> ParseJson<T>(HttpResponseMessage response)
+	{
+		var responseBody = await response.Content.ReadAsStringAsync();
+		var typedResponse = JsonConvert.DeserializeObject<T>(responseBody);
+
+		// ReSharper disable once ConvertIfStatementToReturnStatement
+		if (typedResponse == null)
+			throw new InvalidOperationException($"Failed to deserialize response to {typeof(T).Name}");
+
+		return typedResponse;
+	}
 
 	/// <summary>
 	/// Joins the room with the given settings
@@ -28,11 +60,16 @@ internal sealed class BingoApiClient : IDisposable
 			IsSpectator = settings.IsSpectator
 		};
 
-		var response = await _client.SendJson<ApiJoinRoomResponse>(
-			HttpMethod.Post,
-			"/api/join-room",
-			body
-		);
+		using var request = new RequestBuilder(_builder)
+							.Post()
+							.ToEndpoint("/api/join-room")
+							.WithJson(body)
+							.Build();
+
+		var responseMessage = await _client.SendAsync(request);
+		responseMessage.EnsureSuccessStatusCode();
+
+		var response = await ParseJson<ApiJoinRoomResponse>(responseMessage);
 
 		return response.SocketKey;
 	}
@@ -42,7 +79,15 @@ internal sealed class BingoApiClient : IDisposable
 	/// </summary>
 	public async Task<Board> GetBoard(string room)
 	{
-		var response = await _client.GetJson<ApiGetBoardItem[]>($"/room/{room}/board");
+		using var request = new RequestBuilder(_builder)
+							.Get()
+							.ToEndpoint($"/room/{room}/board")
+							.Build();
+
+		using var responseMessage = await _client.SendAsync(request);
+		responseMessage.EnsureSuccessStatusCode();
+
+		var response = await ParseJson<ApiGetBoardItem[]>(responseMessage);
 
 		var squares = new Square[response.Length];
 
@@ -77,11 +122,14 @@ internal sealed class BingoApiClient : IDisposable
 			Index = (index + 1).ToString()
 		};
 
-		await _client.SendJson(
-			HttpMethod.Put,
-			"/api/select",
-			body
-		);
+		using var request = new RequestBuilder(_builder)
+							.Put()
+							.ToEndpoint("/api/select")
+							.WithJson(body)
+							.Build();
+
+		using var response = await _client.SendAsync(request);
+		response.EnsureSuccessStatusCode();
 	}
 
 	/// <summary>
@@ -96,11 +144,14 @@ internal sealed class BingoApiClient : IDisposable
 			Index = (index + 1).ToString()
 		};
 
-		await _client.SendJson(
-			HttpMethod.Put,
-			"/api/select",
-			body
-		);
+		using var request = new RequestBuilder(_builder)
+							.Put()
+							.ToEndpoint("/api/select")
+							.WithJson(body)
+							.Build();
+
+		using var responseMessage = await _client.SendAsync(request);
+		responseMessage.EnsureSuccessStatusCode();
 	}
 
 	/// <summary>
@@ -114,11 +165,14 @@ internal sealed class BingoApiClient : IDisposable
 			Message = message
 		};
 
-		await _client.SendJson(
-			HttpMethod.Put,
-			"/api/chat",
-			body
-		);
+		using var request = new RequestBuilder(_builder)
+							.Put()
+							.ToEndpoint("/api/chat")
+							.WithJson(body)
+							.Build();
+
+		using var responseMessage = await _client.SendAsync(request);
+		responseMessage.EnsureSuccessStatusCode();
 	}
 
 	/// <summary>
@@ -132,11 +186,14 @@ internal sealed class BingoApiClient : IDisposable
 			Team = team.ToColorString()
 		};
 
-		await _client.SendJson(
-			HttpMethod.Put,
-			"/api/color",
-			body
-		);
+		using var request = new RequestBuilder(_builder)
+							.Put()
+							.ToEndpoint("/api/color")
+							.WithJson(body)
+							.Build();
+
+		using var responseMessage = await _client.SendAsync(request);
+		responseMessage.EnsureSuccessStatusCode();
 	}
 
 	/// <inheritdoc />
