@@ -1,0 +1,13 @@
+using Newtonsoft.Json.Linq;
+
+namespace BingoAPI.Events;
+
+/// <summary>
+/// Event used when a user changes team
+/// </summary>
+public sealed class ColorEvent : BaseEvent
+{
+	internal ColorEvent(JObject json) : base(json)
+	{
+	}
+}

@@ -25,7 +25,7 @@ internal static class TeamExtensions
 	/// <summary>
 	/// Converts a <see cref="string"/> into <see cref="Team"/>
 	/// </summary>
-	public static Team FromColorString(this string name)
+	public static Team FromColorString(this string? name)
 	{
 		if (string.IsNullOrWhiteSpace(name))
 			return Team.None;

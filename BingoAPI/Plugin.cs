@@ -2,6 +2,7 @@ using BepInEx;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
 using BingoAPI.Networking;
+using BingoAPI.Session;
 using UnityEngine;
 
 namespace BingoAPI;
@@ -18,12 +19,11 @@ internal partial class Plugin : BaseUnityPlugin
 
 	private async Task A()
 	{
-		using var api = new BingoApiClient();
-		using var socket = new BingoSocketClient();
+		using var session = new BingoSession();
 
 		try
 		{
-			var key = await api.JoinRoom(new JoinRoomSettings
+			await session.JoinRoom(new JoinRoomSettings
 			{
 				Code = "cZyTrIhlSv6t8xaPDUOSuw",
 				Password = "abccba",
@@ -31,21 +31,24 @@ internal partial class Plugin : BaseUnityPlugin
 				Nickname = "OwO",
 			});
 
-			await socket.Connect(key, Log.Info);
-
-			await api.SendMessage(
-				"cZyTrIhlSv6t8xaPDUOSuw",
+			await session.SendMessage(
 				"Hello World!"
 			);
 
 			while (Application.isPlaying)
 			{
-				var board = await api.GetBoard("cZyTrIhlSv6t8xaPDUOSuw");
+				/*var board = await api.GetBoard("cZyTrIhlSv6t8xaPDUOSuw");
 
 				foreach (var square in board.Squares)
 					Log.Info(square.Index + ": " + square.Name + "(" + string.Join(',', square.Teams) + ")");
 
 				Log.Info("---");
+
+				await api.MarkSquare(
+					"cZyTrIhlSv6t8xaPDUOSuw",
+					Team.Blue,
+					UnityEngine.Random.Range(0, 25)
+				);*/
 				await Task.Delay(1000);
 			}
 		}
