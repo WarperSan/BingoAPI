@@ -46,8 +46,20 @@ internal sealed class BingoHttpClient : IDisposable
 		return await _client.SendAsync(request, ct);
 	}
 
+	private static async Task<T> ParseJson<T>(HttpResponseMessage response)
+	{
+		var responseBody = await response.Content.ReadAsStringAsync();
+		var typedResponse = JsonConvert.DeserializeObject<T>(responseBody);
+
+		// ReSharper disable once ConvertIfStatementToReturnStatement
+		if (typedResponse == null)
+			throw new InvalidOperationException($"Failed to deserialize response to {typeof(T).Name}");
+
+		return typedResponse;
+	}
+
 	/// <summary>
-	/// Sends a request with the given JSON
+	/// Sends a request with the given JSON, and returns the received JSON
 	/// </summary>
 	/// <exception cref="InvalidOperationException"></exception>
 	public async Task<T> SendJson<T>(
@@ -66,14 +78,7 @@ internal sealed class BingoHttpClient : IDisposable
 
 		response.EnsureSuccessStatusCode();
 
-		var responseBody = await response.Content.ReadAsStringAsync();
-		var typedResponse = JsonConvert.DeserializeObject<T>(responseBody);
-
-		// ReSharper disable once ConvertIfStatementToReturnStatement
-		if (typedResponse == null)
-			throw new InvalidOperationException($"Failed to deserialize response to {typeof(T).Name}");
-
-		return typedResponse;
+		return await ParseJson<T>(response);
 	}
 
 	/// <summary>
@@ -94,6 +99,25 @@ internal sealed class BingoHttpClient : IDisposable
 		);
 
 		response.EnsureSuccessStatusCode();
+	}
+
+	/// <summary>
+	/// Sends a request, and returns the received JSON
+	/// </summary>
+	public async Task<T> GetJson<T>(
+		string endpoint,
+		CancellationToken ct = default
+	)
+	{
+		using var request = new HttpRequestMessage();
+		request.Method = HttpMethod.Get;
+		request.RequestUri = new Uri(endpoint, UriKind.Relative);
+
+		using var response = await _client.SendAsync(request, ct);
+
+		response.EnsureSuccessStatusCode();
+
+		return await ParseJson<T>(response);
 	}
 
 	/// <inheritdoc />
