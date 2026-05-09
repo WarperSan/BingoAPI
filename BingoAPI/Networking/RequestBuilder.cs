@@ -64,7 +64,7 @@ public sealed class RequestBuilder
 
 	#region URI
 
-	private readonly UriBuilder _uriBuilder;
+	private UriBuilder _uriBuilder;
 
 	/// <summary>
 	/// Sets the endpoint of this request
@@ -72,6 +72,15 @@ public sealed class RequestBuilder
 	public RequestBuilder ToEndpoint(string endpoint)
 	{
 		_uriBuilder.Path = endpoint;
+		return this;
+	}
+
+	/// <summary>
+	/// Sets the URL of this request
+	/// </summary>
+	public RequestBuilder ToUri(Uri uri)
+	{
+		_uriBuilder = new UriBuilder(uri);
 		return this;
 	}
 
@@ -113,12 +122,10 @@ public sealed class RequestBuilder
 	/// </summary>
 	public HttpRequestMessage Build()
 	{
-		var tempBuilder = new UriBuilder(_uriBuilder.Uri);
-
 		var request = new HttpRequestMessage
 		{
 			Method = _method,
-			RequestUri = tempBuilder.Uri,
+			RequestUri = _uriBuilder.Uri,
 			Content = _content,
 		};
 

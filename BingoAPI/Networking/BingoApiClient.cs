@@ -18,7 +18,6 @@ internal sealed class BingoApiClient : IDisposable
 	public BingoApiClient()
 	{
 		_client = new HttpClient();
-		_client.BaseAddress = new Uri("https://bingosync.com");
 		_client.Timeout = TimeSpan.FromSeconds(30);
 
 		_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(
@@ -26,7 +25,8 @@ internal sealed class BingoApiClient : IDisposable
 			Plugin.Version
 		));
 
-		_builder = new RequestBuilder();
+		_builder = new RequestBuilder()
+			.ToUri(new Uri("https://bingosync.com"));
 	}
 
 	/// <summary>
@@ -66,7 +66,7 @@ internal sealed class BingoApiClient : IDisposable
 							.WithJson(body)
 							.Build();
 
-		var responseMessage = await _client.SendAsync(request);
+		using var responseMessage = await _client.SendAsync(request);
 		responseMessage.EnsureSuccessStatusCode();
 
 		var response = await ParseJson<ApiJoinRoomResponse>(responseMessage);
