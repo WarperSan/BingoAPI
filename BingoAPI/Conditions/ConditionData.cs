@@ -23,25 +23,6 @@ public sealed class ConditionData
 	}
 
 	/// <summary>
-	/// Parses the given JSON to the appropriate condition
-	/// </summary>
-	private static ICondition ParseCondition(JObject json)
-	{
-		var action = json.Value<string>("action");
-
-		if (action == null)
-			throw new JsonException($"No action was specified for this condition: {json}");
-
-		var condition = ConditionRegistry.Create(action, json);
-
-		// ReSharper disable once ConvertIfStatementToReturnStatement
-		if (condition == null)
-			throw new InvalidOperationException($"Unhandled condition '{action}': {json}");
-
-		return condition;
-	}
-
-	/// <summary>
 	/// Gets the children conditions from the <c>conditions</c> field
 	/// </summary>
 	/// <returns></returns>
@@ -59,7 +40,7 @@ public sealed class ConditionData
 			if (rawCondition is not JObject child)
 				continue;
 
-			var newCondition = ParseCondition(child);
+			var newCondition = ConditionRegistry.ParseCondition(child);
 
 			conditions.Add(newCondition);
 		}
@@ -77,7 +58,7 @@ public sealed class ConditionData
 		if (rawCondition == null)
 			throw new JsonException($"Expected '{CONDITION_KEY}': {_json}");
 
-		return ParseCondition(rawCondition);
+		return ConditionRegistry.ParseCondition(rawCondition);
 	}
 
 	/// <summary>

@@ -1,6 +1,5 @@
 using BingoAPI.Conditions;
-using BingoAPI.Conditions;
-using BingoAPI.Helpers;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Goals;
@@ -58,16 +57,26 @@ public static class ConditionRegistry
 	}
 
 	/// <summary>
-	/// Creates a condition for the given action key using the given JSON
+	/// Parses the given JSON to the appropriate condition
 	/// </summary>
-	internal static ICondition? Create(string action, JObject json)
+	internal static ICondition ParseCondition(JObject json)
 	{
-		// ReSharper disable once ConvertIfStatementToReturnStatement
+		var action = json.Value<string>("action");
+
+		if (action == null)
+			throw new JsonException($"No action was specified for this condition: {json}");
+
 		if (!Factories.TryGetValue(action, out var factory))
-			return null;
+			throw new InvalidOperationException($"No condition registered under the action '{action}'.");
 
 		var data = new ConditionData(json);
 
-		return factory?.Invoke(data);
+		var condition = factory?.Invoke(data);
+
+		// ReSharper disable once ConvertIfStatementToReturnStatement
+		if (condition == null)
+			throw new InvalidOperationException($"Unhandled condition '{action}': {json}");
+
+		return condition;
 	}
 }
