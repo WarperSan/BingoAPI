@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 namespace BingoAPI.Networking.DTOs;
 
 /// <summary>
-/// Model used as the request's payload of <see cref="BingoSyncApi.SendMessage"/>
+/// Model used as the request's payload of <see cref="BingoApiClient.SendMessage"/>
 /// </summary>
 public record ApiSendMessageRequest
 {

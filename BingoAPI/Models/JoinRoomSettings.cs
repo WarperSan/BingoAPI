@@ -1,7 +1,9 @@
+using BingoAPI.Networking;
+
 namespace BingoAPI.Models;
 
 /// <summary>
-/// Data used to join a room when calling <see cref="Networking.BingoSyncApi.JoinRoom"/>
+/// Data used to join a room when calling <see cref="BingoApiClient.JoinRoom"/>
 /// </summary>
 public struct JoinRoomSettings
 {

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 namespace BingoAPI.Networking.DTOs;
 
 /// <summary>
-/// Model used as the request's payload of <see cref="BingoSyncApi.JoinRoom"/>
+/// Model used as the request's payload of <see cref="BingoApiClient.JoinRoom"/>
 /// </summary>
 public record ApiJoinRoomRequest
 {
@@ -21,7 +21,7 @@ public record ApiJoinRoomRequest
 }
 
 /// <summary>
-/// Model used as the response's payload of <see cref="BingoSyncApi.JoinRoom"/>
+/// Model used as the response's payload of <see cref="BingoApiClient.JoinRoom"/>
 /// </summary>
 public record ApiJoinRoomResponse
 {

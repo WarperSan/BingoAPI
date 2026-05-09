@@ -7,14 +7,9 @@ namespace BingoAPI.Networking;
 /// <summary>
 /// Handles all HTTP communication with the BingoSync REST API
 /// </summary>
-internal sealed class BingoSyncApi
+internal sealed class BingoApiClient : IDisposable
 {
-	private readonly BingoHttpClient _client;
-
-	public BingoSyncApi(BingoHttpClient client)
-	{
-		_client = client;
-	}
+	private readonly BingoHttpClient _client = new();
 
 	/// <summary>
 	/// Joins the room with the given settings
@@ -57,5 +52,11 @@ internal sealed class BingoSyncApi
 			"/api/chat",
 			body
 		);
+	}
+
+	/// <inheritdoc />
+	public void Dispose()
+	{
+		_client.Dispose();
 	}
 }
