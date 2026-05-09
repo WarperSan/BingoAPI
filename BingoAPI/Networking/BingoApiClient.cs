@@ -121,6 +121,24 @@ internal sealed class BingoApiClient : IDisposable
 		);
 	}
 
+	/// <summary>
+	/// Changes the team of the client in the room
+	/// </summary>
+	public async Task ChangeTeam(string room, Team team)
+	{
+		var body = new ApiChangeTeamRequest
+		{
+			Code = room,
+			Team = team.ToColorString()
+		};
+
+		await _client.SendJson(
+			HttpMethod.Put,
+			"/api/color",
+			body
+		);
+	}
+
 	/// <inheritdoc />
 	public void Dispose()
 	{
