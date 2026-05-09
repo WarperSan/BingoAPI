@@ -1,16 +1,17 @@
 using System.Diagnostics.CodeAnalysis;
-using BingoAPI.Events;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
 using BingoAPI.Networking;
 
 namespace BingoAPI.Session;
 
+/// <summary>
+/// Represents an active connection to a BingoSync room.
+/// </summary>
 public sealed class BingoSession : IDisposable
 {
 	private readonly BingoApiClient _api;
 	private readonly BingoSocketClient _socket;
-	private readonly BingoEventClient _event;
 
 	public string? RoomId { get; private set; }
 	public string? UUID { get; private set; }
@@ -22,7 +23,6 @@ public sealed class BingoSession : IDisposable
 	{
 		_api = new BingoApiClient();
 		_socket = new BingoSocketClient();
-		_event = new BingoEventClient(OnEventReceived);
 	}
 
 	/// <summary>
@@ -36,7 +36,11 @@ public sealed class BingoSession : IDisposable
 		{
 			var socketKey = await _api.JoinRoom(settings);
 
-			await _socket.Connect(socketKey, _event.OnMessageReceived);
+			await _socket.Connect(socketKey, Log.Info);
+
+			// TODO: Make it wired with events
+			RoomId = settings.Code;
+			UUID = settings.Nickname;
 
 			Log.Info($"Room '{settings.Code}' was joined.");
 			return true;
@@ -44,6 +48,38 @@ public sealed class BingoSession : IDisposable
 		catch (Exception e)
 		{
 			Log.Error($"Failed to join the room '{settings.Code}': {e.Message}");
+			return false;
+		}
+	}
+
+	/// <summary>
+	/// Leaves the room
+	/// </summary>
+	public async Task<bool> LeaveRoom()
+	{
+		if (!IsConnected)
+		{
+			Log.Error("Tried to leave the room before being connected.");
+			return false;
+		}
+
+		var roomId = RoomId;
+
+		Log.Info($"Leaving the room '{roomId}'...");
+
+		try
+		{
+			await _socket.Disconnect();
+
+			RoomId = null;
+			UUID = null;
+
+			Log.Info($"Left the room '{roomId}'.");
+			return true;
+		}
+		catch (Exception e)
+		{
+			Log.Error($"Failed to disconnected from the room '{roomId}': {e.Message}");
 			return false;
 		}
 	}
@@ -73,10 +109,6 @@ public sealed class BingoSession : IDisposable
 			Log.Error($"Failed to sent the chat message as the player '{UUID}': {e.Message}");
 			return false;
 		}
-	}
-
-	private void OnEventReceived(BaseEvent evt)
-	{
 	}
 
 	/// <inheritdoc />
