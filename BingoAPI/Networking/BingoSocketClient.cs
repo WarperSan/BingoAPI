@@ -132,29 +132,37 @@ internal sealed class BingoSocketClient : IDisposable
 	{
 		var buffer = new byte[1024];
 
+		using var ms = new MemoryStream();
+
 		while (!ct.IsCancellationRequested && socket.State == WebSocketState.Open)
 		{
-			var result = await socket.ReceiveAsync(
-				buffer,
-				ct
-			);
+			WebSocketReceiveResult result;
+
+			do
+			{
+				result = await socket.ReceiveAsync(buffer, ct);
+				ms.Write(buffer, 0, result.Count);
+			} while (!result.EndOfMessage);
 
 			if (result.MessageType == WebSocketMessageType.Close)
 				break;
 
-			if (result.MessageType != WebSocketMessageType.Text)
-				continue;
-
-			var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-
-			try
+			if (result.MessageType == WebSocketMessageType.Text)
 			{
-				onReceive.Invoke(message);
+				var message = Encoding.UTF8.GetString(ms.ToArray());
+
+				try
+				{
+					onReceive.Invoke(message);
+				}
+				catch (Exception ex)
+				{
+					Log.Error($"Error handling socket message: {ex.Message}");
+				}
 			}
-			catch (Exception ex)
-			{
-				Log.Error($"Error handling socket message: {ex.Message}\n{message}");
-			}
+
+			ms.Seek(0, SeekOrigin.Begin);
+			ms.SetLength(0);
 		}
 	}
 
