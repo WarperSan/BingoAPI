@@ -7,10 +7,25 @@ namespace BingoAPI.Extensions;
 /// </summary>
 internal static class TeamExtensions
 {
+	private static readonly Dictionary<string, Team> TeamMappings = new(StringComparer.OrdinalIgnoreCase)
+	{
+		["pink"] = Team.Pink,
+		["red"] = Team.Red,
+		["orange"] = Team.Orange,
+		["brown"] = Team.Brown,
+		["yellow"] = Team.Yellow,
+		["green"] = Team.Green,
+		["teal"] = Team.Teal,
+		["blue"] = Team.Blue,
+		["navy"] = Team.Navy,
+		["purple"] = Team.Purple,
+		["blank"] = Team.None
+	};
+
 	/// <summary>
-	/// Fetches the teams with the given name
+	/// Converts a <see cref="string"/> into <see cref="Team"/>
 	/// </summary>
-	public static Team GetTeams(this string name)
+	public static Team FromColorString(this string name)
 	{
 		if (string.IsNullOrWhiteSpace(name))
 			return Team.None;
@@ -19,25 +34,33 @@ internal static class TeamExtensions
 
 		foreach (var part in name.Split(' '))
 		{
-			var partTeam = part.ToLowerInvariant() switch
-			{
-				"pink" => Team.Pink,
-				"red" => Team.Red,
-				"orange" => Team.Orange,
-				"brown" => Team.Brown,
-				"yellow" => Team.Yellow,
-				"green" => Team.Green,
-				"teal" => Team.Teal,
-				"blue" => Team.Blue,
-				"navy" => Team.Navy,
-				"purple" => Team.Purple,
-				"blank" => Team.None,
-				_ => throw new InvalidOperationException($"Unknown team '{part}'")
-			};
+			if (!TeamMappings.TryGetValue(part, out var team))
+				throw new InvalidOperationException($"Unknown team '{part}'");
 
-			result |= partTeam;
+			result |= team;
 		}
 
 		return result;
+	}
+
+	/// <summary>
+	/// Converts <see cref="Team"/> into a <see cref="string"/>
+	/// </summary>
+	public static string ToColorString(this Team team)
+	{
+		var colors = new List<string>();
+
+		foreach (var pair in TeamMappings)
+		{
+			if (pair.Value == Team.None)
+				continue;
+
+			if (!team.HasFlag(pair.Value))
+				continue;
+
+			colors.Add(pair.Key);
+		}
+
+		return string.Join(" ", colors);
 	}
 }

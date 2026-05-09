@@ -58,11 +58,49 @@ internal sealed class BingoApiClient : IDisposable
 			squares[i] = new Square(
 				item.Name,
 				index - 1,
-				item.Colors.GetTeams()
+				item.Colors.FromColorString()
 			);
 		}
 
 		return new Board(squares);
+	}
+
+	/// <summary>
+	/// Marks the square at the given index for a certain team
+	/// </summary>
+	public async Task MarkSquare(string room, Team team, int index)
+	{
+		var body = new ApiMarkSquareRequest
+		{
+			Code = room,
+			Team = team.ToColorString(),
+			Index = (index + 1).ToString()
+		};
+
+		await _client.SendJson(
+			HttpMethod.Put,
+			"/api/select",
+			body
+		);
+	}
+
+	/// <summary>
+	/// Clears the square at the given index for a certain team
+	/// </summary>
+	public async Task ClearSquare(string room, Team team, int index)
+	{
+		var body = new ApiClearSquareRequest
+		{
+			Code = room,
+			Team = team.ToColorString(),
+			Index = (index + 1).ToString()
+		};
+
+		await _client.SendJson(
+			HttpMethod.Put,
+			"/api/select",
+			body
+		);
 	}
 
 	/// <summary>
