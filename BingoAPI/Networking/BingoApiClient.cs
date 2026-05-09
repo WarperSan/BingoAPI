@@ -1,4 +1,5 @@
 using System.Net.WebSockets;
+using BingoAPI.Extensions;
 using BingoAPI.Models;
 using BingoAPI.Networking.DTOs;
 
@@ -34,6 +35,34 @@ internal sealed class BingoApiClient : IDisposable
 		);
 
 		return response.SocketKey;
+	}
+
+	/// <summary>
+	/// Gets the current board of the room
+	/// </summary>
+	public async Task<Board> GetBoard(string room)
+	{
+		var response = await _client.GetJson<ApiGetBoardItem[]>($"/room/{room}/board");
+
+		var squares = new Square[response.Length];
+
+		for (var i = 0; i < response.Length; i++)
+		{
+			var item = response[i];
+
+			var slot = item.Slot.Replace("slot", "");
+
+			if (!int.TryParse(slot, out var index))
+				throw new InvalidOperationException($"Invalid slot '{slot}'");
+
+			squares[i] = new Square(
+				item.Name,
+				index - 1,
+				item.Colors.GetTeams()
+			);
+		}
+
+		return new Board(squares);
 	}
 
 	/// <summary>
