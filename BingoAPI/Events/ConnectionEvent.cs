@@ -1,5 +1,4 @@
 using BingoAPI.Models;
-using BingoAPI.Networking.Converters;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Events;
@@ -7,7 +6,6 @@ namespace BingoAPI.Events;
 /// <summary>
 /// Event sent when a player joins or leaves the room
 /// </summary>
-[JsonConverter(typeof(EventConverter))]
 public record ConnectionEvent : IBingoEvent
 {
 	/// <summary>
@@ -16,6 +14,13 @@ public record ConnectionEvent : IBingoEvent
 	[JsonProperty("player")]
 	[JsonRequired]
 	public Player Player = null!;
+
+	/// <summary>
+	/// Identifier of the room
+	/// </summary>
+	[JsonProperty("room")]
+	[JsonRequired]
+	public string RoomId = string.Empty;
 
 	/// <summary>
 	/// Time when this event was sent

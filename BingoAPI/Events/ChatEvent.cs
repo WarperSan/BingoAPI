@@ -1,5 +1,4 @@
 using BingoAPI.Models;
-using BingoAPI.Networking.Converters;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Events;
@@ -7,7 +6,6 @@ namespace BingoAPI.Events;
 /// <summary>
 /// Event sent when a player sends a message in the room
 /// </summary>
-[JsonConverter(typeof(EventConverter))]
 public record ChatEvent : IBingoEvent
 {
 	/// <summary>

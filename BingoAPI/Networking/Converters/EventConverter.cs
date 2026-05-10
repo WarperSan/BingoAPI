@@ -19,7 +19,7 @@ internal class EventConverter : JsonConverter<IBingoEvent>
 	}
 
 	/// <inheritdoc />
-	public override IBingoEvent? ReadJson(
+	public override IBingoEvent ReadJson(
 		JsonReader reader,
 		Type objectType,
 		IBingoEvent? existingValue,
@@ -31,32 +31,38 @@ internal class EventConverter : JsonConverter<IBingoEvent>
 
 		var type = obj.Value<string>("type");
 
+		IBingoEvent evt;
+
 		switch (type)
 		{
 			case "chat":
-				return obj.ToObject<ChatEvent>();
+				evt = new ChatEvent();
+				break;
 			case "goal":
-				return obj.ToObject<GoalEvent>();
+				evt = new GoalEvent();
+				break;
 			case "color":
-				return obj.ToObject<ColorEvent>();
+				evt = new ColorEvent();
+				break;
 			case "connection":
-				var evt = obj.ToObject<ConnectionEvent>();
-
-				if (evt == null)
-					return null;
+				var connectionEvt = new ConnectionEvent();
 
 				var connectionType = obj.Value<string>("event_type");
 
-				evt.IsConnected = connectionType switch
+				connectionEvt.IsConnected = connectionType switch
 				{
 					"connected" => true,
 					"disconnected" => false,
 					_ => throw new JsonException($"Unknown 'event_type': '{connectionType}'")
 				};
 
-				return evt;
+				evt = connectionEvt;
+				break;
+			default:
+				throw new InvalidOperationException($"No event was found of type '{type}': {obj}");
 		}
 
-		throw new InvalidOperationException($"No event was found of type '{type}': {obj}");
+		serializer.Populate(obj.CreateReader(), evt);
+		return evt;
 	}
 }
