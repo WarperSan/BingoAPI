@@ -12,6 +12,8 @@ namespace BingoAPI.Networking;
 /// </summary>
 internal sealed class BingoApiClient : IDisposable
 {
+	// TODO: CreateRoom, RevealCard, GetFeed
+
 	private readonly HttpClient _client;
 	private readonly RequestBuilder _builder;
 
