@@ -17,7 +17,11 @@ internal sealed class BingoSocketClient : IDisposable
 	/// <summary>
 	/// Opens a <see cref="WebSocket"/> using the given key
 	/// </summary>
-	public async Task Connect(string socketKey, Action<string> onMessageReceived)
+	public async Task Connect(
+		string socketKey,
+		Action<string> onMessageReceived,
+		CancellationToken ct
+	)
 	{
 		if (_socket != null)
 			throw new InvalidOperationException("Socket is already connected.");
@@ -28,10 +32,20 @@ internal sealed class BingoSocketClient : IDisposable
 		{
 			await socket.ConnectAsync(
 				new Uri("wss://sockets.bingosync.com/broadcast"),
-				CancellationToken.None
+				ct
 			);
 
-			await Authenticate(socket, socketKey);
+			var json = JsonConvert.SerializeObject(new
+			{
+				socket_key = socketKey
+			});
+
+			await socket.SendAsync(
+				Encoding.UTF8.GetBytes(json),
+				WebSocketMessageType.Text,
+				true,
+				ct
+			);
 
 			_socket = socket;
 			_cts = new CancellationTokenSource();
@@ -99,29 +113,6 @@ internal sealed class BingoSocketClient : IDisposable
 	}
 
 	/// <summary>
-	/// Authenticates the given <see cref="WebSocket"/> using the given key
-	/// </summary>
-	private static async Task Authenticate(
-		WebSocket socket,
-		string socketKey
-	)
-	{
-		var json = JsonConvert.SerializeObject(new
-		{
-			socket_key = socketKey
-		});
-
-		var buffer = Encoding.UTF8.GetBytes(json);
-
-		await socket.SendAsync(
-			buffer,
-			WebSocketMessageType.Text,
-			true,
-			CancellationToken.None
-		);
-	}
-
-	/// <summary>
 	/// Receives data on the given <see cref="WebSocket"/>, and notifies the given callback
 	/// </summary>
 	private static async Task ReceiveLoop(
@@ -145,11 +136,18 @@ internal sealed class BingoSocketClient : IDisposable
 			} while (!result.EndOfMessage);
 
 			if (result.MessageType == WebSocketMessageType.Close)
+			{
+				Log.Debug("Close message was received.");
 				break;
+			}
 
 			if (result.MessageType == WebSocketMessageType.Text)
 			{
 				var message = Encoding.UTF8.GetString(ms.ToArray());
+
+				Log.Debug("Message received:\n" + message);
+
+				await Task.Delay(1000, ct);
 
 				try
 				{
@@ -157,7 +155,7 @@ internal sealed class BingoSocketClient : IDisposable
 				}
 				catch (Exception ex)
 				{
-					Log.Error($"Error handling socket message: {ex.Message}");
+					Log.Error($"Error handling socket message: {ex}");
 				}
 			}
 

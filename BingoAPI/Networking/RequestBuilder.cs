@@ -97,21 +97,12 @@ public sealed class RequestBuilder
 	{
 		var serializedJson = JsonConvert.SerializeObject(json);
 
-		var jsonContent = new StringContent(
+		_content = new StringContent(
 			serializedJson,
 			Encoding.UTF8,
 			MediaTypeNames.Application.Json
 		);
 
-		return WithContent(jsonContent);
-	}
-
-	/// <summary>
-	/// Sets the payload of this request
-	/// </summary>
-	public RequestBuilder WithContent(HttpContent content)
-	{
-		_content = content;
 		return this;
 	}
 
