@@ -1,8 +1,7 @@
-using BingoAPI.Conditions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Goals;
+namespace BingoAPI.Conditions;
 
 /// <summary>
 /// Registry of all known condition factories, keyed by their action
@@ -10,42 +9,6 @@ namespace BingoAPI.Goals;
 public static class ConditionRegistry
 {
 	private static readonly Dictionary<string, Func<ConditionData, ICondition>> Factories = new(StringComparer.OrdinalIgnoreCase);
-
-	static ConditionRegistry()
-	{
-		Register("AND",
-			data =>
-			{
-				var children = data.GetChildren();
-
-				return new AndCondition(children);
-			});
-
-		Register("OR",
-			data =>
-			{
-				var children = data.GetChildren();
-
-				return new OrCondition(children);
-			});
-
-		Register("NOT",
-			data =>
-			{
-				var child = data.GetChild();
-
-				return new NotCondition(child);
-			});
-
-		Register("SOME",
-			data =>
-			{
-				var children = data.GetChildren();
-				var amount = data.GetOptionalParam<uint>("amount", 1);
-
-				return new SomeCondition(amount, children);
-			});
-	}
 
 	/// <summary>
 	/// Registers a condition factory under the given action key
