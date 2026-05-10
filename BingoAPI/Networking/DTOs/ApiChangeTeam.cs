@@ -1,3 +1,4 @@
+using BingoAPI.Models;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Networking.DTOs;
@@ -11,5 +12,5 @@ public record ApiChangeTeamRequest
 	public string Code = string.Empty;
 
 	[JsonProperty("color")]
-	public string Team = string.Empty;
+	public Team Team;
 }

@@ -1,9 +1,13 @@
+using BingoAPI.Networking.Converters;
+using Newtonsoft.Json;
+
 namespace BingoAPI.Models;
 
 /// <summary>
 /// Teams available for a bingo match
 /// </summary>
 [Flags]
+[JsonConverter(typeof(TeamConverter))]
 public enum Team : ushort
 {
 	// No team

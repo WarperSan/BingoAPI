@@ -1,3 +1,4 @@
+using BingoAPI.Models;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Networking.DTOs;
@@ -11,7 +12,7 @@ public record ApiMarkSquareRequest
 	public string Code = string.Empty;
 
 	[JsonProperty("color")]
-	public string Team = string.Empty;
+	public Team Team;
 
 	[JsonProperty("slot")]
 	public string Index = string.Empty;
