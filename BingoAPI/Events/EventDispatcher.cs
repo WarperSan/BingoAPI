@@ -168,7 +168,7 @@ public sealed class EventDispatcher
 	/// <summary>
 	/// Called when a <see cref="IBingoEvent"/> is received
 	/// </summary>
-	public void Dispatch(IBingoEvent evt)
+	internal void Dispatch(IBingoEvent evt)
 	{
 		switch (evt)
 		{
