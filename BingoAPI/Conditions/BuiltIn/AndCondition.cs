@@ -1,6 +1,4 @@
-using BingoAPI.Conditions;
-
-namespace BingoAPI.Conditions;
+namespace BingoAPI.Conditions.BuiltIn;
 
 /// <summary>
 /// Condition that is valid when all the conditions are valid

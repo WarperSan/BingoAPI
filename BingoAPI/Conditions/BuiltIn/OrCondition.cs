@@ -1,4 +1,4 @@
-namespace BingoAPI.Conditions;
+namespace BingoAPI.Conditions.BuiltIn;
 
 /// <summary>
 /// Condition that is valid if any of the conditions is valid

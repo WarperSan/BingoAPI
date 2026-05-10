@@ -1,6 +1,4 @@
-using BingoAPI.Conditions;
-
-namespace BingoAPI.Conditions;
+namespace BingoAPI.Conditions.BuiltIn;
 
 /// <summary>
 /// Condition that is valid when at least the given amount of the conditions are valid
