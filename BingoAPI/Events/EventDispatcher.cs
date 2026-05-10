@@ -7,17 +7,17 @@ namespace BingoAPI.Events;
 /// </summary>
 public sealed class EventDispatcher
 {
-	private Player? _localPlayer;
+	private string? _localUUID;
 
 	/// <summary>
 	/// Sets the local player used to differentiate self events from others
 	/// </summary>
-	internal void SetLocalPlayer(Player player) => _localPlayer = player;
+	internal void SetLocalPlayer(Player player) => _localUUID = player.UUID;
 
 	/// <summary>
 	/// Checks if the given <see cref="IBingoEvent"/> is from the local player
 	/// </summary>
-	private bool IsFromLocal(Player player) => player.UUID == _localPlayer?.UUID;
+	private bool IsFromLocal(Player player) => player.UUID == _localUUID;
 
 	#region Delegates
 
@@ -38,7 +38,7 @@ public sealed class EventDispatcher
 	#region Alias Callbacks
 
 	/// <summary>
-	/// Called when any client sends a message
+	/// Called when any player sends a message
 	/// </summary>
 	/// <remarks>
 	/// This is equivalent to <see cref="OnSelfChatted"/> and <see cref="OnOtherChatted"/>
@@ -58,7 +58,7 @@ public sealed class EventDispatcher
 	}
 
 	/// <summary>
-	/// Called when any client marks a goal
+	/// Called when any player marks a goal
 	/// </summary>
 	/// <remarks>
 	/// This is equivalent to <see cref="OnSelfMarked"/> and <see cref="OnOtherMarked"/>
@@ -78,7 +78,7 @@ public sealed class EventDispatcher
 	}
 
 	/// <summary>
-	/// Called when any client clears a goal
+	/// Called when any player clears a goal
 	/// </summary>
 	/// <remarks>
 	/// This is equivalent to <see cref="OnSelfCleared"/> and <see cref="OnOtherCleared"/>
@@ -102,62 +102,62 @@ public sealed class EventDispatcher
 	#region Callbacks
 
 	/// <summary>
-	/// Called when this client gets connected to a room
+	/// Called when this player gets connected to a room
 	/// </summary>
 	public event ConnectionCallback? OnSelfConnected;
 
 	/// <summary>
-	/// Called when this client gets disconnected from a room
+	/// Called when this player gets disconnected from a room
 	/// </summary>
 	public event Action? OnSelfDisconnected;
 
 	/// <summary>
-	/// Called when this client has marked a square
+	/// Called when this player has marked a square
 	/// </summary>
 	public event MarkCallback? OnSelfMarked;
 
 	/// <summary>
-	/// Called when this client has cleared a square
+	/// Called when this player has cleared a square
 	/// </summary>
 	public event ClearCallback? OnSelfCleared;
 
 	/// <summary>
-	/// Called when this client has sent a message in a room
+	/// Called when this player has sent a message in a room
 	/// </summary>
 	public event ChatCallback? OnSelfChatted;
 
 	/// <summary>
-	/// Called when this client has changed team
+	/// Called when this player has changed team
 	/// </summary>
 	public event TeamCallback? OnSelfTeamChanged;
 
 	/// <summary>
-	/// Called when another client gets connected
+	/// Called when another player gets connected
 	/// </summary>
 	public event ConnectionCallback? OnOtherConnected;
 
 	/// <summary>
-	/// Called when another client gets disconnected
+	/// Called when another player gets disconnected
 	/// </summary>
 	public event DisconnectionCallback? OnOtherDisconnected;
 
 	/// <summary>
-	/// Called when another client has marked a square
+	/// Called when another player has marked a square
 	/// </summary>
 	public event MarkCallback? OnOtherMarked;
 
 	/// <summary>
-	/// Called when another client has cleared a square
+	/// Called when another player has cleared a square
 	/// </summary>
 	public event ClearCallback? OnOtherCleared;
 
 	/// <summary>
-	/// Called when another client has sent a message in a room
+	/// Called when another player has sent a message in a room
 	/// </summary>
 	public event ChatCallback? OnOtherChatted;
 
 	/// <summary>
-	/// Called when another client has changed team
+	/// Called when another player has changed team
 	/// </summary>
 	public event TeamCallback? OnOtherTeamChanged;
 
@@ -196,67 +196,49 @@ public sealed class EventDispatcher
 	private void OnConnectedEvent(ConnectionEvent evt)
 	{
 		if (IsFromLocal(evt.Player))
-		{
 			OnSelfConnected?.Invoke(evt.Player);
-			return;
-		}
-
-		OnOtherConnected?.Invoke(evt.Player);
+		else
+			OnOtherConnected?.Invoke(evt.Player);
 	}
 
 	private void OnDisconnectedEvent(ConnectionEvent evt)
 	{
 		if (IsFromLocal(evt.Player))
-		{
 			OnSelfDisconnected?.Invoke();
-			return;
-		}
-
-		OnOtherDisconnected?.Invoke(evt.Player);
+		else
+			OnOtherDisconnected?.Invoke(evt.Player);
 	}
 
 	private void OnChatEvent(ChatEvent evt)
 	{
 		if (IsFromLocal(evt.Player))
-		{
 			OnSelfChatted?.Invoke(evt.Player, evt.Text, evt.Timestamp);
-			return;
-		}
-
-		OnOtherChatted?.Invoke(evt.Player, evt.Text, evt.Timestamp);
+		else
+			OnOtherChatted?.Invoke(evt.Player, evt.Text, evt.Timestamp);
 	}
 
 	private void OnColorEvent(ColorEvent evt)
 	{
 		if (IsFromLocal(evt.Player))
-		{
 			OnSelfTeamChanged?.Invoke(evt.Player, evt.Player.Team);
-			return;
-		}
-
-		OnOtherTeamChanged?.Invoke(evt.Player, evt.Player.Team);
+		else
+			OnOtherTeamChanged?.Invoke(evt.Player, evt.Player.Team);
 	}
 
 	private void OnGoalCleared(GoalEvent evt)
 	{
 		if (IsFromLocal(evt.Player))
-		{
 			OnSelfCleared?.Invoke(evt.Player, evt.Square);
-			return;
-		}
-
-		OnOtherCleared?.Invoke(evt.Player, evt.Square);
+		else
+			OnOtherCleared?.Invoke(evt.Player, evt.Square);
 	}
 
 	private void OnGoalMarked(GoalEvent evt)
 	{
 		if (IsFromLocal(evt.Player))
-		{
 			OnSelfMarked?.Invoke(evt.Player, evt.Square);
-			return;
-		}
-
-		OnOtherMarked?.Invoke(evt.Player, evt.Square);
+		else
+			OnOtherMarked?.Invoke(evt.Player, evt.Square);
 	}
 
 	#endregion
