@@ -66,7 +66,7 @@ internal sealed class BingoSocketClient : IDisposable
 	/// <summary>
 	/// Closes the <see cref="WebSocket"/> gracefully
 	/// </summary>
-	public async Task Disconnect()
+	public async Task Disconnect(CancellationToken ct)
 	{
 		if (_socket == null)
 			return;
@@ -80,7 +80,7 @@ internal sealed class BingoSocketClient : IDisposable
 				await _socket.CloseAsync(
 					WebSocketCloseStatus.NormalClosure,
 					"Client disconnecting",
-					CancellationToken.None
+					ct
 				);
 			}
 		}

@@ -114,13 +114,14 @@ internal sealed class BingoApiClient : IDisposable
 		using var responseMessage = await SendAsync(request, ct);
 		responseMessage.EnsureSuccessStatusCode();
 
-		var response = await ParseJson<ApiGetBoardItem[]>(responseMessage);
+		var response = await ParseJson<Square[]>(responseMessage);
 
-		var squares = new Square[response.Length];
+		/*var squares = new Square[response.Length];
 
 		for (var i = 0; i < response.Length; i++)
 		{
 			var item = response[i];
+
 
 			var slot = item.Slot.Replace("slot", "");
 
@@ -132,9 +133,9 @@ internal sealed class BingoApiClient : IDisposable
 				index - 1,
 				item.Team
 			);
-		}
+		}*/
 
-		return new Board(squares);
+		return new Board(response);
 	}
 
 	/// <summary>

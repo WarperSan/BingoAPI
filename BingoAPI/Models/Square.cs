@@ -1,30 +1,29 @@
+using BingoAPI.Networking.Converters;
+using Newtonsoft.Json;
+
 namespace BingoAPI.Models;
 
-public sealed class Square
+public record Square
 {
 	/// <summary>
 	/// Text displayed on this square
 	/// </summary>
-	public string Name { get; }
+	[JsonProperty("name")]
+	[JsonRequired]
+	public string Name = string.Empty;
 
 	/// <summary>
 	/// Index of this square
 	/// </summary>
-	public int Index { get; }
+	[JsonProperty("slot")]
+	[JsonRequired]
+	[JsonConverter(typeof(SlotIndexConverter))]
+	public int Index;
 
 	/// <summary>
 	/// Teams currently owning this square
 	/// </summary>
-	public Team Teams { get; }
-
-	internal Square(
-		string name,
-		int index,
-		Team teams
-	)
-	{
-		Name = name;
-		Index = index;
-		Teams = teams;
-	}
+	[JsonProperty("colors")]
+	[JsonRequired]
+	public Team Teams = Team.None;
 }
