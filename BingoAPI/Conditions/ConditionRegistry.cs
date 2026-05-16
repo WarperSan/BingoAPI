@@ -1,76 +1,45 @@
-using System.Reflection;
-using BingoAPI.Helpers;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Conditions;
 
 /// <summary>
-/// Class that handles the registering of <see cref="BaseCondition"/>
+/// Registry of all known condition factories, keyed by their action
 /// </summary>
 public static class ConditionRegistry
 {
-	private static readonly Dictionary<string, Func<JObject, BaseCondition>> LoadedConditions = [];
+	private static readonly Dictionary<string, Func<ConditionData, ICondition>> Factories = new(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>
-	/// Refreshes the registry of <see cref="BaseCondition"/>
+	/// Registers a condition factory under the given action key
 	/// </summary>
-	public static void Refresh()
+	public static void Register(string action, Func<ConditionData, ICondition> factory)
 	{
-		LoadedConditions.Clear();
-
-		foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-		{
-			foreach (var type in assembly.GetTypes())
-			{
-				if (!typeof(BaseCondition).IsAssignableFrom(type))
-					continue;
-
-				var conditionAttr = type.GetCustomAttribute<ConditionAttribute>();
-
-				if (conditionAttr == null)
-					continue;
-
-				TryAdd(type, conditionAttr);
-			}
-		}
+		if (!Factories.TryAdd(action, factory))
+			throw new InvalidOperationException($"A condition is already registered under '{action}'.");
 	}
 
 	/// <summary>
-	/// Creates the given <see cref="BaseCondition"/> from the given content
+	/// Parses the given JSON to the appropriate condition
 	/// </summary>
-	public static BaseCondition? Create(string action, JObject json)
+	internal static ICondition ParseCondition(JObject json)
 	{
+		var action = json.Value<string>("action");
+
+		if (action == null)
+			throw new JsonException($"No action was specified for this condition: {json}");
+
+		if (!Factories.TryGetValue(action, out var factory))
+			throw new InvalidOperationException($"No condition registered under the action '{action}'.");
+
+		var data = new ConditionData(json);
+
+		var condition = factory?.Invoke(data);
+
 		// ReSharper disable once ConvertIfStatementToReturnStatement
-		if (!LoadedConditions.TryGetValue(action, out var parser))
-			return null;
+		if (condition == null)
+			throw new InvalidOperationException($"Unhandled condition '{action}': {json}");
 
-		return parser.Invoke(json);
-	}
-
-	/// <summary>
-	/// Tries to add the given <see cref="BaseCondition"/>
-	/// </summary>
-	private static bool TryAdd(Type type, ConditionAttribute attribute)
-	{
-		var constructor = type.GetConstructor([typeof(JObject)]);
-
-		if (constructor == null)
-		{
-			Log.Error($"Failed to add '{type}', because no constructor is valid.");
-			return false;
-		}
-
-		if (LoadedConditions.ContainsKey(attribute.Action))
-		{
-			Log.Debug($"Couldn't add '{type.FullName}', because another action uses the action '{attribute.Action}'.");
-			return false;
-		}
-
-		LoadedConditions.Add(
-			attribute.Action,
-			json => (BaseCondition)constructor.Invoke([json])
-		);
-		Log.Debug($"Added '{type.FullName}' with the action '{attribute.Action}'.");
-		return true;
+		return condition;
 	}
 }

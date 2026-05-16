@@ -4,9 +4,9 @@ using Newtonsoft.Json;
 namespace BingoAPI.Events;
 
 /// <summary>
-/// Event sent when a player changes team
+/// Event sent when a player joins or leaves the room
 /// </summary>
-public record ColorEvent : IBingoEvent
+public record ConnectionEvent : IBingoEvent
 {
 	/// <summary>
 	/// Player responsible for this event
@@ -16,18 +16,11 @@ public record ColorEvent : IBingoEvent
 	public Player Player = null!;
 
 	/// <summary>
-	/// Previous color of the player
+	/// Identifier of the room
 	/// </summary>
-	[JsonProperty("player_color")]
+	[JsonProperty("room")]
 	[JsonRequired]
-	public Team PreviousColor;
-
-	/// <summary>
-	/// New color of the player
-	/// </summary>
-	[JsonProperty("color")]
-	[JsonRequired]
-	public Team NewColor;
+	public string RoomId = string.Empty;
 
 	/// <summary>
 	/// Time when this event was sent
@@ -35,4 +28,10 @@ public record ColorEvent : IBingoEvent
 	[JsonProperty("timestamp")]
 	[JsonRequired]
 	public ulong Timestamp;
+
+	/// <summary>
+	/// Defines if the player has connected or disconnected
+	/// </summary>
+	[JsonIgnore]
+	public bool IsConnected { get; internal set; }
 }

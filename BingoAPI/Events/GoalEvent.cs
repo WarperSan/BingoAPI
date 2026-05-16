@@ -1,27 +1,38 @@
 using BingoAPI.Models;
-using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace BingoAPI.Events;
 
 /// <summary>
-/// Event used when a user marks or unmarks a square
+/// Event sent when a player marks or clears a square
 /// </summary>
-public sealed class GoalEvent : BaseEvent
+public record GoalEvent : IBingoEvent
 {
+	/// <summary>
+	/// Player responsible for this event
+	/// </summary>
+	[JsonProperty("player")]
+	[JsonRequired]
+	public Player Player = null!;
+
+	/// <summary>
+	/// Time when this event was sent
+	/// </summary>
+	[JsonProperty("timestamp")]
+	[JsonRequired]
+	public ulong Timestamp;
+
 	/// <summary>
 	/// Square modified by this event
 	/// </summary>
-	public readonly SquareData Square;
+	[JsonProperty("square")]
+	[JsonRequired]
+	public Square Square = null!;
 
 	/// <summary>
 	/// Defines if the selected square has been cleared or marked
 	/// </summary>
-	public readonly bool HasBeenCleared;
-
-	internal GoalEvent(JObject json) : base(json)
-	{
-		var goal = json.GetValue("square");
-		Square = new SquareData(goal);
-		HasBeenCleared = goal?.Value<bool>("remove") ?? false;
-	}
+	[JsonProperty("remove")]
+	[JsonRequired]
+	public bool HasBeenCleared;
 }

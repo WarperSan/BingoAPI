@@ -1,4 +1,5 @@
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+using BingoAPI.Networking.Converters;
+using Newtonsoft.Json;
 
 namespace BingoAPI.Models;
 
@@ -6,10 +7,11 @@ namespace BingoAPI.Models;
 /// Teams available for a bingo match
 /// </summary>
 [Flags]
+[JsonConverter(typeof(TeamConverter))]
 public enum Team : ushort
 {
 	// No team
-	Blank = 0,
+	None = 0,
 
 	// All team colors
 	Pink = 1 << 1,
