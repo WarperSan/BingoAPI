@@ -197,6 +197,34 @@ public sealed class BingoSession : IDisposable
 		}
 	}
 
+	/// <summary>
+	/// Reveals the card in the room
+	/// </summary>
+	public async Task<bool> RevealCard(CancellationToken ct = default)
+	{
+		if (!IsConnected)
+		{
+			Log.Error("Tried to reveal the card before being connected.");
+			return false;
+		}
+
+		try
+		{
+			await _api.RevealCard(
+				RoomId,
+				ct
+			);
+
+			Log.Info("Revealed the card.");
+			return true;
+		}
+		catch (Exception e)
+		{
+			Log.Error($"Failed to reveal the card: {e.Message}");
+			return false;
+		}
+	}
+
 	private void OnMessageReceived(string message)
 	{
 		var evt = JsonConvert.DeserializeObject<IBingoEvent>(message);

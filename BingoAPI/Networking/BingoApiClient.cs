@@ -23,8 +23,8 @@ internal sealed class BingoApiClient : IDisposable
 		_client.Timeout = TimeSpan.FromSeconds(30);
 
 		_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(
-			Plugin.Id,
-			Plugin.Version
+			"BingoAPI",
+			"1.0.0"
 		));
 
 		_builder = new RequestBuilder()
@@ -227,6 +227,26 @@ internal sealed class BingoApiClient : IDisposable
 		using var request = new RequestBuilder(_builder)
 							.Put()
 							.ToEndpoint("/api/color")
+							.WithJson(body)
+							.Build();
+
+		using var responseMessage = await SendAsync(request, ct);
+		responseMessage.EnsureSuccessStatusCode();
+	}
+
+	/// <summary>
+	/// Reveals the card in the room
+	/// </summary>
+	public async Task RevealCard(string room, CancellationToken ct)
+	{
+		var body = new ApiRevealCardRequest
+		{
+			Code = room,
+		};
+
+		using var request = new RequestBuilder(_builder)
+							.Put()
+							.ToEndpoint("/api/revealed")
 							.WithJson(body)
 							.Build();
 
