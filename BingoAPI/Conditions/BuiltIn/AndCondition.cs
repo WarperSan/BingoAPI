@@ -13,5 +13,5 @@ internal sealed class AndCondition : ICondition
 	}
 
 	/// <inheritdoc/>
-	public bool Check() => _conditions.All(condition => condition.Check());
+	public bool IsMet() => _conditions.All(condition => condition.IsMet());
 }

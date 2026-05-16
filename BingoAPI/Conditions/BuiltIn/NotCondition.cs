@@ -13,5 +13,5 @@ internal sealed class NotCondition : ICondition
 	}
 
 	/// <inheritdoc/>
-	public bool Check() => !_condition.Check();
+	public bool IsMet() => !_condition.IsMet();
 }

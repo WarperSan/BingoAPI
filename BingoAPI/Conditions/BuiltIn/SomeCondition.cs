@@ -15,7 +15,7 @@ internal sealed class SomeCondition : ICondition
 	}
 
 	/// <inheritdoc/>
-	public bool Check()
+	public bool IsMet()
 	{
 		if (_conditions.Length < _amount)
 			return false;
@@ -24,7 +24,7 @@ internal sealed class SomeCondition : ICondition
 
 		foreach (var condition in _conditions)
 		{
-			if (!condition.Check())
+			if (!condition.IsMet())
 				continue;
 
 			currentAmount++;

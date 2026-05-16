@@ -13,5 +13,5 @@ internal sealed class OrCondition : ICondition
 	}
 
 	/// <inheritdoc/>
-	public bool Check() => _conditions.Any(condition => condition.Check());
+	public bool IsMet() => _conditions.Any(condition => condition.IsMet());
 }
