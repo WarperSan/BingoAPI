@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Project Properties -->
+	<PropertyGroup>
+		<AssemblyName>BingoAPI</AssemblyName>
+		<Product>BingoAPI</Product>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<RootNamespace>BingoAPI</RootNamespace>
+
+		<BepInExInstallPath>/home/warpersan/.var/app/com.github.ebkr.r2modman/config/r2modmanPlus-local/HollowKnightSilksong/profiles/Default</BepInExInstallPath>
+	</PropertyGroup>
+
+	<!-- NuGet Metadata -->
+	<PropertyGroup>
+		<PackageId>WarperSan.BingoAPI</PackageId>
+		<PackageTags>Bingo;BingoSync</PackageTags>
+		<Title>BingoAPI</Title>
+		<Description>Library that allows to communicate with BingoSync's servers through code</Description>
+		<Authors>WarperSan</Authors>
+
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<RepositoryUrl>https://github.com/WarperSan/BingoAPI</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="../icon.png" Pack="true" PackagePath=""/>
+	</ItemGroup>
+
+	<!-- Dependencies -->
+	<ItemGroup>
+		<PackageReference Include="BepInEx.Core" Version="5.4.21"/>
+		<PackageReference Include="Nullable" Version="1.3.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="UnityEngine.Modules" Version="2021.3.33"/>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+		<PackageReference Include="MinVer" Version="6.0.0"/>
+		<PackageReference Include="Hamunii.BepInEx.AutoPlugin" Version="2.1.0"/>
+	</ItemGroup>
+</Project>

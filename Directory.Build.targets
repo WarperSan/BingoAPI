@@ -1,28 +1,9 @@
 <Project>
-	<Target Name="GenerateMetadata" BeforeTargets="BeforeCompile;CoreCompile">
-		<PropertyGroup>
-			<GUID Condition="'$(GUID)' == ''" >dev.$([System.String]::Copy('$(Authors)').ToLower()).$([System.String]::Copy('$(AssemblyName)').ToLower())</GUID>
-
-			<GeneratedText><![CDATA[
-#pragma warning disable CS1591
-
-namespace $(RootNamespace)
-{
-    public static class Metadata
-    {
-      public const string GUID = "$(GUID)"%3B
-      public const string VERSION = "$(Version)"%3B
-    }
-}
-]]></GeneratedText>
-			<GeneratedFilePath>$(IntermediateOutputPath)/Metadata.cs</GeneratedFilePath>
-		</PropertyGroup>
-
+	<Target Name="CopyOutputToInstall" AfterTargets="PostBuildEvent" Condition="'$(BepInExInstallPath)' != ''">
 		<ItemGroup>
-			<Compile Include="$(GeneratedFilePath)"/>
-			<FileWrites Include="$(GeneratedFilePath)"/>
+			<Files Include="$(TargetPath)" />
 		</ItemGroup>
 
-		<WriteLinesToFile Lines="$(GeneratedText)" File="$(GeneratedFilePath)" WriteOnlyWhenDifferent="true" Overwrite="true"/>
+		<Copy SourceFiles="@(Files)" DestinationFolder="$(BepInExInstallPath)/BepInEx/plugins/$(Authors)-$(TargetName)" />
 	</Target>
 </Project>
