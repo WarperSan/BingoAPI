@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.WebSockets;
+using BingoAPI.Events;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
 using BingoAPI.Models.Settings;
@@ -13,7 +14,7 @@ namespace BingoAPI.Networking;
 /// </summary>
 internal sealed class BingoApiClient : IDisposable
 {
-	// TODO: CreateRoom, NewCard, GetFeed
+	// TODO: CreateRoom, NewCard
 
 	private readonly HttpClient _client;
 	private readonly RequestBuilder _builder;
@@ -216,6 +217,22 @@ internal sealed class BingoApiClient : IDisposable
 
 		using var responseMessage = await SendAsync(request, ct);
 		responseMessage.EnsureSuccessStatusCode();
+	}
+
+	/// <summary>
+	/// Gets the feed of <see cref="IBingoEvent"/> in the room
+	/// </summary>
+	public async Task<IBingoEvent[]> GetFeed(string room, CancellationToken ct)
+	{
+		using var request = new RequestBuilder(_builder)
+							.Get()
+							.ToEndpoint($"/room/{room}/feed")
+							.Build();
+
+		using var responseMessage = await SendAsync(request, ct);
+		responseMessage.EnsureSuccessStatusCode();
+
+		return await ParseJson<IBingoEvent[]>(responseMessage);
 	}
 
 	/// <inheritdoc />
