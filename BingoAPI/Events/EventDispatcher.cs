@@ -45,19 +45,19 @@ public sealed class EventDispatcher
 	/// Called when any player sends a message
 	/// </summary>
 	/// <remarks>
-	/// This is equivalent to <see cref="OnSelfChatted"/> and <see cref="OnOtherChatted"/>
+	/// This is equivalent to <see cref="OnSelfMessageSent"/> and <see cref="OnOtherMessageSent"/>
 	/// </remarks>
-	public event ChatCallback? OnChatted
+	public event ChatCallback? OnMessageSent
 	{
 		add
 		{
-			OnSelfChatted += value;
-			OnOtherChatted += value;
+			OnSelfMessageSent += value;
+			OnOtherMessageSent += value;
 		}
 		remove
 		{
-			OnSelfChatted -= value;
-			OnOtherChatted -= value;
+			OnSelfMessageSent -= value;
+			OnOtherMessageSent -= value;
 		}
 	}
 
@@ -65,19 +65,19 @@ public sealed class EventDispatcher
 	/// Called when any player marks a goal
 	/// </summary>
 	/// <remarks>
-	/// This is equivalent to <see cref="OnSelfMarked"/> and <see cref="OnOtherMarked"/>
+	/// This is equivalent to <see cref="OnSelfSquareMarked"/> and <see cref="OnOtherSquareMarked"/>
 	/// </remarks>
-	public event MarkCallback? OnMarked
+	public event MarkCallback? OnSquareMarked
 	{
 		add
 		{
-			OnSelfMarked += value;
-			OnOtherMarked += value;
+			OnSelfSquareMarked += value;
+			OnOtherSquareMarked += value;
 		}
 		remove
 		{
-			OnSelfMarked -= value;
-			OnOtherMarked -= value;
+			OnSelfSquareMarked -= value;
+			OnOtherSquareMarked -= value;
 		}
 	}
 
@@ -85,19 +85,19 @@ public sealed class EventDispatcher
 	/// Called when any player clears a goal
 	/// </summary>
 	/// <remarks>
-	/// This is equivalent to <see cref="OnSelfCleared"/> and <see cref="OnOtherCleared"/>
+	/// This is equivalent to <see cref="OnSelfSquareCleared"/> and <see cref="OnOtherSquareCleared"/>
 	/// </remarks>
-	public event ClearCallback? OnCleared
+	public event ClearCallback? OnSquareCleared
 	{
 		add
 		{
-			OnSelfCleared += value;
-			OnOtherCleared += value;
+			OnSelfSquareCleared += value;
+			OnOtherSquareCleared += value;
 		}
 		remove
 		{
-			OnSelfCleared -= value;
-			OnOtherCleared -= value;
+			OnSelfSquareCleared -= value;
+			OnOtherSquareCleared -= value;
 		}
 	}
 
@@ -178,17 +178,17 @@ public sealed class EventDispatcher
 	/// <summary>
 	/// Called when this player has marked a square
 	/// </summary>
-	public event MarkCallback? OnSelfMarked;
+	public event MarkCallback? OnSelfSquareMarked;
 
 	/// <summary>
 	/// Called when this player has cleared a square
 	/// </summary>
-	public event ClearCallback? OnSelfCleared;
+	public event ClearCallback? OnSelfSquareCleared;
 
 	/// <summary>
 	/// Called when this player has sent a message in a room
 	/// </summary>
-	public event ChatCallback? OnSelfChatted;
+	public event ChatCallback? OnSelfMessageSent;
 
 	/// <summary>
 	/// Called when this player has changed team
@@ -218,17 +218,17 @@ public sealed class EventDispatcher
 	/// <summary>
 	/// Called when another player has marked a square
 	/// </summary>
-	public event MarkCallback? OnOtherMarked;
+	public event MarkCallback? OnOtherSquareMarked;
 
 	/// <summary>
 	/// Called when another player has cleared a square
 	/// </summary>
-	public event ClearCallback? OnOtherCleared;
+	public event ClearCallback? OnOtherSquareCleared;
 
 	/// <summary>
 	/// Called when another player has sent a message in a room
 	/// </summary>
-	public event ChatCallback? OnOtherChatted;
+	public event ChatCallback? OnOtherMessageSent;
 
 	/// <summary>
 	/// Called when another player has changed team
@@ -274,10 +274,10 @@ public sealed class EventDispatcher
 				else
 					DispatchGoalMarked(goal);
 				break;
-			case CardRevealEvent reveal:
+			case CardRevealedEvent reveal:
 				DispatchCardRevealed(reveal);
 				break;
-			case CardGenerateEvent generate:
+			case CardGeneratedEvent generate:
 				DispatchCardGenerated(generate);
 				break;
 		}
@@ -302,9 +302,9 @@ public sealed class EventDispatcher
 	private void DispatchChatEvent(ChatEvent evt)
 	{
 		if (IsFromLocal(evt.Player))
-			OnSelfChatted?.Invoke(evt.Player, evt.Text, evt.Timestamp);
+			OnSelfMessageSent?.Invoke(evt.Player, evt.Text, evt.Timestamp);
 		else
-			OnOtherChatted?.Invoke(evt.Player, evt.Text, evt.Timestamp);
+			OnOtherMessageSent?.Invoke(evt.Player, evt.Text, evt.Timestamp);
 	}
 
 	private void DispatchColorEvent(ColorEvent evt)
@@ -318,20 +318,20 @@ public sealed class EventDispatcher
 	private void DispatchGoalCleared(GoalEvent evt)
 	{
 		if (IsFromLocal(evt.Player))
-			OnSelfCleared?.Invoke(evt.Player, evt.Square);
+			OnSelfSquareCleared?.Invoke(evt.Player, evt.Square);
 		else
-			OnOtherCleared?.Invoke(evt.Player, evt.Square);
+			OnOtherSquareCleared?.Invoke(evt.Player, evt.Square);
 	}
 
 	private void DispatchGoalMarked(GoalEvent evt)
 	{
 		if (IsFromLocal(evt.Player))
-			OnSelfMarked?.Invoke(evt.Player, evt.Square);
+			OnSelfSquareMarked?.Invoke(evt.Player, evt.Square);
 		else
-			OnOtherMarked?.Invoke(evt.Player, evt.Square);
+			OnOtherSquareMarked?.Invoke(evt.Player, evt.Square);
 	}
 
-	private void DispatchCardRevealed(CardRevealEvent evt)
+	private void DispatchCardRevealed(CardRevealedEvent evt)
 	{
 		if (IsFromLocal(evt.Player))
 			OnSelfCardRevealed?.Invoke(evt.Player);
@@ -339,7 +339,7 @@ public sealed class EventDispatcher
 			OnOtherCardRevealed?.Invoke(evt.Player);
 	}
 
-	private void DispatchCardGenerated(CardGenerateEvent evt)
+	private void DispatchCardGenerated(CardGeneratedEvent evt)
 	{
 		if (IsFromLocal(evt.Player))
 			OnSelfCardGenerated?.Invoke(evt.Player, evt.IsCardHidden);
