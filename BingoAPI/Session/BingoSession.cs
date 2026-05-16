@@ -133,6 +133,70 @@ public sealed class BingoSession : IDisposable
 		}
 	}
 
+	/// <summary>
+	/// Marks the square at the given index for a certain team
+	/// </summary>
+	public async Task<bool> MarkSquare(Team team, int index, CancellationToken ct = default)
+	{
+		if (!IsConnected)
+		{
+			Log.Error("Tried to mark a square before being connected.");
+			return false;
+		}
+
+		Log.Info($"Marking the square #{index} for the team '{team}'...");
+
+		try
+		{
+			await _api.MarkSquare(
+				RoomId,
+				team,
+				index,
+				ct
+			);
+
+			Log.Info($"Marked the square #{index} for the team '{team}'.");
+			return true;
+		}
+		catch (Exception e)
+		{
+			Log.Error($"Failed to mark the square #{index} for the team '{team}': {e.Message}");
+			return false;
+		}
+	}
+
+	/// <summary>
+	/// Clears the square at the given index for a certain team
+	/// </summary>
+	public async Task<bool> ClearSquare(Team team, int index, CancellationToken ct = default)
+	{
+		if (!IsConnected)
+		{
+			Log.Error("Tried to clear a square before being connected.");
+			return false;
+		}
+
+		Log.Info($"Clearing the square #{index} for the team '{team}'...");
+
+		try
+		{
+			await _api.ClearSquare(
+				RoomId,
+				team,
+				index,
+				ct
+			);
+
+			Log.Info($"Cleared the square #{index} for the team '{team}'.");
+			return true;
+		}
+		catch (Exception e)
+		{
+			Log.Error($"Failed to clear the square #{index} for the team '{team}': {e.Message}");
+			return false;
+		}
+	}
+
 	private void OnMessageReceived(string message)
 	{
 		var evt = JsonConvert.DeserializeObject<IBingoEvent>(message);
