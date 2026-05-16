@@ -12,7 +12,7 @@ public sealed class EventDispatcher
 	/// <summary>
 	/// Sets the local player used to differentiate self events from others
 	/// </summary>
-	internal void SetLocalPlayer(Player player) => _localUUID = player.UUID;
+	internal void SetLocalPlayer(string uuid) => _localUUID = uuid;
 
 	/// <summary>
 	/// Checks if the given <see cref="IBingoEvent"/> is from the local player
