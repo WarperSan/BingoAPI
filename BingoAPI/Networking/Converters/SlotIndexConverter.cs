@@ -22,10 +22,10 @@ internal class SlotIndexConverter : JsonConverter<int>
 		JsonSerializer serializer
 	)
 	{
-		var rawIndex = reader.ReadAsString();
-
-		if (rawIndex == null)
+		if (reader.Value is not string rawIndex)
 			return 0;
+
+		rawIndex = rawIndex.Replace("slot", "");
 
 		// ReSharper disable once ConvertIfStatementToReturnStatement
 		if (!int.TryParse(rawIndex, out var index))
