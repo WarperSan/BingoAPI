@@ -42,7 +42,10 @@ public sealed class ConditionData
 			if (rawCondition is not JObject child)
 				continue;
 
-			var newCondition = ConditionRegistry.ParseCondition(child);
+			var newCondition = child.ToObject<ICondition>();
+
+			if (newCondition == null)
+				throw new InvalidOperationException($"Unhandled condition: {child}");
 
 			conditions.Add(newCondition);
 		}
@@ -63,7 +66,13 @@ public sealed class ConditionData
 		if (rawCondition == null)
 			throw new JsonException($"Expected '{CONDITION_KEY}': {_params}");
 
-		return ConditionRegistry.ParseCondition(rawCondition);
+		var newCondition = rawCondition.ToObject<ICondition>();
+
+		// ReSharper disable once ConvertIfStatementToReturnStatement
+		if (newCondition == null)
+			throw new InvalidOperationException($"Unhandled condition: {rawCondition}");
+
+		return newCondition;
 	}
 
 	/// <summary>

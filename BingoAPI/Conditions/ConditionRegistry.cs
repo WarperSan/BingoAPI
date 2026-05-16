@@ -22,26 +22,13 @@ public static class ConditionRegistry
 	}
 
 	/// <summary>
-	/// Parses the given JSON to the appropriate condition
+	/// Gets the factory registered under the given action key
 	/// </summary>
-	internal static ICondition ParseCondition(JObject json)
+	internal static Func<ConditionData, ICondition> GetFactory(string action)
 	{
-		var action = json.Value<string>("action");
-
-		if (action == null)
-			throw new JsonException($"No action was specified for this condition: {json}");
-
 		if (!Factories.TryGetValue(action, out var factory))
 			throw new InvalidOperationException($"No condition registered under the action '{action}'.");
 
-		var data = new ConditionData(json);
-
-		var condition = factory?.Invoke(data);
-
-		// ReSharper disable once ConvertIfStatementToReturnStatement
-		if (condition == null)
-			throw new InvalidOperationException($"Unhandled condition '{action}': {json}");
-
-		return condition;
+		return factory;
 	}
 }

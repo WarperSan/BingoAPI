@@ -1,8 +1,12 @@
+using BingoAPI.Networking.Converters;
+using Newtonsoft.Json;
+
 namespace BingoAPI.Conditions;
 
 /// <summary>
 /// Represents any class that can be used as a condition
 /// </summary>
+[JsonConverter(typeof(ConditionConverter))]
 public interface ICondition
 {
 	/// <summary>
