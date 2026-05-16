@@ -27,10 +27,13 @@ public sealed class ConditionData
 	/// <returns></returns>
 	public ICondition[] GetChildren()
 	{
-		var rawConditions = _json.Value<JArray>(CONDITIONS_KEY);
+		if (_params == null)
+			throw new JsonException($"Expected '{PARAMS_KEY}' object: {_json}");
+
+		var rawConditions = _params.Value<JArray>(CONDITIONS_KEY);
 
 		if (rawConditions == null)
-			throw new JsonException($"Expected '{CONDITIONS_KEY}': {_json}");
+			throw new JsonException($"Expected '{CONDITIONS_KEY}': {_params}");
 
 		var conditions = new List<ICondition>();
 
@@ -52,10 +55,13 @@ public sealed class ConditionData
 	/// </summary>
 	public ICondition GetChild()
 	{
-		var rawCondition = _json.Value<JObject>(CONDITION_KEY);
+		if (_params == null)
+			throw new JsonException($"Expected '{PARAMS_KEY}' object: {_json}");
+
+		var rawCondition = _params.Value<JObject>(CONDITION_KEY);
 
 		if (rawCondition == null)
-			throw new JsonException($"Expected '{CONDITION_KEY}': {_json}");
+			throw new JsonException($"Expected '{CONDITION_KEY}': {_params}");
 
 		return ConditionRegistry.ParseCondition(rawCondition);
 	}
