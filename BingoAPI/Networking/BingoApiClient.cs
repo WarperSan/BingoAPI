@@ -84,7 +84,7 @@ internal sealed class BingoApiClient : IDisposable
 			Code = settings.Code,
 			Password = settings.Password,
 			Username = settings.Nickname,
-			IsSpectator = settings.IsSpectator
+			IsSpectator = settings.IsSpectator,
 		};
 
 		using var request = new RequestBuilder(_builder)
@@ -152,7 +152,7 @@ internal sealed class BingoApiClient : IDisposable
 		{
 			Code = room,
 			Team = team,
-			Index = (index + 1).ToString()
+			Index = (index + 1).ToString(),
 		};
 
 		using var request = new RequestBuilder(_builder)
@@ -179,7 +179,7 @@ internal sealed class BingoApiClient : IDisposable
 		{
 			Code = room,
 			Team = team,
-			Index = (index + 1).ToString()
+			Index = (index + 1).ToString(),
 		};
 
 		using var request = new RequestBuilder(_builder)
@@ -200,7 +200,7 @@ internal sealed class BingoApiClient : IDisposable
 		var body = new ApiSendMessageRequest
 		{
 			Code = room,
-			Message = message
+			Message = message,
 		};
 
 		using var request = new RequestBuilder(_builder)
@@ -221,7 +221,7 @@ internal sealed class BingoApiClient : IDisposable
 		var body = new ApiChangeTeamRequest
 		{
 			Code = room,
-			Team = team
+			Team = team,
 		};
 
 		using var request = new RequestBuilder(_builder)

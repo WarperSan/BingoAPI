@@ -1,4 +1,3 @@
-using System.Net.Mime;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -100,7 +99,7 @@ public sealed class RequestBuilder
 		_content = new StringContent(
 			serializedJson,
 			Encoding.UTF8,
-			MediaTypeNames.Application.Json
+			"application/json"
 		);
 
 		return this;

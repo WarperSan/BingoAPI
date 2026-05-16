@@ -23,5 +23,5 @@ public enum Team : ushort
 	Teal = 1 << 7,
 	Blue = 1 << 8,
 	Navy = 1 << 9,
-	Purple = 1 << 10
+	Purple = 1 << 10,
 }

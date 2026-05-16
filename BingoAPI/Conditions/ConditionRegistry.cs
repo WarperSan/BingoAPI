@@ -15,8 +15,10 @@ public static class ConditionRegistry
 	/// </summary>
 	public static void Register(string action, Func<ConditionData, ICondition> factory)
 	{
-		if (!Factories.TryAdd(action, factory))
+		if (Factories.ContainsKey(action))
 			throw new InvalidOperationException($"A condition is already registered under '{action}'.");
+
+		Factories.Add(action, factory);
 	}
 
 	/// <summary>

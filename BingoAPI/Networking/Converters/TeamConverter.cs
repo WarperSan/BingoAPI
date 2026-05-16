@@ -20,7 +20,7 @@ internal class TeamConverter : JsonConverter<Team>
 		["blue"] = Team.Blue,
 		["navy"] = Team.Navy,
 		["purple"] = Team.Purple,
-		["blank"] = Team.None
+		["blank"] = Team.None,
 	};
 
 	/// <inheritdoc />
@@ -44,10 +44,10 @@ internal class TeamConverter : JsonConverter<Team>
 
 	/// <inheritdoc />
 	public override Team ReadJson(
-		JsonReader     reader,
-		Type           objectType,
-		Team           existingValue,
-		bool           hasExistingValue,
+		JsonReader reader,
+		Type objectType,
+		Team existingValue,
+		bool hasExistingValue,
 		JsonSerializer serializer
 	)
 	{
@@ -56,7 +56,7 @@ internal class TeamConverter : JsonConverter<Team>
 
 		var result = Team.None;
 
-		foreach (var part in rawTeam.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+		foreach (var part in rawTeam.Split([' '], StringSplitOptions.RemoveEmptyEntries))
 		{
 			if (!TeamMappings.TryGetValue(part, out var team))
 				throw new InvalidOperationException($"Unknown team '{part}'");

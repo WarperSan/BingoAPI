@@ -37,11 +37,13 @@ internal sealed class BingoSocketClient : IDisposable
 
 			var json = JsonConvert.SerializeObject(new
 			{
-				socket_key = socketKey
+				socket_key = socketKey,
 			});
 
 			await socket.SendAsync(
-				Encoding.UTF8.GetBytes(json),
+				new ArraySegment<byte>(
+					Encoding.UTF8.GetBytes(json)
+				),
 				WebSocketMessageType.Text,
 				true,
 				ct
@@ -131,7 +133,10 @@ internal sealed class BingoSocketClient : IDisposable
 
 			do
 			{
-				result = await socket.ReceiveAsync(buffer, ct);
+				result = await socket.ReceiveAsync(
+					new ArraySegment<byte>(buffer),
+					ct
+				);
 				ms.Write(buffer, 0, result.Count);
 			} while (!result.EndOfMessage);
 

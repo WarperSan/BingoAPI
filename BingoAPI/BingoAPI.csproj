@@ -4,7 +4,7 @@
 	<PropertyGroup>
 		<AssemblyName>BingoAPI</AssemblyName>
 		<Product>BingoAPI</Product>
-		<TargetFramework>netstandard2.1</TargetFramework>
+		<TargetFramework>netstandard2.0</TargetFramework>
 		<RootNamespace>BingoAPI</RootNamespace>
 
 		<BepInExInstallPath>/home/warpersan/.var/app/com.github.ebkr.r2modman/config/r2modmanPlus-local/HollowKnightSilksong/profiles/Default</BepInExInstallPath>

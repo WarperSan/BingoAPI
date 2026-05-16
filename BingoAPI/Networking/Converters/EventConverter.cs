@@ -53,7 +53,7 @@ internal class EventConverter : JsonConverter<IBingoEvent>
 				{
 					"connected" => true,
 					"disconnected" => false,
-					_ => throw new JsonException($"Unknown 'event_type': '{connectionType}'")
+					_ => throw new JsonException($"Unknown 'event_type': '{connectionType}'"),
 				};
 
 				evt = connectionEvt;

@@ -24,15 +24,23 @@ public sealed class GoalPool
 	{
 		foreach (var goal in goals)
 		{
-			if (_goals.TryAdd(goal.Name, goal))
+			if (_goals.ContainsKey(goal.Name))
+			{
+				Log.Warning($"Goal skipped, because another goal has the same name: '{goal.Name}'");
 				continue;
-
-			Log.Warning($"Goal skipped, because another goal has the same name: '{goal.Name}'");
+			}
+			_goals.Add(goal.Name, goal);
 		}
 	}
 
 	/// <summary>
 	/// Finds a <see cref="Goal"/> by name
 	/// </summary>
-	public Goal? Find(string name) => _goals.GetValueOrDefault(name);
+	public Goal? Find(string name)
+	{
+		if (_goals.TryGetValue(name, out var goal))
+			return goal;
+
+		return null;
+	}
 }
