@@ -1,6 +1,6 @@
 using BingoAPI.Networking;
 
-namespace BingoAPI.Models;
+namespace BingoAPI.Models.Settings;
 
 /// <summary>
 /// Data used to join a room when calling <see cref="BingoApiClient.JoinRoom"/>

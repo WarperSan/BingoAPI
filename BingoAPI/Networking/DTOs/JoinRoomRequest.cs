@@ -5,7 +5,7 @@ namespace BingoAPI.Networking.DTOs;
 /// <summary>
 /// Model used as the request's payload of <see cref="BingoApiClient.JoinRoom"/>
 /// </summary>
-public record ApiJoinRoomRequest
+public record JoinRoomRequest
 {
 	[JsonProperty("room")]
 	public string Code = string.Empty;
@@ -18,14 +18,4 @@ public record ApiJoinRoomRequest
 
 	[JsonProperty("is_spectator")]
 	public bool IsSpectator;
-}
-
-/// <summary>
-/// Model used as the response's payload of <see cref="BingoApiClient.JoinRoom"/>
-/// </summary>
-public record ApiJoinRoomResponse
-{
-	[JsonProperty("socket_key")]
-	[JsonRequired]
-	public string SocketKey = string.Empty;
 }

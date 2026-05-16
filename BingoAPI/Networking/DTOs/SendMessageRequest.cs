@@ -5,7 +5,7 @@ namespace BingoAPI.Networking.DTOs;
 /// <summary>
 /// Model used as the request's payload of <see cref="BingoApiClient.SendMessage"/>
 /// </summary>
-public record ApiSendMessageRequest
+public record SendMessageRequest
 {
 	[JsonProperty("room")]
 	public string Code = string.Empty;
@@ -13,4 +13,3 @@ public record ApiSendMessageRequest
 	[JsonProperty("text")]
 	public string Message = string.Empty;
 }
-

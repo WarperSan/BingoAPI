@@ -6,7 +6,7 @@ namespace BingoAPI.Networking.DTOs;
 /// <summary>
 /// Model used as the request's payload of <see cref="BingoApiClient.ChangeTeam"/>
 /// </summary>
-public record ApiChangeTeamRequest
+public record ChangeTeamRequest
 {
 	[JsonProperty("room")]
 	public string Code = string.Empty;
