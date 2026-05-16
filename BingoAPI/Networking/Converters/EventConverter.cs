@@ -44,6 +44,12 @@ internal class EventConverter : JsonConverter<IBingoEvent>
 			case "color":
 				evt = new ColorEvent();
 				break;
+			case "revealed":
+				evt = new CardRevealEvent();
+				break;
+			case "new-card":
+				evt = new CardGenerateEvent();
+				break;
 			case "connection":
 				var connectionEvt = new ConnectionEvent();
 

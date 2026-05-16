@@ -106,6 +106,33 @@ public sealed class BingoSession : IDisposable
 		}
 	}
 
+	/// <summary>
+	/// Changes the team of the room
+	/// </summary>
+	public async Task<bool> ChangeTeam(Team team, CancellationToken ct = default)
+	{
+		if (!IsConnected)
+		{
+			Log.Error("Tried to change team before being connected.");
+			return false;
+		}
+
+		Log.Info($"Changing team to '{team}' as the player '{Player.UUID}'...");
+
+		try
+		{
+			await _api.ChangeTeam(RoomId, team, ct);
+
+			Log.Info($"Changed team to '{team}' as the player '{Player.UUID}'.");
+			return true;
+		}
+		catch (Exception e)
+		{
+			Log.Error($"Failed to change the team as the player '{Player.UUID}': {e.Message}");
+			return false;
+		}
+	}
+
 	private void OnMessageReceived(string message)
 	{
 		var evt = JsonConvert.DeserializeObject<IBingoEvent>(message);
