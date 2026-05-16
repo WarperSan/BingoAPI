@@ -232,7 +232,9 @@ internal sealed class BingoApiClient : IDisposable
 		using var responseMessage = await SendAsync(request, ct);
 		responseMessage.EnsureSuccessStatusCode();
 
-		return await ParseJson<IBingoEvent[]>(responseMessage);
+		var response = await ParseJson<ApiGetFeedResponse>(responseMessage);
+
+		return response.Events;
 	}
 
 	/// <inheritdoc />
