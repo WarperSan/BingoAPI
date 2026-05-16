@@ -1,7 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.WebSockets;
 using BingoAPI.Events;
-using BingoAPI.Helpers;
 using BingoAPI.Models;
 using BingoAPI.Models.Settings;
 using BingoAPI.Networking.DTOs;
@@ -16,12 +15,13 @@ internal sealed class BingoApiClient : IDisposable
 {
 	// TODO: CreateRoom, NewCard
 
-	private readonly HttpClient _client;
-	private readonly RequestBuilder _builder;
-
 	public BingoApiClient()
 	{
-		_client = new HttpClient();
+		_client = new HttpClient(
+			new LoggingHandler(
+				new HttpClientHandler()
+			)
+		);
 		_client.Timeout = TimeSpan.FromSeconds(30);
 
 		_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(
@@ -32,6 +32,10 @@ internal sealed class BingoApiClient : IDisposable
 		_builder = new RequestBuilder()
 			.ToUri(new Uri("https://bingosync.com"));
 	}
+
+	#region HTTP
+
+	private readonly HttpClient _client;
 
 	/// <summary>
 	/// Parses the JSON response
@@ -48,27 +52,11 @@ internal sealed class BingoApiClient : IDisposable
 		return typedResponse;
 	}
 
-	private async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
-	{
-		Log.Debug($"""
-		           {request.Method} {request.RequestUri?.PathAndQuery} HTTP/{request.Version}
-		           Host: {request.RequestUri?.Host}
-		           {request.Headers}
+	#endregion
 
-		           {await request.Content.ReadAsStringAsync()}
-		           """);
+	#region API
 
-		var response = await _client.SendAsync(request, ct);
-
-		Log.Debug($"""
-		           HTTP/{response.Version} {(int)response.StatusCode} {response.ReasonPhrase}
-		           {response.Headers}
-
-		           {await response.Content.ReadAsStringAsync()}
-		           """);
-
-		return response;
-	}
+	private readonly RequestBuilder _builder;
 
 	/// <summary>
 	/// Joins the room with the given settings
@@ -81,7 +69,7 @@ internal sealed class BingoApiClient : IDisposable
 		CancellationToken ct
 	)
 	{
-		var body = new ApiJoinRoomRequest
+		var body = new JoinRoomRequest
 		{
 			Code = settings.Code,
 			Password = settings.Password,
@@ -95,10 +83,10 @@ internal sealed class BingoApiClient : IDisposable
 							.WithJson(body)
 							.Build();
 
-		using var responseMessage = await SendAsync(request, ct);
+		using var responseMessage = await _client.SendAsync(request, ct);
 		responseMessage.EnsureSuccessStatusCode();
 
-		var response = await ParseJson<ApiJoinRoomResponse>(responseMessage);
+		var response = await ParseJson<JoinRoomResponse>(responseMessage);
 
 		return response.SocketKey;
 	}
@@ -113,7 +101,7 @@ internal sealed class BingoApiClient : IDisposable
 		CancellationToken ct
 	)
 	{
-		var body = new ApiMarkSquareRequest
+		var body = new MarkSquareRequest
 		{
 			Code = room,
 			Team = team,
@@ -126,7 +114,7 @@ internal sealed class BingoApiClient : IDisposable
 							.WithJson(body)
 							.Build();
 
-		using var response = await SendAsync(request, ct);
+		using var response = await _client.SendAsync(request, ct);
 		response.EnsureSuccessStatusCode();
 	}
 
@@ -140,7 +128,7 @@ internal sealed class BingoApiClient : IDisposable
 		CancellationToken ct
 	)
 	{
-		var body = new ApiClearSquareRequest
+		var body = new ClearSquareRequest
 		{
 			Code = room,
 			Team = team,
@@ -153,7 +141,7 @@ internal sealed class BingoApiClient : IDisposable
 							.WithJson(body)
 							.Build();
 
-		using var responseMessage = await SendAsync(request, ct);
+		using var responseMessage = await _client.SendAsync(request, ct);
 		responseMessage.EnsureSuccessStatusCode();
 	}
 
@@ -162,7 +150,7 @@ internal sealed class BingoApiClient : IDisposable
 	/// </summary>
 	public async Task SendMessage(string room, string message, CancellationToken ct)
 	{
-		var body = new ApiSendMessageRequest
+		var body = new SendMessageRequest
 		{
 			Code = room,
 			Message = message,
@@ -174,7 +162,7 @@ internal sealed class BingoApiClient : IDisposable
 							.WithJson(body)
 							.Build();
 
-		using var responseMessage = await SendAsync(request, ct);
+		using var responseMessage = await _client.SendAsync(request, ct);
 		responseMessage.EnsureSuccessStatusCode();
 	}
 
@@ -183,7 +171,7 @@ internal sealed class BingoApiClient : IDisposable
 	/// </summary>
 	public async Task ChangeTeam(string room, Team team, CancellationToken ct)
 	{
-		var body = new ApiChangeTeamRequest
+		var body = new ChangeTeamRequest
 		{
 			Code = room,
 			Team = team,
@@ -195,7 +183,7 @@ internal sealed class BingoApiClient : IDisposable
 							.WithJson(body)
 							.Build();
 
-		using var responseMessage = await SendAsync(request, ct);
+		using var responseMessage = await _client.SendAsync(request, ct);
 		responseMessage.EnsureSuccessStatusCode();
 	}
 
@@ -204,7 +192,7 @@ internal sealed class BingoApiClient : IDisposable
 	/// </summary>
 	public async Task RevealCard(string room, CancellationToken ct)
 	{
-		var body = new ApiRevealCardRequest
+		var body = new RevealCardRequest
 		{
 			Code = room,
 		};
@@ -215,7 +203,7 @@ internal sealed class BingoApiClient : IDisposable
 							.WithJson(body)
 							.Build();
 
-		using var responseMessage = await SendAsync(request, ct);
+		using var responseMessage = await _client.SendAsync(request, ct);
 		responseMessage.EnsureSuccessStatusCode();
 	}
 
@@ -229,13 +217,15 @@ internal sealed class BingoApiClient : IDisposable
 							.ToEndpoint($"/room/{room}/feed")
 							.Build();
 
-		using var responseMessage = await SendAsync(request, ct);
+		using var responseMessage = await _client.SendAsync(request, ct);
 		responseMessage.EnsureSuccessStatusCode();
 
-		var response = await ParseJson<ApiGetFeedResponse>(responseMessage);
+		var response = await ParseJson<GetFeedResponse>(responseMessage);
 
 		return response.Events;
 	}
+
+	#endregion
 
 	/// <inheritdoc />
 	public void Dispose()
