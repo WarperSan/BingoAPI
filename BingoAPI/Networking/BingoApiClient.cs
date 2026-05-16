@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Net.WebSockets;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
+using BingoAPI.Models.Settings;
 using BingoAPI.Networking.DTOs;
 using Newtonsoft.Json;
 
@@ -12,7 +13,7 @@ namespace BingoAPI.Networking;
 /// </summary>
 internal sealed class BingoApiClient : IDisposable
 {
-	// TODO: CreateRoom, RevealCard, GetFeed
+	// TODO: CreateRoom, NewCard, GetFeed
 
 	private readonly HttpClient _client;
 	private readonly RequestBuilder _builder;
@@ -49,12 +50,12 @@ internal sealed class BingoApiClient : IDisposable
 	private async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
 	{
 		Log.Debug($"""
-		          {request.Method} {request.RequestUri?.PathAndQuery} HTTP/{request.Version}
-		          Host: {request.RequestUri?.Host}
-		          {request.Headers}
+		           {request.Method} {request.RequestUri?.PathAndQuery} HTTP/{request.Version}
+		           Host: {request.RequestUri?.Host}
+		           {request.Headers}
 
-		          {await request.Content.ReadAsStringAsync()}
-		          """);
+		           {await request.Content.ReadAsStringAsync()}
+		           """);
 
 		var response = await _client.SendAsync(request, ct);
 
@@ -99,43 +100,6 @@ internal sealed class BingoApiClient : IDisposable
 		var response = await ParseJson<ApiJoinRoomResponse>(responseMessage);
 
 		return response.SocketKey;
-	}
-
-	/// <summary>
-	/// Gets the current board of the room
-	/// </summary>
-	public async Task<Board> GetBoard(string room, CancellationToken ct)
-	{
-		using var request = new RequestBuilder(_builder)
-							.Get()
-							.ToEndpoint($"/room/{room}/board")
-							.Build();
-
-		using var responseMessage = await SendAsync(request, ct);
-		responseMessage.EnsureSuccessStatusCode();
-
-		var response = await ParseJson<Square[]>(responseMessage);
-
-		/*var squares = new Square[response.Length];
-
-		for (var i = 0; i < response.Length; i++)
-		{
-			var item = response[i];
-
-
-			var slot = item.Slot.Replace("slot", "");
-
-			if (!int.TryParse(slot, out var index))
-				throw new InvalidOperationException($"Invalid slot '{slot}'");
-
-			squares[i] = new Square(
-				item.Name,
-				index - 1,
-				item.Team
-			);
-		}*/
-
-		return new Board(response);
 	}
 
 	/// <summary>
