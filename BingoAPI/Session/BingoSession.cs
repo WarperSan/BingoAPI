@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using BingoAPI.Events;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
+using BingoAPI.Models.Settings;
 using BingoAPI.Networking;
 using Newtonsoft.Json;
 
@@ -17,12 +18,11 @@ public sealed class BingoSession : IDisposable
 
 	public readonly EventDispatcher Events = new();
 
-	public string? RoomId { get; private set; }
+	public string? RoomCode { get; private set; }
+	public string? PlayerUUID { get; private set; }
 
-	public Player? Player { get; set; }
-
-	[MemberNotNullWhen(true, nameof(RoomId), nameof(Player))]
-	public bool IsConnected => RoomId != null && Player != null;
+	[MemberNotNullWhen(true, nameof(RoomCode), nameof(PlayerUUID))]
+	public bool IsConnected => RoomCode != null && PlayerUUID != null;
 
 	/// <summary>
 	/// Joins the room with the given settings
@@ -37,12 +37,19 @@ public sealed class BingoSession : IDisposable
 
 			await _socket.Connect(socketKey, OnMessageReceived, ct);
 
+			var socketInfo = await _api.GetSocketInformation(socketKey, ct);
+
+			RoomCode = socketInfo.Code;
+			PlayerUUID = socketInfo.PlayerUUID;
+
+			Events.SetLocalPlayer(PlayerUUID);
+
 			Log.Info($"Room '{settings.Code}' was joined.");
 			return true;
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to join the room '{settings.Code}': {e.Message}");
+			Log.Error($"Failed to join the room '{settings.Code}': {e}");
 			return false;
 		}
 	}
@@ -58,23 +65,23 @@ public sealed class BingoSession : IDisposable
 			return false;
 		}
 
-		var roomId = RoomId;
+		var room = RoomCode;
 
-		Log.Info($"Leaving the room '{roomId}'...");
+		Log.Info($"Leaving the room '{room}'...");
 
 		try
 		{
 			await _socket.Disconnect(ct);
 
-			RoomId = null;
-			Player = null;
+			RoomCode = null;
+			PlayerUUID = null;
 
-			Log.Info($"Left the room '{roomId}'.");
+			Log.Info($"Left the room '{room}'.");
 			return true;
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to disconnected from the room '{roomId}': {e.Message}");
+			Log.Error($"Failed to disconnected from the room '{room}': {e}");
 			return false;
 		}
 	}
@@ -90,18 +97,18 @@ public sealed class BingoSession : IDisposable
 			return false;
 		}
 
-		Log.Info($"Sending the following chat message as the player '{Player.UUID}': '{message}'...");
+		Log.Info($"Sending the following chat message as the player '{PlayerUUID}': '{message}'...");
 
 		try
 		{
-			await _api.SendMessage(RoomId, message, ct);
+			await _api.SendMessage(RoomCode, message, ct);
 
-			Log.Info($"Sent the following chat message as the player '{Player.UUID}': '{message}'.");
+			Log.Info($"Sent the following chat message as the player '{PlayerUUID}': '{message}'.");
 			return true;
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to sent the chat message as the player '{Player.UUID}': {e.Message}");
+			Log.Error($"Failed to sent the chat message as the player '{PlayerUUID}': {e}");
 			return false;
 		}
 	}
@@ -117,18 +124,18 @@ public sealed class BingoSession : IDisposable
 			return false;
 		}
 
-		Log.Info($"Changing team to '{team}' as the player '{Player.UUID}'...");
+		Log.Info($"Changing team to '{team}' as the player '{PlayerUUID}'...");
 
 		try
 		{
-			await _api.ChangeTeam(RoomId, team, ct);
+			await _api.ChangeTeam(RoomCode, team, ct);
 
-			Log.Info($"Changed team to '{team}' as the player '{Player.UUID}'.");
+			Log.Info($"Changed team to '{team}' as the player '{PlayerUUID}'.");
 			return true;
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to change the team as the player '{Player.UUID}': {e.Message}");
+			Log.Error($"Failed to change the team as the player '{PlayerUUID}': {e}");
 			return false;
 		}
 	}
@@ -149,7 +156,7 @@ public sealed class BingoSession : IDisposable
 		try
 		{
 			await _api.MarkSquare(
-				RoomId,
+				RoomCode,
 				team,
 				index,
 				ct
@@ -160,7 +167,7 @@ public sealed class BingoSession : IDisposable
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to mark the square #{index} for the team '{team}': {e.Message}");
+			Log.Error($"Failed to mark the square #{index} for the team '{team}': {e}");
 			return false;
 		}
 	}
@@ -181,7 +188,7 @@ public sealed class BingoSession : IDisposable
 		try
 		{
 			await _api.ClearSquare(
-				RoomId,
+				RoomCode,
 				team,
 				index,
 				ct
@@ -192,7 +199,7 @@ public sealed class BingoSession : IDisposable
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to clear the square #{index} for the team '{team}': {e.Message}");
+			Log.Error($"Failed to clear the square #{index} for the team '{team}': {e}");
 			return false;
 		}
 	}
@@ -211,7 +218,7 @@ public sealed class BingoSession : IDisposable
 		try
 		{
 			await _api.RevealCard(
-				RoomId,
+				RoomCode,
 				ct
 			);
 
@@ -220,7 +227,7 @@ public sealed class BingoSession : IDisposable
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to reveal the card: {e.Message}");
+			Log.Error($"Failed to reveal the card: {e}");
 			return false;
 		}
 	}
@@ -233,13 +240,6 @@ public sealed class BingoSession : IDisposable
 		{
 			Log.Warning($"Failed to deserialize the message into a '{typeof(IBingoEvent)}': {message}");
 			return;
-		}
-
-		if (!IsConnected && evt is ConnectionEvent e && e.IsConnected)
-		{
-			RoomId = e.RoomId;
-			Player = e.Player;
-			Events.SetLocalPlayer(Player);
 		}
 
 		Events.Dispatch(evt);

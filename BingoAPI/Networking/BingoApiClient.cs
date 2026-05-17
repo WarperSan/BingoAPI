@@ -203,6 +203,22 @@ internal sealed class BingoApiClient : IDisposable
 		return response.Events;
 	}
 
+	/// <summary>
+	/// Gets the information related to the given socket key
+	/// </summary>
+	public async Task<GetSocketInformationResponse> GetSocketInformation(string socketKey, CancellationToken ct)
+	{
+		using var request = new RequestBuilder(_builder)
+							.Get()
+							.ToEndpoint($"/api/socket/{socketKey}")
+							.Build();
+
+		using var responseMessage = await _client.SendAsync(request, ct);
+		responseMessage.EnsureSuccessStatusCode();
+
+		return await responseMessage.ParseJson<GetSocketInformationResponse>();
+	}
+
 	/// <inheritdoc />
 	public void Dispose()
 	{
