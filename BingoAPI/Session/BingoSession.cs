@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using BingoAPI.Events;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
