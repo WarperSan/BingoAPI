@@ -18,11 +18,11 @@ public sealed class BingoSession : IDisposable
 
 	public readonly EventDispatcher Events = new();
 
-	public string? RoomCode { get; private set; }
-	public string? PlayerUUID { get; private set; }
+	private string? _roomCode;
+	private string? _playerUUID;
 
-	[MemberNotNullWhen(true, nameof(RoomCode), nameof(PlayerUUID))]
-	public bool IsConnected => RoomCode != null && PlayerUUID != null;
+	[MemberNotNullWhen(true, nameof(_roomCode), nameof(_playerUUID))]
+	private bool IsConnected => _roomCode != null && _playerUUID != null;
 
 	/// <summary>
 	/// Joins the room with the given settings
@@ -39,10 +39,10 @@ public sealed class BingoSession : IDisposable
 
 			var socketInfo = await _api.GetSocketInformation(socketKey, ct);
 
-			RoomCode = socketInfo.Code;
-			PlayerUUID = socketInfo.PlayerUUID;
+			_roomCode = socketInfo.Code;
+			_playerUUID = socketInfo.PlayerUUID;
 
-			Events.SetLocalPlayer(PlayerUUID);
+			Events.SetLocalPlayer(_playerUUID);
 
 			Log.Info($"Room '{settings.Code}' was joined.");
 			return true;
@@ -65,7 +65,7 @@ public sealed class BingoSession : IDisposable
 			return false;
 		}
 
-		var room = RoomCode;
+		var room = _roomCode;
 
 		Log.Info($"Leaving the room '{room}'...");
 
@@ -73,8 +73,8 @@ public sealed class BingoSession : IDisposable
 		{
 			await _socket.Disconnect(ct);
 
-			RoomCode = null;
-			PlayerUUID = null;
+			_roomCode = null;
+			_playerUUID = null;
 
 			Log.Info($"Left the room '{room}'.");
 			return true;
@@ -97,18 +97,18 @@ public sealed class BingoSession : IDisposable
 			return false;
 		}
 
-		Log.Info($"Sending the following chat message as the player '{PlayerUUID}': '{message}'...");
+		Log.Info($"Sending the following chat message as the player '{_playerUUID}': '{message}'...");
 
 		try
 		{
-			await _api.SendMessage(RoomCode, message, ct);
+			await _api.SendMessage(_roomCode, message, ct);
 
-			Log.Info($"Sent the following chat message as the player '{PlayerUUID}': '{message}'.");
+			Log.Info($"Sent the following chat message as the player '{_playerUUID}': '{message}'.");
 			return true;
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to sent the chat message as the player '{PlayerUUID}': {e}");
+			Log.Error($"Failed to sent the chat message as the player '{_playerUUID}': {e}");
 			return false;
 		}
 	}
@@ -124,18 +124,18 @@ public sealed class BingoSession : IDisposable
 			return false;
 		}
 
-		Log.Info($"Changing team to '{team}' as the player '{PlayerUUID}'...");
+		Log.Info($"Changing team to '{team}' as the player '{_playerUUID}'...");
 
 		try
 		{
-			await _api.ChangeTeam(RoomCode, team, ct);
+			await _api.ChangeTeam(_roomCode, team, ct);
 
-			Log.Info($"Changed team to '{team}' as the player '{PlayerUUID}'.");
+			Log.Info($"Changed team to '{team}' as the player '{_playerUUID}'.");
 			return true;
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to change the team as the player '{PlayerUUID}': {e}");
+			Log.Error($"Failed to change the team as the player '{_playerUUID}': {e}");
 			return false;
 		}
 	}
@@ -156,7 +156,7 @@ public sealed class BingoSession : IDisposable
 		try
 		{
 			await _api.MarkSquare(
-				RoomCode,
+				_roomCode,
 				team,
 				index,
 				ct
@@ -188,7 +188,7 @@ public sealed class BingoSession : IDisposable
 		try
 		{
 			await _api.ClearSquare(
-				RoomCode,
+				_roomCode,
 				team,
 				index,
 				ct
@@ -218,7 +218,7 @@ public sealed class BingoSession : IDisposable
 		try
 		{
 			await _api.RevealCard(
-				RoomCode,
+				_roomCode,
 				ct
 			);
 
