@@ -5,7 +5,7 @@ namespace BingoAPI.Networking.Converters;
 /// <summary>
 /// Converts a <see cref="string"/> to a <see cref="bool"/> if the value is equal to the argument
 /// </summary>
-public class StringEqualConverter : JsonConverter<bool>
+internal class StringEqualConverter : JsonConverter<bool>
 {
 	private readonly string _value;
 

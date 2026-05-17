@@ -7,7 +7,7 @@ namespace BingoAPI.Networking.Converters;
 /// <summary>
 /// Converts <see cref="ICondition"/> to and from a <see cref="string"/>
 /// </summary>
-public class ConditionConverter : JsonConverter<ICondition>
+internal class ConditionConverter : JsonConverter<ICondition>
 {
 	private const string ACTION_KEY = "action";
 
