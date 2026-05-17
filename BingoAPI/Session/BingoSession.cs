@@ -19,17 +19,13 @@ public sealed class BingoSession : IDisposable
 	public readonly EventDispatcher Events = new();
 
 	private string? _roomCode;
-	private string? _playerUUID;
-
-	[MemberNotNullWhen(true, nameof(_roomCode), nameof(_playerUUID))]
-	private bool IsConnected => _roomCode != null && _playerUUID != null;
 
 	/// <summary>
 	/// Joins the room with the given settings
 	/// </summary>
 	public async Task<bool> JoinRoom(JoinRoomSettings settings, CancellationToken ct = default)
 	{
-		if (IsConnected)
+		if (_roomCode != null)
 		{
 			Log.Error("Tried to join a room while being connected.");
 			return false;
@@ -46,9 +42,8 @@ public sealed class BingoSession : IDisposable
 			var socketInfo = await _api.GetSocketInformation(socketKey, ct);
 
 			_roomCode = socketInfo.Code;
-			_playerUUID = socketInfo.PlayerUUID;
 
-			Events.SetLocalPlayer(_playerUUID);
+			Events.SetLocalPlayer(socketInfo.PlayerUUID);
 
 			Log.Info($"Room '{settings.Code}' was joined.");
 			return true;
@@ -65,7 +60,7 @@ public sealed class BingoSession : IDisposable
 	/// </summary>
 	public async Task<bool> LeaveRoom(CancellationToken ct = default)
 	{
-		if (!IsConnected)
+		if (_roomCode == null)
 		{
 			Log.Error("Tried to leave the room before being connected.");
 			return false;
@@ -80,14 +75,13 @@ public sealed class BingoSession : IDisposable
 			await _socket.Disconnect(ct);
 
 			_roomCode = null;
-			_playerUUID = null;
 
 			Log.Info($"Left the room '{room}'.");
 			return true;
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to disconnected from the room '{room}': {e}");
+			Log.Error($"Failed to d_roomCode != null from the room '{room}': {e}");
 			return false;
 		}
 	}
@@ -97,24 +91,24 @@ public sealed class BingoSession : IDisposable
 	/// </summary>
 	public async Task<bool> SendMessage(string message, CancellationToken ct = default)
 	{
-		if (!IsConnected)
+		if (_roomCode == null)
 		{
 			Log.Error("Tried to send a message before being connected.");
 			return false;
 		}
 
-		Log.Info($"Sending the following chat message as the player '{_playerUUID}': '{message}'...");
+		Log.Info($"Sending the following chat message: '{message}'...");
 
 		try
 		{
 			await _api.SendMessage(_roomCode, message, ct);
 
-			Log.Info($"Sent the following chat message as the player '{_playerUUID}': '{message}'.");
+			Log.Info($"Sent the following chat message: '{message}'.");
 			return true;
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to sent the chat message as the player '{_playerUUID}': {e}");
+			Log.Error($"Failed to sent the chat message: {e}");
 			return false;
 		}
 	}
@@ -124,24 +118,24 @@ public sealed class BingoSession : IDisposable
 	/// </summary>
 	public async Task<bool> ChangeTeam(Team team, CancellationToken ct = default)
 	{
-		if (!IsConnected)
+		if (_roomCode == null)
 		{
 			Log.Error("Tried to change team before being connected.");
 			return false;
 		}
 
-		Log.Info($"Changing team to '{team}' as the player '{_playerUUID}'...");
+		Log.Info($"Changing team to '{team}'...");
 
 		try
 		{
 			await _api.ChangeTeam(_roomCode, team, ct);
 
-			Log.Info($"Changed team to '{team}' as the player '{_playerUUID}'.");
+			Log.Info($"Changed team to '{team}'.");
 			return true;
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to change the team as the player '{_playerUUID}': {e}");
+			Log.Error($"Failed to change the team: {e}");
 			return false;
 		}
 	}
@@ -151,7 +145,7 @@ public sealed class BingoSession : IDisposable
 	/// </summary>
 	public async Task<bool> MarkSquare(Team team, int index, CancellationToken ct = default)
 	{
-		if (!IsConnected)
+		if (_roomCode == null)
 		{
 			Log.Error("Tried to mark a square before being connected.");
 			return false;
@@ -183,7 +177,7 @@ public sealed class BingoSession : IDisposable
 	/// </summary>
 	public async Task<bool> ClearSquare(Team team, int index, CancellationToken ct = default)
 	{
-		if (!IsConnected)
+		if (_roomCode == null)
 		{
 			Log.Error("Tried to clear a square before being connected.");
 			return false;
@@ -215,7 +209,7 @@ public sealed class BingoSession : IDisposable
 	/// </summary>
 	public async Task<bool> RevealCard(CancellationToken ct = default)
 	{
-		if (!IsConnected)
+		if (_roomCode == null)
 		{
 			Log.Error("Tried to reveal the card before being connected.");
 			return false;
@@ -245,7 +239,7 @@ public sealed class BingoSession : IDisposable
 	/// </summary>
 	public async Task<RoomSettings?> GetRoomSettings(CancellationToken ct = default)
 	{
-		if (!IsConnected)
+		if (_roomCode == null)
 		{
 			Log.Error("Tried to get the room settings before being connected.");
 			return null;
