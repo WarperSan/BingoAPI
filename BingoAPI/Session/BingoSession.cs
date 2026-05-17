@@ -29,6 +29,12 @@ public sealed class BingoSession : IDisposable
 	/// </summary>
 	public async Task<bool> JoinRoom(JoinRoomSettings settings, CancellationToken ct = default)
 	{
+		if (IsConnected)
+		{
+			Log.Error("Tried to join a room while being connected.");
+			return false;
+		}
+
 		Log.Info($"Joining room '{settings.Code}'...");
 
 		try
@@ -215,6 +221,8 @@ public sealed class BingoSession : IDisposable
 			return false;
 		}
 
+		Log.Info($"Revealing the card in the room '{_roomCode}'...");
+
 		try
 		{
 			await _api.RevealCard(
@@ -222,13 +230,40 @@ public sealed class BingoSession : IDisposable
 				ct
 			);
 
-			Log.Info("Revealed the card.");
+			Log.Info($"Revealed the card in the room '{_roomCode}'.");
 			return true;
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to reveal the card: {e}");
+			Log.Error($"Failed to reveal the card in the room '{_roomCode}': {e}");
 			return false;
+		}
+	}
+
+	/// <summary>
+	/// Gets the setting of the room
+	/// </summary>
+	public async Task<RoomSettings?> GetRoomSettings(CancellationToken ct = default)
+	{
+		if (!IsConnected)
+		{
+			Log.Error("Tried to get the room settings before being connected.");
+			return null;
+		}
+
+		Log.Info($"Getting the room settings of the room '{_roomCode}'...");
+
+		try
+		{
+			var settings = await _api.GetRoomSettings(_roomCode, ct);
+
+			Log.Info($"Got the room settings of the room '{_roomCode}'.");
+			return settings;
+		}
+		catch (Exception e)
+		{
+			Log.Error($"Failed to get the room settings of the room '{_roomCode}': {e}");
+			return null;
 		}
 	}
 

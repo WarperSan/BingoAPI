@@ -219,6 +219,24 @@ internal sealed class BingoApiClient : IDisposable
 		return await responseMessage.ParseJson<GetSocketInformationResponse>();
 	}
 
+	/// <summary>
+	/// Gets the settings of the room
+	/// </summary>
+	public async Task<RoomSettings> GetRoomSettings(string room, CancellationToken ct)
+	{
+		using var request = new RequestBuilder(_builder)
+							.Get()
+							.ToEndpoint($"/room/{room}/room-settings")
+							.Build();
+
+		using var responseMessage = await _client.SendAsync(request, ct);
+		responseMessage.EnsureSuccessStatusCode();
+
+		var response = await responseMessage.ParseJson<GetRoomSettingsResponse>();
+
+		return response.Settings;
+	}
+
 	/// <inheritdoc />
 	public void Dispose()
 	{
