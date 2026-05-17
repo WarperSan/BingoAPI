@@ -6,7 +6,7 @@ namespace BingoAPI.Events;
 /// <summary>
 /// Event sent when a player reveals the card
 /// </summary>
-public record CardRevealedEvent : IBingoEvent
+internal record CardRevealedEvent : IBingoEvent
 {
 	/// <summary>
 	/// Player responsible for this event

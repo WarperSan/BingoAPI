@@ -6,7 +6,7 @@ namespace BingoAPI.Events;
 /// <summary>
 /// Event sent when a player generates a new card
 /// </summary>
-public record CardGeneratedEvent : IBingoEvent
+internal record CardGeneratedEvent : IBingoEvent
 {
 	/// <summary>
 	/// Player responsible for this event
