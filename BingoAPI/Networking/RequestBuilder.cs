@@ -6,7 +6,7 @@ namespace BingoAPI.Networking;
 /// <summary>
 /// Class allowing to build <see cref="HttpRequestMessage"/> with ease
 /// </summary>
-public sealed class RequestBuilder
+internal sealed class RequestBuilder
 {
 	public RequestBuilder()
 	{
