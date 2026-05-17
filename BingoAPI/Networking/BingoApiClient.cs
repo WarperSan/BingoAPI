@@ -1,10 +1,10 @@
 using System.Net.Http.Headers;
 using System.Net.WebSockets;
 using BingoAPI.Events;
+using BingoAPI.Extensions;
 using BingoAPI.Models;
 using BingoAPI.Models.Settings;
 using BingoAPI.Networking.DTOs;
-using Newtonsoft.Json;
 
 namespace BingoAPI.Networking;
 
@@ -14,6 +14,9 @@ namespace BingoAPI.Networking;
 internal sealed class BingoApiClient : IDisposable
 {
 	// TODO: CreateRoom, NewCard
+
+	private readonly HttpClient _client;
+	private readonly RequestBuilder _builder;
 
 	public BingoApiClient()
 	{
@@ -32,31 +35,6 @@ internal sealed class BingoApiClient : IDisposable
 		_builder = new RequestBuilder()
 			.ToUri(new Uri("https://bingosync.com"));
 	}
-
-	#region HTTP
-
-	private readonly HttpClient _client;
-
-	/// <summary>
-	/// Parses the JSON response
-	/// </summary>
-	private static async Task<T> ParseJson<T>(HttpResponseMessage response)
-	{
-		var responseBody = await response.Content.ReadAsStringAsync();
-		var typedResponse = JsonConvert.DeserializeObject<T>(responseBody);
-
-		// ReSharper disable once ConvertIfStatementToReturnStatement
-		if (typedResponse == null)
-			throw new InvalidOperationException($"Failed to deserialize response to {typeof(T).Name}");
-
-		return typedResponse;
-	}
-
-	#endregion
-
-	#region API
-
-	private readonly RequestBuilder _builder;
 
 	/// <summary>
 	/// Joins the room with the given settings
@@ -86,7 +64,7 @@ internal sealed class BingoApiClient : IDisposable
 		using var responseMessage = await _client.SendAsync(request, ct);
 		responseMessage.EnsureSuccessStatusCode();
 
-		var response = await ParseJson<JoinRoomResponse>(responseMessage);
+		var response = await responseMessage.ParseJson<JoinRoomResponse>();
 
 		return response.SocketKey;
 	}
@@ -220,12 +198,10 @@ internal sealed class BingoApiClient : IDisposable
 		using var responseMessage = await _client.SendAsync(request, ct);
 		responseMessage.EnsureSuccessStatusCode();
 
-		var response = await ParseJson<GetFeedResponse>(responseMessage);
+		var response = await responseMessage.ParseJson<GetFeedResponse>();
 
 		return response.Events;
 	}
-
-	#endregion
 
 	/// <inheritdoc />
 	public void Dispose()
