@@ -152,8 +152,6 @@ internal sealed class BingoSocketClient : IDisposable
 
 				Log.Debug("Message received:\n" + message);
 
-				await Task.Delay(1000, ct);
-
 				try
 				{
 					onReceive.Invoke(message);

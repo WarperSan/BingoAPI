@@ -12,12 +12,20 @@ namespace BingoAPI.Session;
 /// </summary>
 public sealed class BingoSession : IDisposable
 {
-	private readonly BingoApiClient _api = new();
+	private readonly BingoApiClient _api;
 	private readonly BingoSocketClient _socket = new();
 
 	public readonly EventDispatcher Events = new();
 
 	private string? _roomCode;
+
+	public BingoSession()
+	{
+		var builder = new RequestBuilder()
+			.ToUri(new Uri("https://bingosync.com"));
+
+		_api = new BingoApiClient(builder);
+	}
 
 	/// <summary>
 	/// Joins the room with the given settings

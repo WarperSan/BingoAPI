@@ -18,7 +18,7 @@ internal sealed class BingoApiClient : IDisposable
 	private readonly HttpClient _client;
 	private readonly RequestBuilder _builder;
 
-	public BingoApiClient()
+	public BingoApiClient(RequestBuilder builder)
 	{
 		_client = new HttpClient(
 			new LoggingHandler(
@@ -32,8 +32,7 @@ internal sealed class BingoApiClient : IDisposable
 			"1.0.0"
 		));
 
-		_builder = new RequestBuilder()
-			.ToUri(new Uri("https://bingosync.com"));
+		_builder = new RequestBuilder(builder);
 	}
 
 	/// <summary>
