@@ -159,6 +159,33 @@ public sealed class BingoSession : IDisposable
 	}
 
 	/// <summary>
+	/// Gets all the <see cref="Square"/> of the room
+	/// </summary>
+	public async Task<Square[]?> GetSquares(CancellationToken ct = default)
+	{
+		if (_roomCode == null)
+		{
+			Log.Error("Tried to get the squares before being connected.");
+			return null;
+		}
+
+		Log.Info($"Getting the squares of the room '{_roomCode}'...");
+
+		try
+		{
+			var squares = await _api.GetSquares(_roomCode, ct);
+
+			Log.Info($"Got {squares.Length} squares for room '{_roomCode}'.");
+			return squares;
+		}
+		catch (Exception e)
+		{
+			Log.Error($"Failed to get squares for room '{_roomCode}': {e}");
+			return null;
+		}
+	}
+
+	/// <summary>
 	/// Marks the square for a team
 	/// </summary>
 	public async Task<bool> MarkSquare(int index, CancellationToken ct = default)

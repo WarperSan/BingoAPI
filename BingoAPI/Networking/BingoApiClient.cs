@@ -171,6 +171,22 @@ internal sealed class BingoApiClient : IDisposable
 	}
 
 	/// <summary>
+	/// Gets all the squares of the room
+	/// </summary>
+	public async Task<Square[]> GetSquares(string room, CancellationToken ct)
+	{
+		using var request = new RequestBuilder(_builder)
+							.Get()
+							.ToEndpoint($"/room/{room}/board")
+							.Build();
+
+		using var responseMessage = await _client.SendAsync(request, ct);
+		responseMessage.EnsureSuccessStatusCode();
+
+		return await responseMessage.ParseJson<Square[]>();
+	}
+
+	/// <summary>
 	/// Reveals the card in the room
 	/// </summary>
 	public async Task RevealCard(string room, CancellationToken ct)
