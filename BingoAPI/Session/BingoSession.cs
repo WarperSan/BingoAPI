@@ -15,12 +15,17 @@ public sealed class BingoSession : IDisposable
 	private readonly BingoApiClient _api = new();
 	private readonly BingoSocketClient _socket = new();
 
-	public readonly EventDispatcher Events = new();
+	private readonly EventDispatcher _dispatcher;
 
 	private string? _roomCode;
 
+	public BingoSession(EventDispatcher dispatcher)
+	{
+		_dispatcher = dispatcher;
+	}
+
 	/// <summary>
-	/// Joins the room with the given settings
+	/// Joins the room
 	/// </summary>
 	public async Task<bool> JoinRoom(JoinRoomSettings settings, CancellationToken ct = default)
 	{
@@ -42,7 +47,7 @@ public sealed class BingoSession : IDisposable
 
 			_roomCode = socketInfo.Code;
 
-			Events.SetLocalPlayer(socketInfo.PlayerUUID);
+			_dispatcher.SetLocalPlayer(socketInfo.PlayerUUID);
 
 			Log.Info($"Room '{settings.Code}' was joined.");
 			return true;
@@ -80,7 +85,7 @@ public sealed class BingoSession : IDisposable
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to d_roomCode != null from the room '{room}': {e}");
+			Log.Error($"Failed to leave the room '{room}: {e}");
 			return false;
 		}
 	}
@@ -113,7 +118,7 @@ public sealed class BingoSession : IDisposable
 	}
 
 	/// <summary>
-	/// Changes the team of the room
+	/// Changes the player's team
 	/// </summary>
 	public async Task<bool> ChangeTeam(Team team, CancellationToken ct = default)
 	{
@@ -140,7 +145,7 @@ public sealed class BingoSession : IDisposable
 	}
 
 	/// <summary>
-	/// Marks the square at the given index for a certain team
+	/// Marks the square for a team
 	/// </summary>
 	public async Task<bool> MarkSquare(Team team, int index, CancellationToken ct = default)
 	{
@@ -172,7 +177,7 @@ public sealed class BingoSession : IDisposable
 	}
 
 	/// <summary>
-	/// Clears the square at the given index for a certain team
+	/// Clears the square for a team
 	/// </summary>
 	public async Task<bool> ClearSquare(Team team, int index, CancellationToken ct = default)
 	{
@@ -204,7 +209,7 @@ public sealed class BingoSession : IDisposable
 	}
 
 	/// <summary>
-	/// Reveals the card in the room
+	/// Reveals the card for the room
 	/// </summary>
 	public async Task<bool> RevealCard(CancellationToken ct = default)
 	{
@@ -214,7 +219,7 @@ public sealed class BingoSession : IDisposable
 			return false;
 		}
 
-		Log.Info($"Revealing the card in the room '{_roomCode}'...");
+		Log.Info($"Revealing the card for the room '{_roomCode}'...");
 
 		try
 		{
@@ -223,12 +228,12 @@ public sealed class BingoSession : IDisposable
 				ct
 			);
 
-			Log.Info($"Revealed the card in the room '{_roomCode}'.");
+			Log.Info($"Revealed the card for the room '{_roomCode}'.");
 			return true;
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to reveal the card in the room '{_roomCode}': {e}");
+			Log.Error($"Failed to reveal the card for the room '{_roomCode}': {e}");
 			return false;
 		}
 	}
@@ -270,7 +275,7 @@ public sealed class BingoSession : IDisposable
 			return;
 		}
 
-		Events.Dispatch(evt);
+		_dispatcher.Dispatch(evt);
 	}
 
 	/// <inheritdoc />
