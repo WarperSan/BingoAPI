@@ -1,5 +1,4 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using BingoAPI.Conditions.BuiltIn;
 
 namespace BingoAPI.Conditions;
 
@@ -9,6 +8,14 @@ namespace BingoAPI.Conditions;
 public static class ConditionRegistry
 {
 	private static readonly Dictionary<string, Func<ConditionData, ICondition>> Factories = new(StringComparer.OrdinalIgnoreCase);
+
+	static ConditionRegistry()
+	{
+		Register("AND", AndCondition.Create);
+		Register("OR", OrCondition.Create);
+		Register("NOT", NotCondition.Create);
+		Register("SOME", SomeCondition.Create);
+	}
 
 	/// <summary>
 	/// Registers a condition factory under the given action key

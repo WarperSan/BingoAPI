@@ -7,11 +7,18 @@ internal sealed class NotCondition : ICondition
 {
 	private readonly ICondition _condition;
 
-	public NotCondition(ICondition condition)
+	private NotCondition(ICondition condition)
 	{
 		_condition = condition;
 	}
 
 	/// <inheritdoc/>
 	public bool IsMet() => !_condition.IsMet();
+
+	public static ICondition Create(ConditionData data)
+	{
+		var child = data.GetChild();
+
+		return new NotCondition(child);
+	}
 }

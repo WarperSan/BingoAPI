@@ -8,7 +8,7 @@ internal sealed class SomeCondition : ICondition
 	private readonly uint _amount;
 	private readonly ICondition[] _conditions;
 
-	public SomeCondition(uint amount, params ICondition[] conditions)
+	private SomeCondition(uint amount, params ICondition[] conditions)
 	{
 		_amount = amount;
 		_conditions = conditions;
@@ -34,5 +34,13 @@ internal sealed class SomeCondition : ICondition
 		}
 
 		return false;
+	}
+
+	public static ICondition Create(ConditionData data)
+	{
+		var children = data.GetChildren();
+		var amount = data.GetOptionalParam<uint>("amount", 1);
+
+		return new SomeCondition(amount, children);
 	}
 }
