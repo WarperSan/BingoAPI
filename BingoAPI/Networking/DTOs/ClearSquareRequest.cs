@@ -6,7 +6,7 @@ namespace BingoAPI.Networking.DTOs;
 /// <summary>
 /// Model used as the request's payload of <see cref="BingoApiClient.ClearSquare"/>
 /// </summary>
-public record ClearSquareRequest
+internal record ClearSquareRequest
 {
 	[JsonProperty("room")]
 	public string Code = string.Empty;

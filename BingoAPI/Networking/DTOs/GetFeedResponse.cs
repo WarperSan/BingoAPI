@@ -6,7 +6,7 @@ namespace BingoAPI.Networking.DTOs;
 /// <summary>
 /// Model used as the response's payload of <see cref="BingoApiClient.GetFeed"/>
 /// </summary>
-public record GetFeedResponse
+internal record GetFeedResponse
 {
 	[JsonProperty("events")]
 	[JsonRequired]

@@ -5,7 +5,7 @@ namespace BingoAPI.Networking.DTOs;
 /// <summary>
 /// Model used as the response's payload of <see cref="BingoApiClient.JoinRoom"/>
 /// </summary>
-public record JoinRoomResponse
+internal record JoinRoomResponse
 {
 	[JsonProperty("socket_key")]
 	[JsonRequired]

@@ -6,7 +6,7 @@ namespace BingoAPI.Networking.DTOs;
 /// <summary>
 /// Model used as the response's payload of <see cref="BingoApiClient.GetRoomSettings"/>
 /// </summary>
-public record GetRoomSettingsResponse
+internal record GetRoomSettingsResponse
 {
 	[JsonProperty("settings")]
 	[JsonRequired]

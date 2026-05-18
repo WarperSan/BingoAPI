@@ -5,7 +5,7 @@ namespace BingoAPI.Networking.DTOs;
 /// <summary>
 /// Model used as the response's payload of <see cref="BingoApiClient.GetSocketInformation"/>
 /// </summary>
-public record GetSocketInformationResponse
+internal record GetSocketInformationResponse
 {
 	[JsonProperty("room")]
 	[JsonRequired]
