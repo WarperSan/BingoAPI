@@ -207,7 +207,13 @@ public sealed class BingoSession : IDisposable
 			return false;
 		}
 
-		Log.Info($"Clearing the square #{index} for the team '{team}'...");
+		if (Team == Team.None)
+		{
+			Log.Error("Tried to clear a square without being in a team.");
+			return false;
+		}
+
+		Log.Info($"Clearing the square #{index} for the team '{Team}'...");
 
 		try
 		{
