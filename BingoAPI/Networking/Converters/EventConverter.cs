@@ -31,31 +31,16 @@ internal class EventConverter : JsonConverter<IBingoEvent>
 
 		var type = obj.Value<string>("type");
 
-		IBingoEvent evt;
-
-		switch (type)
+		IBingoEvent evt = type switch
 		{
-			case "chat":
-				evt = new ChatEvent();
-				break;
-			case "goal":
-				evt = new GoalEvent();
-				break;
-			case "color":
-				evt = new ColorEvent();
-				break;
-			case "revealed":
-				evt = new CardRevealedEvent();
-				break;
-			case "new-card":
-				evt = new CardGeneratedEvent();
-				break;
-			case "connection":
-				evt = new ConnectionEvent();
-				break;
-			default:
-				throw new InvalidOperationException($"No event was found of type '{type}': {obj}");
-		}
+			"chat" => new ChatEvent(),
+			"goal" => new GoalEvent(),
+			"color" => new ColorEvent(),
+			"revealed" => new CardRevealedEvent(),
+			"new-card" => new CardGeneratedEvent(),
+			"connection" => new ConnectionEvent(),
+			_ => throw new InvalidOperationException($"No event was found of type '{type}': {obj}")
+		};
 
 		serializer.Populate(obj.CreateReader(), evt);
 		return evt;
