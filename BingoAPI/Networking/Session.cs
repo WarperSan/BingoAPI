@@ -2,15 +2,14 @@ using BingoAPI.Events;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
 using BingoAPI.Models.Settings;
-using BingoAPI.Networking;
 using Newtonsoft.Json;
 
-namespace BingoAPI.Session;
+namespace BingoAPI.Networking;
 
 /// <summary>
 /// Represents an active connection to a room
 /// </summary>
-public sealed class BingoSession : IDisposable
+public sealed class Session : IDisposable
 {
 	private readonly BingoApiClient _api = new();
 	private readonly BingoSocketClient _socket = new();
@@ -24,7 +23,7 @@ public sealed class BingoSession : IDisposable
 	/// </summary>
 	public Team Team { get; private set; } = Team.None;
 
-	public BingoSession(EventDispatcher dispatcher)
+	public Session(EventDispatcher dispatcher)
 	{
 		_dispatcher = dispatcher;
 	}
