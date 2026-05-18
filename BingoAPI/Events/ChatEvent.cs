@@ -13,19 +13,19 @@ internal record ChatEvent : IBingoEvent
 	/// </summary>
 	[JsonProperty("player")]
 	[JsonRequired]
-	public Player Player = null!;
+	public readonly Player Player = null!;
 
 	/// <summary>
 	/// Time when this event was sent
 	/// </summary>
 	[JsonProperty("timestamp")]
 	[JsonRequired]
-	public ulong Timestamp;
+	public readonly ulong Timestamp;
 
 	/// <summary>
 	/// Content of the message sent
 	/// </summary>
 	[JsonProperty("text")]
 	[JsonRequired]
-	public string Text = string.Empty;
+	public readonly string Text = string.Empty;
 }

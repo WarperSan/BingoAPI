@@ -3,6 +3,9 @@ using Newtonsoft.Json;
 
 namespace BingoAPI.Models;
 
+/// <summary>
+/// Represents a square on a bingo card
+/// </summary>
 public record Square
 {
 	/// <summary>
@@ -10,7 +13,7 @@ public record Square
 	/// </summary>
 	[JsonProperty("name")]
 	[JsonRequired]
-	public string Name = string.Empty;
+	public readonly string Name = string.Empty;
 
 	/// <summary>
 	/// Index of this square
@@ -18,12 +21,12 @@ public record Square
 	[JsonProperty("slot")]
 	[JsonRequired]
 	[JsonConverter(typeof(SlotIndexConverter))]
-	public int Index;
+	public readonly int Index;
 
 	/// <summary>
 	/// Teams currently owning this square
 	/// </summary>
 	[JsonProperty("colors")]
 	[JsonRequired]
-	public Team Teams = Team.None;
+	public readonly Team Teams = Team.None;
 }

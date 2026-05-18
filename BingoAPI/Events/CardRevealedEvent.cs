@@ -13,12 +13,12 @@ internal record CardRevealedEvent : IBingoEvent
 	/// </summary>
 	[JsonProperty("player")]
 	[JsonRequired]
-	public Player Player = null!;
+	public readonly Player Player = null!;
 
 	/// <summary>
 	/// Time when this event was sent
 	/// </summary>
 	[JsonProperty("timestamp")]
 	[JsonRequired]
-	public ulong Timestamp;
+	public readonly ulong Timestamp;
 }

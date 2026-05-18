@@ -13,26 +13,26 @@ internal record GoalEvent : IBingoEvent
 	/// </summary>
 	[JsonProperty("player")]
 	[JsonRequired]
-	public Player Player = null!;
+	public readonly Player Player = null!;
 
 	/// <summary>
 	/// Time when this event was sent
 	/// </summary>
 	[JsonProperty("timestamp")]
 	[JsonRequired]
-	public ulong Timestamp;
+	public readonly ulong Timestamp;
 
 	/// <summary>
 	/// Square modified by this event
 	/// </summary>
 	[JsonProperty("square")]
 	[JsonRequired]
-	public Square Square = null!;
+	public readonly Square Square = null!;
 
 	/// <summary>
 	/// Defines if the selected square has been cleared or marked
 	/// </summary>
 	[JsonProperty("remove")]
 	[JsonRequired]
-	public bool HasBeenCleared;
+	public readonly bool HasBeenCleared;
 }

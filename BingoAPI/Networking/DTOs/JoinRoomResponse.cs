@@ -9,5 +9,5 @@ internal record JoinRoomResponse
 {
 	[JsonProperty("socket_key")]
 	[JsonRequired]
-	public string SocketKey = string.Empty;
+	public readonly string SocketKey = string.Empty;
 }

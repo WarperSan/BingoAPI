@@ -10,5 +10,5 @@ internal record GetFeedResponse
 {
 	[JsonProperty("events")]
 	[JsonRequired]
-	public IBingoEvent[] Events = [];
+	public readonly IBingoEvent[] Events = [];
 }

@@ -10,5 +10,5 @@ internal record GetRoomSettingsResponse
 {
 	[JsonProperty("settings")]
 	[JsonRequired]
-	public RoomSettings Settings { get; set; }
+	public readonly RoomSettings Settings;
 }

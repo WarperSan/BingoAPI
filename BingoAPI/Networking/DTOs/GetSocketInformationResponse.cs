@@ -9,9 +9,9 @@ internal record GetSocketInformationResponse
 {
 	[JsonProperty("room")]
 	[JsonRequired]
-	public string Code = string.Empty;
+	public readonly string Code = string.Empty;
 
 	[JsonProperty("player")]
 	[JsonRequired]
-	public string PlayerUUID = string.Empty;
+	public readonly string PlayerUUID = string.Empty;
 }

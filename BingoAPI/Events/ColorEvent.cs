@@ -13,26 +13,26 @@ internal record ColorEvent : IBingoEvent
 	/// </summary>
 	[JsonProperty("player")]
 	[JsonRequired]
-	public Player Player = null!;
+	public readonly Player Player = null!;
 
 	/// <summary>
 	/// Previous color of the player
 	/// </summary>
 	[JsonProperty("player_color")]
 	[JsonRequired]
-	public Team PreviousColor;
+	public readonly Team PreviousColor;
 
 	/// <summary>
 	/// New color of the player
 	/// </summary>
 	[JsonProperty("color")]
 	[JsonRequired]
-	public Team NewColor;
+	public readonly Team NewColor;
 
 	/// <summary>
 	/// Time when this event was sent
 	/// </summary>
 	[JsonProperty("timestamp")]
 	[JsonRequired]
-	public ulong Timestamp;
+	public readonly ulong Timestamp;
 }
