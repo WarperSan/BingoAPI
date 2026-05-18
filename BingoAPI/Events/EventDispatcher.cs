@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using BingoAPI.Models;
 
 namespace BingoAPI.Events;
@@ -5,6 +6,7 @@ namespace BingoAPI.Events;
 /// <summary>
 /// Dispatches incoming <see cref="IBingoEvent"/> into respective callbacks
 /// </summary>
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public sealed class EventDispatcher
 {
 	private string? _localUUID;

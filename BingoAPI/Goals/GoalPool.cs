@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using BingoAPI.Helpers;
 using Newtonsoft.Json;
 
@@ -6,6 +7,8 @@ namespace BingoAPI.Goals;
 /// <summary>
 /// Holds all <see cref="Goal"/> instances available for a bingo match
 /// </summary>
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class GoalPool
 {
 	private readonly Dictionary<string, Goal> _goals = new(StringComparer.OrdinalIgnoreCase);
