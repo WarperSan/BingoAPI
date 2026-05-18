@@ -1,11 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
-using BingoAPI.Helpers;
-using Newtonsoft.Json;
 
 namespace BingoAPI.Goals;
 
 /// <summary>
-/// Holds all <see cref="Goal"/> instances available for a bingo match
+/// Collection of <see cref="Goal"/> instances, accessible by name
 /// </summary>
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
@@ -14,60 +12,34 @@ public sealed class GoalPool
 	private readonly Dictionary<string, Goal> _goals = new(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>
-	/// All <see cref="Goal"/> currently in the pool
+	/// Adds the given <see cref="Goal"/> to this pool
 	/// </summary>
-	public IReadOnlyCollection<Goal> Goals => _goals.Values;
-
-	/// <summary>
-	/// Adds the given <see cref="Goal"/> to the pool
-	/// </summary>
-	/// <remarks>
-	/// If two instances in the pool have the same <see cref="Goal.Name"/>, only the first one will be kept
-	/// </remarks>
-	public void Add(IEnumerable<Goal> goals)
+	public void Add(Goal goal)
 	{
-		foreach (var goal in goals)
-		{
-			if (_goals.ContainsKey(goal.Name))
-			{
-				Log.Warning($"Goal skipped, because another goal has the same name: '{goal.Name}'");
-				continue;
-			}
-			_goals.Add(goal.Name, goal);
-		}
+		var succeeded = TryAdd(goal);
+
+		if (!succeeded)
+			throw new ArgumentException("The goal has already been added.", nameof(goal));
 	}
 
 	/// <summary>
-	/// Finds a <see cref="Goal"/> by name
+	/// Tries to add the given <see cref="Goal"/> to this pool
 	/// </summary>
-	public Goal? Find(string name)
+	/// <returns>Success of the attempt</returns>
+	public bool TryAdd(Goal goal)
 	{
-		if (_goals.TryGetValue(name, out var goal))
-			return goal;
+		if (_goals.ContainsKey(goal.Name))
+			return false;
 
-		return null;
+		_goals.Add(goal.Name, goal);
+		return true;
 	}
-
-	#region Load
 
 	/// <summary>
-	/// Loads all the <see cref="Goal"/> from the given JSON
+	/// Tries to get the <see cref="Goal"/> from the given name
 	/// </summary>
-	/// <remarks>
-	///	The given JSON must be an array of <see cref="Goal"/>
-	/// </remarks>
-	public void LoadFromJson(string json)
-	{
-		var goals = JsonConvert.DeserializeObject<Goal[]>(json);
-
-		if (goals == null)
-		{
-			Log.Error($"Failed to parse goal JSON: {json}");
-			return;
-		}
-
-		Add(goals);
-	}
-
-	#endregion
+	/// <param name="name">Name of the target goal</param>
+	/// <param name="goal">Matched goal, or <c>null</c> if not found</param>
+	/// <returns>Success of the attempt</returns>
+	public bool TryGet(string name, out Goal? goal) => _goals.TryGetValue(name, out goal);
 }
