@@ -19,6 +19,11 @@ public sealed class BingoSession : IDisposable
 
 	private string? _roomCode;
 
+	/// <summary>
+	/// Team of the player
+	/// </summary>
+	public Team Team { get; private set; } = Team.None;
+
 	public BingoSession(EventDispatcher dispatcher)
 	{
 		_dispatcher = dispatcher;
@@ -46,6 +51,7 @@ public sealed class BingoSession : IDisposable
 			var socketInfo = await _api.GetSocketInformation(socketKey, ct);
 
 			_roomCode = socketInfo.Code;
+			Team = BingoApiClient.DEFAULT_TEAM;
 
 			_dispatcher.SetLocalPlayer(socketInfo.PlayerUUID);
 
@@ -128,11 +134,19 @@ public sealed class BingoSession : IDisposable
 			return false;
 		}
 
+		if (team == Team)
+		{
+			Log.Error("Tried to change to the same team.");
+			return false;
+		}
+
 		Log.Info($"Changing team to '{team}'...");
 
 		try
 		{
 			await _api.ChangeTeam(_roomCode, team, ct);
+
+			Team = team;
 
 			Log.Info($"Changed team to '{team}'.");
 			return true;
@@ -147,7 +161,7 @@ public sealed class BingoSession : IDisposable
 	/// <summary>
 	/// Marks the square for a team
 	/// </summary>
-	public async Task<bool> MarkSquare(Team team, int index, CancellationToken ct = default)
+	public async Task<bool> MarkSquare(int index, CancellationToken ct = default)
 	{
 		if (_roomCode == null)
 		{
@@ -155,23 +169,29 @@ public sealed class BingoSession : IDisposable
 			return false;
 		}
 
-		Log.Info($"Marking the square #{index} for the team '{team}'...");
+		if (Team == Team.None)
+		{
+			Log.Error("Tried to clear a square without being in a team.");
+			return false;
+		}
+
+		Log.Info($"Marking the square #{index} for the team '{Team}'...");
 
 		try
 		{
 			await _api.MarkSquare(
 				_roomCode,
-				team,
+				Team,
 				index,
 				ct
 			);
 
-			Log.Info($"Marked the square #{index} for the team '{team}'.");
+			Log.Info($"Marked the square #{index} for the team '{Team}'.");
 			return true;
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to mark the square #{index} for the team '{team}': {e}");
+			Log.Error($"Failed to mark the square #{index} for the team '{Team}': {e}");
 			return false;
 		}
 	}
@@ -179,7 +199,7 @@ public sealed class BingoSession : IDisposable
 	/// <summary>
 	/// Clears the square for a team
 	/// </summary>
-	public async Task<bool> ClearSquare(Team team, int index, CancellationToken ct = default)
+	public async Task<bool> ClearSquare(int index, CancellationToken ct = default)
 	{
 		if (_roomCode == null)
 		{
@@ -193,17 +213,17 @@ public sealed class BingoSession : IDisposable
 		{
 			await _api.ClearSquare(
 				_roomCode,
-				team,
+				Team,
 				index,
 				ct
 			);
 
-			Log.Info($"Cleared the square #{index} for the team '{team}'.");
+			Log.Info($"Cleared the square #{index} for the team '{Team}'.");
 			return true;
 		}
 		catch (Exception e)
 		{
-			Log.Error($"Failed to clear the square #{index} for the team '{team}': {e}");
+			Log.Error($"Failed to clear the square #{index} for the team '{Team}': {e}");
 			return false;
 		}
 	}

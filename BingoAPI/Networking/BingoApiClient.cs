@@ -13,6 +13,11 @@ namespace BingoAPI.Networking;
 /// </summary>
 internal sealed class BingoApiClient : IDisposable
 {
+	/// <summary>
+	/// Initial team when joining
+	/// </summary>
+	internal const Team DEFAULT_TEAM = Team.Red;
+
 	// TODO: CreateRoom, NewCard
 
 	private readonly HttpClient _client;
