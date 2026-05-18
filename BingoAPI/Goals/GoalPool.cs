@@ -1,4 +1,5 @@
 using BingoAPI.Helpers;
+using Newtonsoft.Json;
 
 namespace BingoAPI.Goals;
 
@@ -43,4 +44,27 @@ public sealed class GoalPool
 
 		return null;
 	}
+
+	#region Load
+
+	/// <summary>
+	/// Loads all the <see cref="Goal"/> from the given JSON
+	/// </summary>
+	/// <remarks>
+	///	The given JSON must be an array of <see cref="Goal"/>
+	/// </remarks>
+	public void LoadFromJson(string json)
+	{
+		var goals = JsonConvert.DeserializeObject<Goal[]>(json);
+
+		if (goals == null)
+		{
+			Log.Error($"Failed to parse goal JSON: {json}");
+			return;
+		}
+
+		Add(goals);
+	}
+
+	#endregion
 }
