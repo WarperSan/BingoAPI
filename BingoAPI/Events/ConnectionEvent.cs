@@ -33,6 +33,7 @@ internal record ConnectionEvent : IBingoEvent
 	/// <summary>
 	/// Defines if the player has connected or disconnected
 	/// </summary>
-	[JsonIgnore]
-	public bool IsConnected { get; internal set; }
+	[JsonProperty("event_type")]
+	[JsonConverter(typeof(StringEqualConverter), "connected")]
+	public readonly bool IsConnected;
 }

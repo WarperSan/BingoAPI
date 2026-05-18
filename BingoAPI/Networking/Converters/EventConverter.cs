@@ -51,18 +51,7 @@ internal class EventConverter : JsonConverter<IBingoEvent>
 				evt = new CardGeneratedEvent();
 				break;
 			case "connection":
-				var connectionEvt = new ConnectionEvent();
-
-				var connectionType = obj.Value<string>("event_type");
-
-				connectionEvt.IsConnected = connectionType switch
-				{
-					"connected" => true,
-					"disconnected" => false,
-					_ => throw new JsonException($"Unknown 'event_type': '{connectionType}'"),
-				};
-
-				evt = connectionEvt;
+				evt = new ConnectionEvent();
 				break;
 			default:
 				throw new InvalidOperationException($"No event was found of type '{type}': {obj}");
