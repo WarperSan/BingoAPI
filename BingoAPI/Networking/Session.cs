@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Headers;
 using BingoAPI.Events;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
@@ -9,9 +11,11 @@ namespace BingoAPI.Networking;
 /// <summary>
 /// Represents an active connection to a room
 /// </summary>
+[SuppressMessage("ReSharper", "UnusedMember.Global")]
 public sealed class Session : IDisposable
 {
-	private readonly BingoApiClient _api = new();
+	private readonly HttpClient _client;
+	private readonly BingoApiClient _api;
 	private readonly BingoSocketClient _socket = new();
 
 	private readonly EventDispatcher _dispatcher;
@@ -26,6 +30,21 @@ public sealed class Session : IDisposable
 	public Session(EventDispatcher dispatcher)
 	{
 		_dispatcher = dispatcher;
+
+		_client = new HttpClient(
+			new LoggingHandler(
+				new HttpClientHandler()
+			)
+		);
+		_client.Timeout = TimeSpan.FromSeconds(30);
+
+		_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(
+			"BingoAPI",
+			"1.0.0"
+		));
+		_client.BaseAddress = new Uri("https://bingosync.com");
+
+		_api = new BingoApiClient(_client);
 	}
 
 	/// <summary>
@@ -333,7 +352,7 @@ public sealed class Session : IDisposable
 	/// <inheritdoc />
 	public void Dispose()
 	{
-		_api.Dispose();
+		_client.Dispose();
 		_socket.Dispose();
 	}
 }

@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Net.WebSockets;
 using BingoAPI.Events;
 using BingoAPI.Extensions;
@@ -11,34 +10,20 @@ namespace BingoAPI.Networking;
 /// <summary>
 /// Handles all HTTP communication with the BingoSync REST API
 /// </summary>
-internal sealed class BingoApiClient : IDisposable
+internal sealed class BingoApiClient
 {
 	/// <summary>
 	/// Initial team when joining
 	/// </summary>
-	internal const Team DEFAULT_TEAM = Team.Red;
+	public const Team DEFAULT_TEAM = Team.Red;
 
 	// TODO: CreateRoom, NewCard
 
 	private readonly HttpClient _client;
-	private readonly RequestBuilder _builder;
 
-	public BingoApiClient()
+	public BingoApiClient(HttpClient client)
 	{
-		_client = new HttpClient(
-			new LoggingHandler(
-				new HttpClientHandler()
-			)
-		);
-		_client.Timeout = TimeSpan.FromSeconds(30);
-
-		_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(
-			"BingoAPI",
-			"1.0.0"
-		));
-
-		_builder = new RequestBuilder()
-			.ToUri(new Uri("https://bingosync.com"));
+		_client = client;
 	}
 
 	/// <summary>
@@ -60,7 +45,7 @@ internal sealed class BingoApiClient : IDisposable
 			IsSpectator = settings.IsSpectator,
 		};
 
-		using var request = new RequestBuilder(_builder)
+		using var request = new RequestBuilder()
 							.Post()
 							.ToEndpoint("/api/join-room")
 							.WithJson(body)
@@ -91,7 +76,7 @@ internal sealed class BingoApiClient : IDisposable
 			Index = (index + 1).ToString(),
 		};
 
-		using var request = new RequestBuilder(_builder)
+		using var request = new RequestBuilder()
 							.Put()
 							.ToEndpoint("/api/select")
 							.WithJson(body)
@@ -118,7 +103,7 @@ internal sealed class BingoApiClient : IDisposable
 			Index = (index + 1).ToString(),
 		};
 
-		using var request = new RequestBuilder(_builder)
+		using var request = new RequestBuilder()
 							.Put()
 							.ToEndpoint("/api/select")
 							.WithJson(body)
@@ -139,7 +124,7 @@ internal sealed class BingoApiClient : IDisposable
 			Message = message,
 		};
 
-		using var request = new RequestBuilder(_builder)
+		using var request = new RequestBuilder()
 							.Put()
 							.ToEndpoint("/api/chat")
 							.WithJson(body)
@@ -160,7 +145,7 @@ internal sealed class BingoApiClient : IDisposable
 			Team = team,
 		};
 
-		using var request = new RequestBuilder(_builder)
+		using var request = new RequestBuilder()
 							.Put()
 							.ToEndpoint("/api/color")
 							.WithJson(body)
@@ -175,7 +160,7 @@ internal sealed class BingoApiClient : IDisposable
 	/// </summary>
 	public async Task<Square[]> GetSquares(string room, CancellationToken ct)
 	{
-		using var request = new RequestBuilder(_builder)
+		using var request = new RequestBuilder()
 							.Get()
 							.ToEndpoint($"/room/{room}/board")
 							.Build();
@@ -196,7 +181,7 @@ internal sealed class BingoApiClient : IDisposable
 			Code = room,
 		};
 
-		using var request = new RequestBuilder(_builder)
+		using var request = new RequestBuilder()
 							.Put()
 							.ToEndpoint("/api/revealed")
 							.WithJson(body)
@@ -211,7 +196,7 @@ internal sealed class BingoApiClient : IDisposable
 	/// </summary>
 	public async Task<IBingoEvent[]> GetFeed(string room, CancellationToken ct)
 	{
-		using var request = new RequestBuilder(_builder)
+		using var request = new RequestBuilder()
 							.Get()
 							.ToEndpoint($"/room/{room}/feed")
 							.Build();
@@ -229,7 +214,7 @@ internal sealed class BingoApiClient : IDisposable
 	/// </summary>
 	public async Task<GetSocketInformationResponse> GetSocketInformation(string socketKey, CancellationToken ct)
 	{
-		using var request = new RequestBuilder(_builder)
+		using var request = new RequestBuilder()
 							.Get()
 							.ToEndpoint($"/api/socket/{socketKey}")
 							.Build();
@@ -245,7 +230,7 @@ internal sealed class BingoApiClient : IDisposable
 	/// </summary>
 	public async Task<RoomSettings> GetRoomSettings(string room, CancellationToken ct)
 	{
-		using var request = new RequestBuilder(_builder)
+		using var request = new RequestBuilder()
 							.Get()
 							.ToEndpoint($"/room/{room}/room-settings")
 							.Build();
@@ -256,11 +241,5 @@ internal sealed class BingoApiClient : IDisposable
 		var response = await responseMessage.ParseJson<GetRoomSettingsResponse>();
 
 		return response.Settings;
-	}
-
-	/// <inheritdoc />
-	public void Dispose()
-	{
-		_client.Dispose();
 	}
 }
