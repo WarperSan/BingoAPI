@@ -8,8 +8,6 @@ namespace BingoAPI.Conditions;
 /// </summary>
 public sealed class ConditionData
 {
-	private const string CONDITIONS_KEY = "conditions";
-	private const string CONDITION_KEY = "condition";
 	private const string PARAMS_KEY = "params";
 
 	private readonly JObject _json;
@@ -22,86 +20,43 @@ public sealed class ConditionData
 	}
 
 	/// <summary>
-	/// Gets the children conditions from the <c>conditions</c> field
+	/// Gets the parameter at the given key
 	/// </summary>
-	/// <returns></returns>
-	public ICondition[] GetChildren()
+	public T GetRequiredParameter<T>(string key) where T : notnull
 	{
 		if (_params == null)
-			throw new JsonException($"Expected '{PARAMS_KEY}' object: {_json}");
+			throw new JsonException($"Expected '{PARAMS_KEY}', but it was not found in '{_json}'.");
 
-		var rawConditions = _params.Value<JArray>(CONDITIONS_KEY);
+		if (!_params.TryGetValue(key, out var valueToken))
+			throw new JsonException($"Expected '{key}', but it was not found in '{_params}'.");
 
-		if (rawConditions == null)
-			throw new JsonException($"Expected '{CONDITIONS_KEY}': {_params}");
-
-		var conditions = new List<ICondition>();
-
-		foreach (var rawCondition in rawConditions)
-		{
-			if (rawCondition is not JObject child)
-				continue;
-
-			var newCondition = child.ToObject<ICondition>();
-
-			if (newCondition == null)
-				throw new InvalidOperationException($"Unhandled condition: {child}");
-
-			conditions.Add(newCondition);
-		}
-
-		return conditions.ToArray();
-	}
-
-	/// <summary>
-	/// Gets the child condition from the <c>condition</c> field
-	/// </summary>
-	public ICondition GetChild()
-	{
-		if (_params == null)
-			throw new JsonException($"Expected '{PARAMS_KEY}' object: {_json}");
-
-		var rawCondition = _params.Value<JObject>(CONDITION_KEY);
-
-		if (rawCondition == null)
-			throw new JsonException($"Expected '{CONDITION_KEY}': {_params}");
-
-		var newCondition = rawCondition.ToObject<ICondition>();
-
-		// ReSharper disable once ConvertIfStatementToReturnStatement
-		if (newCondition == null)
-			throw new InvalidOperationException($"Unhandled condition: {rawCondition}");
-
-		return newCondition;
-	}
-
-	/// <summary>
-	/// Gets the required parameter with the given key
-	/// </summary>
-	public T GetRequiredParam<T>(string key)
-	{
-		if (_params == null)
-			throw new JsonException($"Expected '{PARAMS_KEY}' object: {_json}");
-
-		var value = _params.Value<T>(key);
+		var value = valueToken.ToObject<T>();
 
 		// ReSharper disable once ConvertIfStatementToReturnStatement
 		if (value == null)
-			throw new JsonException($"Expected '{key}' in parameters: {_params}");
+			throw new JsonException($"Expected '{key}' to be '{typeof(T)}', got '{valueToken.Type}'.");
 
 		return value;
 	}
 
 	/// <summary>
-	/// Gets the optional parameter with the given key
+	/// Gets the parameter at the given key, or <paramref name="defaultValue"/> if not found
 	/// </summary>
-	public T GetOptionalParam<T>(string key, T defaultValue)
+	public T GetOptionalParameter<T>(string key, T defaultValue) where T : notnull
 	{
 		if (_params == null)
 			return defaultValue;
 
-		var value = _params.Value<T>(key);
-
-		return value ?? defaultValue;
+		return _params.Value<T>(key) ?? defaultValue;
 	}
+
+	/// <summary>
+	/// Gets the conditions defined at the <c>conditions</c> property
+	/// </summary>
+	public ICondition[] GetChildren() => GetRequiredParameter<ICondition[]>("conditions");
+
+	/// <summary>
+	/// Gets the condition defined at the <c>condition</c> property
+	/// </summary>
+	public ICondition GetChild() => GetRequiredParameter<ICondition>("condition");
 }
