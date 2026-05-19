@@ -17,8 +17,8 @@ internal sealed class NotCondition : ICondition
 
 	public static ICondition Create(ConditionData data)
 	{
-		var child = data.GetChild();
+		var condition = data.GetRequiredParameter<ICondition>("condition");
 
-		return new NotCondition(child);
+		return new NotCondition(condition);
 	}
 }

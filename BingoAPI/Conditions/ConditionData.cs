@@ -49,14 +49,4 @@ public sealed class ConditionData
 
 		return _params.Value<T>(key) ?? defaultValue;
 	}
-
-	/// <summary>
-	/// Gets the conditions defined at the <c>conditions</c> property
-	/// </summary>
-	public ICondition[] GetChildren() => GetRequiredParameter<ICondition[]>("conditions");
-
-	/// <summary>
-	/// Gets the condition defined at the <c>condition</c> property
-	/// </summary>
-	public ICondition GetChild() => GetRequiredParameter<ICondition>("condition");
 }

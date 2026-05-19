@@ -17,8 +17,8 @@ internal sealed class AndCondition : ICondition
 
 	public static ICondition Create(ConditionData data)
 	{
-		var children = data.GetChildren();
+		var conditions = data.GetRequiredParameter<ICondition[]>("conditions");
 
-		return new AndCondition(children);
+		return new AndCondition(conditions);
 	}
 }

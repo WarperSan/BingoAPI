@@ -38,9 +38,9 @@ internal sealed class SomeCondition : ICondition
 
 	public static ICondition Create(ConditionData data)
 	{
-		var children = data.GetChildren();
+		var conditions = data.GetRequiredParameter<ICondition[]>("conditions");
 		var amount = data.GetOptionalParameter<uint>("amount", 1);
 
-		return new SomeCondition(amount, children);
+		return new SomeCondition(amount, conditions);
 	}
 }
