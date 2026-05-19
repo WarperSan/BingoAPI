@@ -1,4 +1,5 @@
 using BingoAPI.Conditions.BuiltIn;
+using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Conditions;
 
@@ -29,13 +30,15 @@ public static class ConditionRegistry
 	}
 
 	/// <summary>
-	/// Gets the factory registered under the given action key
+	/// Creates a <see cref="ICondition"/> registered under the given action
 	/// </summary>
-	internal static Func<ConditionData, ICondition> GetFactory(string action)
+	internal static ICondition Create(string action, JObject obj)
 	{
 		if (!Factories.TryGetValue(action, out var factory))
 			throw new InvalidOperationException($"No condition registered under the action '{action}'.");
 
-		return factory;
+		var data = new ConditionData(obj);
+
+		return factory.Invoke(data);
 	}
 }
