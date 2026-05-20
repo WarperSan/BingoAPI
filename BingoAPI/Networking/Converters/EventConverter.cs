@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 namespace BingoAPI.Networking.Converters;
 
 /// <summary>
-/// Converts <see cref="IBingoEvent"/> to and from a <see cref="string"/>
+/// Converts a <see cref="string"/> to a <see cref="IBingoEvent"/>
 /// </summary>
 internal class EventConverter : JsonConverter<IBingoEvent>
 {
