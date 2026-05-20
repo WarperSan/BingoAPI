@@ -188,9 +188,9 @@ public sealed class EventDispatcher
 	private void DispatchColorEvent(ColorEvent evt)
 	{
 		if (IsFromLocal(evt.Player))
-			OnSelfTeamChanged?.Invoke(evt.Player, evt.Player.Team);
+			OnSelfTeamChanged?.Invoke(evt.Player, evt.NewColor);
 		else
-			OnOtherTeamChanged?.Invoke(evt.Player, evt.Player.Team);
+			OnOtherTeamChanged?.Invoke(evt.Player, evt.NewColor);
 	}
 
 	private void DispatchGoalCleared(GoalEvent evt)
