@@ -8,9 +8,12 @@ namespace BingoAPI.Networking.Converters;
 internal class SlotIndexConverter : JsonConverter<int>
 {
 	/// <inheritdoc />
+	public override bool CanWrite => false;
+
+	/// <inheritdoc />
 	public override void WriteJson(JsonWriter writer, int value, JsonSerializer serializer)
 	{
-		writer.WriteValue($"slot{value + 1}");
+		throw new NotImplementedException();
 	}
 
 	/// <inheritdoc />
