@@ -1,11 +1,10 @@
 using System.Net.WebSockets;
-using BingoAPI.Events;
 using BingoAPI.Models;
 using BingoAPI.Models.Settings;
 using BingoAPI.Networking.DTOs;
 using Newtonsoft.Json;
 
-namespace BingoAPI.Networking;
+namespace BingoAPI.Networking.Clients;
 
 /// <summary>
 /// Handles all HTTP communication with the BingoSync REST API

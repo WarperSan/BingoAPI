@@ -3,7 +3,7 @@ using System.Text;
 using BingoAPI.Helpers;
 using Newtonsoft.Json;
 
-namespace BingoAPI.Networking;
+namespace BingoAPI.Networking.Clients;
 
 /// <summary>
 /// Handles all communication with the BingoSync websocket
