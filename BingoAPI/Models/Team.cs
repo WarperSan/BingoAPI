@@ -10,18 +10,15 @@ namespace BingoAPI.Models;
 [JsonConverter(typeof(TeamConverter))]
 public enum Team : ushort
 {
-	// No team
 	None = 0,
-
-	// All team colors
-	Pink = 1 << 1,
-	Red = 1 << 2,
-	Orange = 1 << 3,
-	Brown = 1 << 4,
-	Yellow = 1 << 5,
-	Green = 1 << 6,
-	Teal = 1 << 7,
-	Blue = 1 << 8,
-	Navy = 1 << 9,
-	Purple = 1 << 10,
+	Pink = 1 << 0,
+	Red = 1 << 1,
+	Orange = 1 << 2,
+	Brown = 1 << 3,
+	Yellow = 1 << 4,
+	Green = 1 << 5,
+	Teal = 1 << 6,
+	Blue = 1 << 7,
+	Navy = 1 << 8,
+	Purple = 1 << 9,
 }
