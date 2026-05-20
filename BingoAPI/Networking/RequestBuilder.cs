@@ -40,7 +40,7 @@ internal sealed class RequestBuilder
 
 	#region URI
 
-	private string? _endpoint = null;
+	private string? _endpoint;
 
 	/// <summary>
 	/// Sets the endpoint of this request
@@ -55,7 +55,7 @@ internal sealed class RequestBuilder
 
 	#region Content
 
-	private HttpContent? _content = null;
+	private HttpContent? _content;
 
 	/// <summary>
 	/// Sets the JSON payload of this request
