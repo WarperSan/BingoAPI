@@ -28,7 +28,7 @@ internal class LoggingHandler : DelegatingHandler
 		if (response.Content != null)
 			responsePayload = await response.Content.ReadAsStringAsync();
 
-		Log.Debug($"Response:\n{request}\n{responsePayload}");
+		Log.Debug($"Response:\n{response}\n{responsePayload}");
 
 		return response;
 	}
