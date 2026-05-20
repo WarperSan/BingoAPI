@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace BingoAPI.Networking.Converters;
 
 /// <summary>
-/// Converts <see cref="Team"/> to and from a <see cref="string"/>
+/// Converts a <see cref="Team"/> to and from a <see cref="string"/>
 /// </summary>
 internal class TeamConverter : JsonConverter<Team>
 {

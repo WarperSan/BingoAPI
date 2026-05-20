@@ -23,13 +23,13 @@ internal class SlotIndexConverter : JsonConverter<int>
 	)
 	{
 		if (reader.Value is not string rawIndex)
-			return 0;
+			throw new JsonException($"Expected a '{nameof(String)}', but  got '{reader.ValueType}'.");
 
 		rawIndex = rawIndex.Replace("slot", "");
 
 		// ReSharper disable once ConvertIfStatementToReturnStatement
 		if (!int.TryParse(rawIndex, out var index))
-			return 0;
+			throw new JsonException($"Could not parse index from '{rawIndex}'.");
 
 		return index - 1;
 	}

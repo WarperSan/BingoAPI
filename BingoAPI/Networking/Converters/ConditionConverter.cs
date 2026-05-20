@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 namespace BingoAPI.Networking.Converters;
 
 /// <summary>
-/// Converts <see cref="ICondition"/> to and from a <see cref="string"/>
+/// Converts a <see cref="string"/> to a <see cref="ICondition"/>
 /// </summary>
 internal class ConditionConverter : JsonConverter<ICondition>
 {
