@@ -211,21 +211,6 @@ internal sealed class BingoApiClient
 	}
 
 	/// <summary>
-	/// Gets the feed of <see cref="IBingoEvent"/> in the room
-	/// </summary>
-	public async Task<IBingoEvent[]> GetFeed(string room, CancellationToken ct)
-	{
-		using var request = new RequestBuilder()
-							.Get()
-							.ToEndpoint($"/room/{room}/feed")
-							.Build();
-
-		var response = await SendAndParse<GetFeedResponse>(request, ct);
-
-		return response.Events;
-	}
-
-	/// <summary>
 	/// Gets the information related to the given socket key
 	/// </summary>
 	public async Task<GetSocketInformationResponse> GetSocketInformation(string socketKey, CancellationToken ct)
