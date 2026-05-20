@@ -1,7 +1,7 @@
 using BingoAPI.Models;
 using Newtonsoft.Json;
 
-namespace BingoAPI.Events;
+namespace BingoAPI.Events.BuiltIn;
 
 /// <summary>
 /// Event sent when a player marks or clears a square

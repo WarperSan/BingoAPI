@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using BingoAPI.Events.BuiltIn;
 using BingoAPI.Models;
 
 namespace BingoAPI.Events;

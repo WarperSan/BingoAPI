@@ -1,12 +1,12 @@
 using BingoAPI.Models;
 using Newtonsoft.Json;
 
-namespace BingoAPI.Events;
+namespace BingoAPI.Events.BuiltIn;
 
 /// <summary>
-/// Event sent when a player generates a new card
+/// Event sent when a player reveals the card
 /// </summary>
-internal record CardGeneratedEvent : IBingoEvent
+internal record CardRevealedEvent : IBingoEvent
 {
 	/// <summary>
 	/// Player responsible for this event
@@ -14,13 +14,6 @@ internal record CardGeneratedEvent : IBingoEvent
 	[JsonProperty("player")]
 	[JsonRequired]
 	public readonly Player Player = null!;
-
-	/// <summary>
-	/// Determines if the card was generated as hidden
-	/// </summary>
-	[JsonProperty("hide_card")]
-	[JsonRequired]
-	public readonly bool IsCardHidden;
 
 	/// <summary>
 	/// Time when this event was sent

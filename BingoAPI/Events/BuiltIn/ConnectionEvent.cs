@@ -2,7 +2,7 @@ using BingoAPI.Models;
 using BingoAPI.Networking.Converters;
 using Newtonsoft.Json;
 
-namespace BingoAPI.Events;
+namespace BingoAPI.Events.BuiltIn;
 
 /// <summary>
 /// Event sent when a player joins or leaves the room
