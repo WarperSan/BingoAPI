@@ -12,6 +12,7 @@ public static class ConditionRegistry
 
 	static ConditionRegistry()
 	{
+		// TODO: Register these conditions outside of this class
 		Register("AND", AndCondition.Create);
 		Register("OR", OrCondition.Create);
 		Register("NOT", NotCondition.Create);
