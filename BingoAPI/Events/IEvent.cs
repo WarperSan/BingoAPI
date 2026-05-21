@@ -7,4 +7,4 @@ namespace BingoAPI.Events;
 /// Represents any class that can be used as an event
 /// </summary>
 [JsonConverter(typeof(EventConverter))]
-internal interface IBingoEvent;
+internal interface IEvent;

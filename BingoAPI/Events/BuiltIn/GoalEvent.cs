@@ -6,7 +6,7 @@ namespace BingoAPI.Events.BuiltIn;
 /// <summary>
 /// Event sent when a player marks or clears a square
 /// </summary>
-internal record GoalEvent : IBingoEvent
+internal record GoalEvent : IEvent
 {
 	/// <summary>
 	/// Player responsible for this event

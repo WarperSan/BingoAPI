@@ -6,7 +6,7 @@ namespace BingoAPI.Events.BuiltIn;
 /// <summary>
 /// Event sent when a player changes team
 /// </summary>
-internal record ColorEvent : IBingoEvent
+internal record ColorEvent : IEvent
 {
 	/// <summary>
 	/// Player responsible for this event

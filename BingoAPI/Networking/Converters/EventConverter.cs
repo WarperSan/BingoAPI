@@ -1,28 +1,29 @@
 using BingoAPI.Events;
+using BingoAPI.Events.BuiltIn;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Networking.Converters;
 
 /// <summary>
-/// Converts a <see cref="string"/> to a <see cref="IBingoEvent"/>
+/// Converts a <see cref="string"/> to a <see cref="IEvent"/>
 /// </summary>
-internal class EventConverter : JsonConverter<IBingoEvent>
+internal class EventConverter : JsonConverter<IEvent>
 {
 	/// <inheritdoc />
 	public override bool CanWrite => false;
 
 	/// <inheritdoc />
-	public override void WriteJson(JsonWriter writer, IBingoEvent? value, JsonSerializer serializer)
+	public override void WriteJson(JsonWriter writer, IEvent? value, JsonSerializer serializer)
 	{
 		throw new NotImplementedException();
 	}
 
 	/// <inheritdoc />
-	public override IBingoEvent ReadJson(
+	public override IEvent ReadJson(
 		JsonReader reader,
 		Type objectType,
-		IBingoEvent? existingValue,
+		IEvent? existingValue,
 		bool hasExistingValue,
 		JsonSerializer serializer
 	)
@@ -31,7 +32,7 @@ internal class EventConverter : JsonConverter<IBingoEvent>
 
 		var type = obj.Value<string>("type");
 
-		IBingoEvent evt = type switch
+		IEvent evt = type switch
 		{
 			"chat" => new ChatEvent(),
 			"goal" => new GoalEvent(),

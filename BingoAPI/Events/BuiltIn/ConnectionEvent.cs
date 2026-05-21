@@ -7,7 +7,7 @@ namespace BingoAPI.Events.BuiltIn;
 /// <summary>
 /// Event sent when a player joins or leaves the room
 /// </summary>
-internal record ConnectionEvent : IBingoEvent
+internal record ConnectionEvent : IEvent
 {
 	/// <summary>
 	/// Player responsible for this event

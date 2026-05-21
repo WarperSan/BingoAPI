@@ -5,7 +5,7 @@ using BingoAPI.Models;
 namespace BingoAPI.Events;
 
 /// <summary>
-/// Dispatches incoming <see cref="IBingoEvent"/> into respective callbacks
+/// Dispatches incoming <see cref="IEvent"/> into respective callbacks
 /// </summary>
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public sealed class EventDispatcher
@@ -18,7 +18,7 @@ public sealed class EventDispatcher
 	internal void SetLocalPlayer(string uuid) => _localUUID = uuid;
 
 	/// <summary>
-	/// Checks if the given <see cref="IBingoEvent"/> is from the local player
+	/// Checks if the given <see cref="IEvent"/> is from the local player
 	/// </summary>
 	private bool IsFromLocal(Player player) => player.UUID == _localUUID;
 
@@ -129,9 +129,9 @@ public sealed class EventDispatcher
 	#region Dispatch
 
 	/// <summary>
-	/// Called when a <see cref="IBingoEvent"/> is received
+	/// Called when a <see cref="IEvent"/> is received
 	/// </summary>
-	internal void Dispatch(IBingoEvent evt)
+	internal void Dispatch(IEvent evt)
 	{
 		switch (evt)
 		{
