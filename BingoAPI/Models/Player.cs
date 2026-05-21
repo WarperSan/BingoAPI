@@ -26,5 +26,5 @@ public record Player
 	/// </summary>
 	[JsonProperty("color")]
 	[JsonRequired]
-	public readonly Team Team = Team.None;
+	public readonly Team Team;
 }

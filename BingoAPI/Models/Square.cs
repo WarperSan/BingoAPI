@@ -28,5 +28,5 @@ public record Square
 	/// </summary>
 	[JsonProperty("colors")]
 	[JsonRequired]
-	public readonly Team Teams = Team.None;
+	public readonly Team Teams;
 }
