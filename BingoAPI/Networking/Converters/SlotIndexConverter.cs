@@ -7,13 +7,12 @@ namespace BingoAPI.Networking.Converters;
 /// </summary>
 internal class SlotIndexConverter : JsonConverter<int>
 {
-	/// <inheritdoc />
-	public override bool CanWrite => false;
+	private const string PREFIX = "slot";
 
 	/// <inheritdoc />
 	public override void WriteJson(JsonWriter writer, int value, JsonSerializer serializer)
 	{
-		throw new NotImplementedException();
+		writer.WriteValue($"{PREFIX}{value + 1}");
 	}
 
 	/// <inheritdoc />
@@ -28,7 +27,7 @@ internal class SlotIndexConverter : JsonConverter<int>
 		if (reader.Value is not string rawIndex)
 			throw new JsonException($"Expected a '{nameof(String)}', but  got '{reader.ValueType}'.");
 
-		rawIndex = rawIndex.Replace("slot", "");
+		rawIndex = rawIndex.Replace(PREFIX, "");
 
 		// ReSharper disable once ConvertIfStatementToReturnStatement
 		if (!int.TryParse(rawIndex, out var index))

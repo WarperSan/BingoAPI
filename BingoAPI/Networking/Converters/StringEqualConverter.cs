@@ -20,7 +20,9 @@ internal class StringEqualConverter : JsonConverter<bool>
 	/// <inheritdoc />
 	public override void WriteJson(JsonWriter writer, bool value, JsonSerializer serializer)
 	{
-		throw new NotImplementedException();
+		throw new InvalidOperationException(
+			$"Class '{nameof(StringEqualConverter)}' cannot write a '{typeof(bool)}' as '{typeof(string)}'."
+		);
 	}
 
 	/// <inheritdoc />
