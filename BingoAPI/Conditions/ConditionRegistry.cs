@@ -20,14 +20,16 @@ public static class ConditionRegistry
 	}
 
 	/// <summary>
-	/// Registers a condition factory under the given action key
+	/// Tries to add the given factory under the given action key
 	/// </summary>
-	public static void Register(string action, Func<ConditionData, ICondition> factory)
+	/// <returns>Success of the attempt</returns>
+	public static bool TryAdd(string action, Func<ConditionData, ICondition> factory)
 	{
 		if (Factories.ContainsKey(action))
-			throw new InvalidOperationException($"A condition is already registered under '{action}'.");
+			return false;
 
 		Factories.Add(action, factory);
+		return true;
 	}
 
 	/// <summary>
