@@ -24,20 +24,44 @@ public sealed class EventDispatcher
 
 	#region Delegates
 
+	/// <summary>
+	/// Callback used when a <see cref="Player"/> connects to a room
+	/// </summary>
 	public delegate void ConnectionCallback(Player player);
 
+	/// <summary>
+	/// Callback used when a <see cref="Player"/> disconnects from a room
+	/// </summary>
 	public delegate void DisconnectionCallback(Player player);
 
+	/// <summary>
+	/// Callback used when a <see cref="Player"/> marks a <see cref="Square"/>
+	/// </summary>
 	public delegate void MarkCallback(Player player, Square square);
 
+	/// <summary>
+	/// Callback used when a <see cref="Player"/> clears a <see cref="Square"/>
+	/// </summary>
 	public delegate void ClearCallback(Player player, Square square);
 
-	public delegate void ChatCallback(Player player, string content, ulong timestamp);
+	/// <summary>
+	/// Callback used when a <see cref="Player"/> sends a message in the chat
+	/// </summary>
+	public delegate void ChatCallback(Player player, string message, ulong timestamp);
 
+	/// <summary>
+	/// Callback used when a <see cref="Player"/> changes their <see cref="Team"/>
+	/// </summary>
 	public delegate void TeamCallback(Player player, Team newTeam);
 
+	/// <summary>
+	/// Callback used when a <see cref="Player"/> reveals their card
+	/// </summary>
 	public delegate void RevealCallback(Player player);
 
+	/// <summary>
+	/// Callback used when a <see cref="Player"/> generates a new card
+	/// </summary>
 	public delegate void GenerateCallback(Player player, bool isHidden);
 
 	#endregion
