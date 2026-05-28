@@ -17,6 +17,7 @@ internal sealed class SomeCondition : ICondition
 	/// <inheritdoc/>
 	public bool IsMet()
 	{
+		// Skip if always false
 		if (_conditions.Length < _amount)
 			return false;
 
