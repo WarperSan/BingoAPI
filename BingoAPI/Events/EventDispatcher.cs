@@ -18,9 +18,9 @@ public sealed class EventDispatcher
 	internal void SetLocalPlayer(string uuid) => _localUUID = uuid;
 
 	/// <summary>
-	/// Checks if the given <see cref="IEvent"/> is from the local player
+	/// Checks if the given <see cref="Player"/> is the local player
 	/// </summary>
-	private bool IsFromLocal(Player player) => player.UUID == _localUUID;
+	private bool IsLocal(Player player) => player.UUID == _localUUID;
 
 	#region Delegates
 
@@ -188,7 +188,7 @@ public sealed class EventDispatcher
 
 	private void DispatchConnectedEvent(ConnectionEvent evt)
 	{
-		if (IsFromLocal(evt.Player))
+		if (IsLocal(evt.Player))
 			OnSelfConnected?.Invoke(evt.Player);
 		else
 			OnOtherConnected?.Invoke(evt.Player);
@@ -196,7 +196,7 @@ public sealed class EventDispatcher
 
 	private void DispatchDisconnectedEvent(ConnectionEvent evt)
 	{
-		if (IsFromLocal(evt.Player))
+		if (IsLocal(evt.Player))
 			OnSelfDisconnected?.Invoke(evt.Player);
 		else
 			OnOtherDisconnected?.Invoke(evt.Player);
@@ -204,7 +204,7 @@ public sealed class EventDispatcher
 
 	private void DispatchChatEvent(ChatEvent evt)
 	{
-		if (IsFromLocal(evt.Player))
+		if (IsLocal(evt.Player))
 			OnSelfMessageSent?.Invoke(evt.Player, evt.Text, evt.Timestamp);
 		else
 			OnOtherMessageSent?.Invoke(evt.Player, evt.Text, evt.Timestamp);
@@ -212,7 +212,7 @@ public sealed class EventDispatcher
 
 	private void DispatchColorEvent(ColorEvent evt)
 	{
-		if (IsFromLocal(evt.Player))
+		if (IsLocal(evt.Player))
 			OnSelfTeamChanged?.Invoke(evt.Player, evt.NewColor);
 		else
 			OnOtherTeamChanged?.Invoke(evt.Player, evt.NewColor);
@@ -220,7 +220,7 @@ public sealed class EventDispatcher
 
 	private void DispatchGoalCleared(GoalEvent evt)
 	{
-		if (IsFromLocal(evt.Player))
+		if (IsLocal(evt.Player))
 			OnSelfSquareCleared?.Invoke(evt.Player, evt.Square);
 		else
 			OnOtherSquareCleared?.Invoke(evt.Player, evt.Square);
@@ -228,7 +228,7 @@ public sealed class EventDispatcher
 
 	private void DispatchGoalMarked(GoalEvent evt)
 	{
-		if (IsFromLocal(evt.Player))
+		if (IsLocal(evt.Player))
 			OnSelfSquareMarked?.Invoke(evt.Player, evt.Square);
 		else
 			OnOtherSquareMarked?.Invoke(evt.Player, evt.Square);
@@ -236,7 +236,7 @@ public sealed class EventDispatcher
 
 	private void DispatchCardRevealed(CardRevealedEvent evt)
 	{
-		if (IsFromLocal(evt.Player))
+		if (IsLocal(evt.Player))
 			OnSelfCardRevealed?.Invoke(evt.Player);
 		else
 			OnOtherCardRevealed?.Invoke(evt.Player);
@@ -244,7 +244,7 @@ public sealed class EventDispatcher
 
 	private void DispatchCardGenerated(CardGeneratedEvent evt)
 	{
-		if (IsFromLocal(evt.Player))
+		if (IsLocal(evt.Player))
 			OnSelfCardGenerated?.Invoke(evt.Player, evt.IsCardHidden);
 		else
 			OnOtherCardGenerated?.Invoke(evt.Player, evt.IsCardHidden);
