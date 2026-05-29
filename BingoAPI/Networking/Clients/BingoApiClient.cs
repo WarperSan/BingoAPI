@@ -56,6 +56,8 @@ internal sealed class BingoApiClient
 
 	#endregion
 
+	#region Endpoints
+
 	/// <summary>
 	/// Joins the room with the given settings
 	/// </summary>
@@ -237,4 +239,6 @@ internal sealed class BingoApiClient
 
 		return response.Settings;
 	}
+
+	#endregion
 }
