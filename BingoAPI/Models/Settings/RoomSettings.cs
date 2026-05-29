@@ -1,4 +1,4 @@
-using BingoAPI.Networking;
+using BingoAPI.Networking.Clients;
 using BingoAPI.Networking.Converters;
 using Newtonsoft.Json;
 
@@ -15,5 +15,5 @@ public struct RoomSettings
 	[JsonProperty("lockout_mode")]
 	[JsonRequired]
 	[JsonConverter(typeof(StringEqualConverter), "Lockout")]
-	public bool IsLockout;
+	public readonly bool IsLockout;
 }
