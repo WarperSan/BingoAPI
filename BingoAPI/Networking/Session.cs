@@ -1,9 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using BingoAPI.Events;
+using BingoAPI.Goals;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
 using BingoAPI.Models.Settings;
+using BingoAPI.Networking.Clients;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Networking;
@@ -173,6 +175,33 @@ public sealed class Session : IDisposable
 		{
 			Log.Error($"Failed to change the team: {e}");
 			return false;
+		}
+	}
+
+	/// <summary>
+	/// Gets the current <see cref="Card"/> of the room
+	/// </summary>
+	public async Task<Card?> GetCard(GoalPool pool, CancellationToken ct = default)
+	{
+		if (_roomCode == null)
+		{
+			Log.Error("Tried to get the squares before being connected.");
+			return null;
+		}
+
+		Log.Info($"Getting the squares of the room '{_roomCode}'...");
+
+		try
+		{
+			var squares = await _api.GetSquares(_roomCode, ct);
+
+			Log.Info($"Got {squares.Length} squares for room '{_roomCode}'.");
+			return new Card(squares, pool);
+		}
+		catch (Exception e)
+		{
+			Log.Error($"Failed to get squares for room '{_roomCode}': {e}");
+			return null;
 		}
 	}
 
