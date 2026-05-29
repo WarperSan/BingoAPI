@@ -30,6 +30,13 @@ internal record GoalEvent : IEvent
 	public readonly Square Square = null!;
 
 	/// <summary>
+	/// Team that was added or removed
+	/// </summary>
+	[JsonProperty("color")]
+	[JsonRequired]
+	public readonly Team Team;
+
+	/// <summary>
 	/// Defines if the selected square has been cleared or marked
 	/// </summary>
 	[JsonProperty("remove")]

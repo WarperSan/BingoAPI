@@ -35,14 +35,14 @@ public sealed class EventDispatcher
 	public delegate void DisconnectionCallback(Player player);
 
 	/// <summary>
-	/// Callback used when a <see cref="Player"/> marks a <see cref="Square"/>
+	/// Callback used when a <see cref="Player"/> marks a <see cref="Square"/> for a <see cref="Team"/>
 	/// </summary>
-	public delegate void MarkCallback(Player player, Square square);
+	public delegate void MarkCallback(Player player, Square square, Team team);
 
 	/// <summary>
-	/// Callback used when a <see cref="Player"/> clears a <see cref="Square"/>
+	/// Callback used when a <see cref="Player"/> clears a <see cref="Square"/> for a <see cref="Team"/>
 	/// </summary>
-	public delegate void ClearCallback(Player player, Square square);
+	public delegate void ClearCallback(Player player, Square square, Team team);
 
 	/// <summary>
 	/// Callback used when a <see cref="Player"/> sends a message in the chat
@@ -218,20 +218,20 @@ public sealed class EventDispatcher
 			OnOtherTeamChanged?.Invoke(evt.Player, evt.NewColor);
 	}
 
-	private void DispatchGoalCleared(GoalEvent evt)
-	{
-		if (IsLocal(evt.Player))
-			OnSelfSquareCleared?.Invoke(evt.Player, evt.Square);
-		else
-			OnOtherSquareCleared?.Invoke(evt.Player, evt.Square);
-	}
-
 	private void DispatchGoalMarked(GoalEvent evt)
 	{
 		if (IsLocal(evt.Player))
-			OnSelfSquareMarked?.Invoke(evt.Player, evt.Square);
+			OnSelfSquareMarked?.Invoke(evt.Player, evt.Square, evt.Team);
 		else
-			OnOtherSquareMarked?.Invoke(evt.Player, evt.Square);
+			OnOtherSquareMarked?.Invoke(evt.Player, evt.Square, evt.Team);
+	}
+
+	private void DispatchGoalCleared(GoalEvent evt)
+	{
+		if (IsLocal(evt.Player))
+			OnSelfSquareCleared?.Invoke(evt.Player, evt.Square, evt.Team);
+		else
+			OnOtherSquareCleared?.Invoke(evt.Player, evt.Square, evt.Team);
 	}
 
 	private void DispatchCardRevealed(CardRevealedEvent evt)
