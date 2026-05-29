@@ -338,11 +338,11 @@ public sealed class Session : IDisposable
 
 	private void OnMessageReceived(string message)
 	{
-		var evt = JsonConvert.DeserializeObject<IBingoEvent>(message);
+		var evt = JsonConvert.DeserializeObject<IEvent>(message);
 
 		if (evt == null)
 		{
-			Log.Warning($"Failed to deserialize the message into a '{typeof(IBingoEvent)}': {message}");
+			Log.Warning($"Failed to deserialize the message into a '{typeof(IEvent)}': {message}");
 			return;
 		}
 
