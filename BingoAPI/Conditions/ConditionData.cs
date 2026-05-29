@@ -30,11 +30,11 @@ public sealed class ConditionData
 		if (!_params.TryGetValue(key, out var valueToken))
 			throw new JsonException($"Expected '{key}', but it was not found in '{_params}'.");
 
-		var value = valueToken.ToObject<T>();
+		var value = valueToken.Value<T>();
 
 		// ReSharper disable once ConvertIfStatementToReturnStatement
 		if (value == null)
-			throw new JsonException($"Expected '{key}' to be '{typeof(T)}', got '{valueToken.Type}'.");
+			throw new JsonException($"Expected '{key}' to be '{typeof(T)}'.");
 
 		return value;
 	}
@@ -44,9 +44,15 @@ public sealed class ConditionData
 	/// </summary>
 	public T GetOptionalParameter<T>(string key, T defaultValue) where T : notnull
 	{
-		if (_params == null)
+		if (_params == null || !_params.TryGetValue(key, out var valueToken))
 			return defaultValue;
 
-		return _params.Value<T>(key) ?? defaultValue;
+		var value = valueToken.Value<T>();
+
+		// ReSharper disable once ConvertIfStatementToReturnStatement
+		if (value == null)
+			throw new JsonException($"Expected '{key}' to be '{typeof(T)}'.");
+
+		return value;
 	}
 }
