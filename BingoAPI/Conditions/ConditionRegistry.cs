@@ -35,12 +35,10 @@ public static class ConditionRegistry
 	/// <summary>
 	/// Creates a <see cref="ICondition"/> registered under the given action
 	/// </summary>
-	internal static ICondition Create(string action, JObject obj)
+	internal static ICondition Create(string action, ConditionData data)
 	{
 		if (!Factories.TryGetValue(action, out var factory))
 			throw new InvalidOperationException($"No condition registered under the action '{action}'.");
-
-		var data = new ConditionData(obj);
 
 		return factory.Invoke(data);
 	}

@@ -36,6 +36,8 @@ internal class ConditionConverter : JsonConverter<ICondition>
 		if (action == null)
 			throw new JsonException($"Expected '{ACTION_KEY}' property: {obj}");
 
-		return ConditionRegistry.Create(action, obj);
+		var data = new ConditionData(obj);
+
+		return ConditionRegistry.Create(action, data);
 	}
 }
