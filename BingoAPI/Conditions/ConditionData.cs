@@ -8,33 +8,40 @@ namespace BingoAPI.Conditions;
 /// </summary>
 public sealed class ConditionData
 {
-	private const string PARAMS_KEY = "params";
-
 	private readonly JObject _json;
-	private readonly JObject? _params;
 
 	internal ConditionData(JObject json)
 	{
 		_json = json;
-		_params = json.Value<JObject>(PARAMS_KEY);
 	}
 
 	/// <summary>
-	/// Gets the parameter at the given key
+	/// Tries to get the parameter at the given key
+	/// </summary>
+	private bool TryGetParameter<T>(string key, out T? value)
+	{
+		value = default;
+
+		if (_json["params"] is not JObject @params)
+			return false;
+
+		if (!@params.TryGetValue(key, out var token))
+			return false;
+
+		if (token.Type == JTokenType.Null)
+			return false;
+
+		value = token.ToObject<T>();
+		return value is not null;
+	}
+
+	/// <summary>
+	/// Gets the parameter at the given key, or throws an exception if invalid
 	/// </summary>
 	public T GetRequiredParameter<T>(string key) where T : notnull
 	{
-		if (_params == null)
-			throw new JsonException($"Expected '{PARAMS_KEY}', but it was not found in '{_json}'.");
-
-		if (!_params.TryGetValue(key, out var valueToken))
-			throw new JsonException($"Expected '{key}', but it was not found in '{_params}'.");
-
-		var value = valueToken.Value<T>();
-
-		// ReSharper disable once ConvertIfStatementToReturnStatement
-		if (value == null)
-			throw new JsonException($"Expected '{key}' to be '{typeof(T)}'.");
+		if (!TryGetParameter<T>(key, out var value) || value == null)
+			throw new JsonException($"Failed to find '{key}' of type '{typeof(T)}'.");
 
 		return value;
 	}
@@ -44,15 +51,9 @@ public sealed class ConditionData
 	/// </summary>
 	public T GetOptionalParameter<T>(string key, T defaultValue) where T : notnull
 	{
-		if (_params == null || !_params.TryGetValue(key, out var valueToken))
+		if (!TryGetParameter<T>(key, out var value))
 			return defaultValue;
 
-		var value = valueToken.Value<T>();
-
-		// ReSharper disable once ConvertIfStatementToReturnStatement
-		if (value == null)
-			throw new JsonException($"Expected '{key}' to be '{typeof(T)}'.");
-
-		return value;
+		return value ?? defaultValue;
 	}
 }
