@@ -7,18 +7,11 @@ internal sealed class AndCondition : ICondition
 {
 	private readonly ICondition[] _conditions;
 
-	private AndCondition(ICondition[] conditions)
+	public AndCondition(ConditionData data)
 	{
-		_conditions = conditions;
+		_conditions = data.GetRequiredParameter<ICondition[]>("conditions");
 	}
 
 	/// <inheritdoc/>
 	public bool IsMet() => _conditions.All(condition => condition.IsMet());
-
-	public static ICondition Create(ConditionData data)
-	{
-		var conditions = data.GetRequiredParameter<ICondition[]>("conditions");
-
-		return new AndCondition(conditions);
-	}
 }

@@ -5,13 +5,13 @@ namespace BingoAPI.Conditions.BuiltIn;
 /// </summary>
 internal sealed class SomeCondition : ICondition
 {
-	private readonly uint _amount;
 	private readonly ICondition[] _conditions;
+	private readonly uint _amount;
 
-	private SomeCondition(uint amount, params ICondition[] conditions)
+	public SomeCondition(ConditionData data)
 	{
-		_amount = amount;
-		_conditions = conditions;
+		_conditions = data.GetRequiredParameter<ICondition[]>("conditions");
+		_amount = data.GetOptionalParameter<uint>("amount", 1);
 	}
 
 	/// <inheritdoc/>
@@ -35,13 +35,5 @@ internal sealed class SomeCondition : ICondition
 		}
 
 		return false;
-	}
-
-	public static ICondition Create(ConditionData data)
-	{
-		var conditions = data.GetRequiredParameter<ICondition[]>("conditions");
-		var amount = data.GetOptionalParameter<uint>("amount", 1);
-
-		return new SomeCondition(amount, conditions);
 	}
 }
