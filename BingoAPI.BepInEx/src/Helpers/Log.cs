@@ -7,7 +7,7 @@ namespace BingoAPI.BepInEx.Helpers;
 /// </summary>
 internal static class Log
 {
-	private static readonly Lazy<ManualLogSource> Logger = new(() => new ManualLogSource(Plugin.Id));
+	private static readonly Lazy<ManualLogSource> Logger = new(() => global::BepInEx.Logging.Logger.CreateLogSource(Plugin.Id));
 
 	/// <summary>
 	/// Logs information for developers that helps to debug the mod

@@ -23,6 +23,7 @@
                 PrivateAssets="all"/>
         <PackageReference Include="Hamunii.BepInEx.AutoPlugin" Version="2.1.0" PrivateAssets="all"/>
         <PackageReference Include="MinVer" Version="7.0.0" PrivateAssets="all"/>
+		<ProjectReference Include="../BingoAPI/BingoAPI.csproj"/>
     </ItemGroup>
 
     <!-- Modding Dependencies -->

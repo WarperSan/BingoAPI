@@ -1,4 +1,5 @@
 using BepInEx;
+using BingoAPI.Conditions;
 
 namespace BingoAPI.BepInEx;
 
@@ -7,7 +8,7 @@ public partial class Plugin : BaseUnityPlugin
 {
 	private void Awake()
 	{
-		Helpers.Patch.ApplyAll();
+		ConditionRegistry.AddBuiltIn();
 		Helpers.Log.Info($"{Name} v{Version} has loaded!");
 	}
 }

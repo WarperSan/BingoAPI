@@ -9,9 +9,11 @@ public static class ConditionRegistry
 {
 	private static readonly Dictionary<string, Func<ConditionData, ICondition>> Factories = new(StringComparer.OrdinalIgnoreCase);
 
-	static ConditionRegistry()
+	/// <summary>
+	/// Adds the built-in <see cref="ICondition"/>
+	/// </summary>
+	public static void AddBuiltIn()
 	{
-		// TODO: Register these conditions outside of this class
 		TryAdd("AND", data => new AndCondition(data));
 		TryAdd("OR", data => new OrCondition(data));
 		TryAdd("NOT", data => new NotCondition(data));
