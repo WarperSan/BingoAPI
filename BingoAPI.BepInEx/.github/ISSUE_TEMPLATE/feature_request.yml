@@ -1,0 +1,45 @@
+name: Feature Request
+description: Suggest a new idea or improvement for this mod
+labels: ["enhancement"]
+
+body:
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: Problem / Motivation
+      description: Describe the problem you're trying to solve. If this is not related to a problem, you can skip this section.
+      placeholder: |
+        What issue or limitation are you experiencing?
+        Why is this feature needed?
+    validations:
+      required: false
+
+  - type: textarea
+    id: solution-description
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature or improvement you'd like to see implemented.
+      placeholder: |
+        What should be added or changed?
+        How should it work?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any alternative solutions or workarounds you've thought about.
+      placeholder: |
+        Have you considered other ways to solve this?
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context, mockups, links, or screenshots.
+      placeholder: Helpful references, examples, or visuals.
+    validations:
+      required: false

@@ -1,0 +1,32 @@
+<Project>
+    <PropertyGroup>
+        <ThunderstoreTeam>$(Authors)</ThunderstoreTeam>
+        <ThunderstoreName>$(AssemblyTitle)</ThunderstoreName>
+        <ThunderstoreDescription>$(Description)</ThunderstoreDescription>
+        <ThunderstoreWebsite>$(RepositoryUrl)</ThunderstoreWebsite>
+
+        <!-- TODO: Add communities -->
+        <!--<ThunderstoreCommunities></ThunderstoreCommunities>-->
+
+        <!-- TODO: Add categories -->
+        <!--<ThunderstoreCategories></ThunderstoreCategories>-->
+
+        <ThunderstoreToken>$(THUNDERSTORE_TOKEN)</ThunderstoreToken>
+
+        <ThunderstorePackageSource Condition="'$(ThunderstorePackageSource)' == ''">$(SolutionDir)</ThunderstorePackageSource>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- Mod Files -->
+        <ThunderstoreFile Include="$(TargetPath)" Destination="plugins/"/>
+
+        <!-- Package Files -->
+        <ThunderstorePackageFile Include="$(ThunderstorePackageSource)README.md"/>
+        <ThunderstorePackageFile Include="$(ThunderstorePackageSource)icon.png"/>
+        <ThunderstorePackageFile Include="$(ThunderstorePackageSource)LICENSE"/>
+        <ThunderstorePackageFile Include="$(ThunderstorePackageSource)CHANGELOG.md"/>
+
+        <!-- Thunderstore Dependencies -->
+        <!--<ThunderstoreDependency Include="TEAM-PACKAGE" Version="VERSION"/>-->
+    </ItemGroup>
+</Project>

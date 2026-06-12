@@ -10,6 +10,6 @@
     <PropertyGroup>
         <DebugSymbols>true</DebugSymbols>
         <DebugType>embedded</DebugType>
-        <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
+		<PathMap Condition="'$(Configuration)' == 'Release'">$(MSBuildProjectDirectory)=./</PathMap>
     </PropertyGroup>
 </Project>

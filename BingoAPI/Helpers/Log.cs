@@ -1,4 +1,3 @@
-using BepInEx.Logging;
 using UnityEngine;
 
 namespace BingoAPI.Helpers;
@@ -8,30 +7,30 @@ namespace BingoAPI.Helpers;
 /// </summary>
 public static class Log
 {
-	private static ManualLogSource? _logger;
+	private static Action<string>? _logger;
 
 	/// <summary>
 	/// Sets the <see cref="ILogger"/> to use
 	/// </summary>
-	public static void SetLogger(ManualLogSource logger) => _logger = logger;
+	public static void SetLogger(Action<string> logger) => _logger = logger;
 
 	/// <summary>
 	/// Logs information for developers that helps to debug the mod
 	/// </summary>
-	internal static void Debug(string? message) => _logger?.LogDebug(message);
+	internal static void Debug(string? message) => _logger?.Invoke(message);
 
 	/// <summary>
 	/// Logs information for players to know important steps of the mod
 	/// </summary>
-	internal static void Info(string? message) => _logger?.LogInfo(message);
+	internal static void Info(string? message) => _logger?.Invoke(message);
 
 	/// <summary>
 	/// Logs information for players to warn them about an unwanted state
 	/// </summary>
-	internal static void Warning(string? message) => _logger?.LogWarning(message);
+	internal static void Warning(string? message) => _logger?.Invoke(message);
 
 	/// <summary>
 	/// Logs information for players to notify them of an error
 	/// </summary>
-	internal static void Error(string? message) => _logger?.LogError(message);
+	internal static void Error(string? message) => _logger?.Invoke(message);
 }

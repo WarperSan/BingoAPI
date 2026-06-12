@@ -1,5 +1,4 @@
 using BingoAPI.Conditions.BuiltIn;
-using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Conditions;
 
@@ -13,10 +12,10 @@ public static class ConditionRegistry
 	static ConditionRegistry()
 	{
 		// TODO: Register these conditions outside of this class
-		Register("AND", AndCondition.Create);
-		Register("OR", OrCondition.Create);
-		Register("NOT", NotCondition.Create);
-		Register("SOME", SomeCondition.Create);
+		TryAdd("AND", data => new AndCondition(data));
+		TryAdd("OR", data => new OrCondition(data));
+		TryAdd("NOT", data => new NotCondition(data));
+		TryAdd("SOME", data => new SomeCondition(data));
 	}
 
 	/// <summary>

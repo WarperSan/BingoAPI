@@ -6,8 +6,6 @@
 		<Product>BingoAPI</Product>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<RootNamespace>BingoAPI</RootNamespace>
-
-		<BepInExInstallPath>/home/warpersan/.var/app/com.github.ebkr.r2modman/config/r2modmanPlus-local/HollowKnightSilksong/profiles/Default</BepInExInstallPath>
 	</PropertyGroup>
 
 	<!-- NuGet Metadata -->
@@ -25,6 +23,12 @@
 		<RepositoryUrl>https://github.com/WarperSan/BingoAPI</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+	  <DocumentationFile>bin\Debug\netstandard2.0\BingoAPI.xml</DocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+	  <DocumentationFile>bin\Release\netstandard2.0\BingoAPI.xml</DocumentationFile>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<None Include="../icon.png" Pack="true" PackagePath=""/>
@@ -32,10 +36,8 @@
 
 	<!-- Dependencies -->
 	<ItemGroup>
-		<PackageReference Include="BepInEx.Core" Version="5.4.21"/>
 		<PackageReference Include="UnityEngine.Modules" Version="2021.3.33"/>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
 		<PackageReference Include="MinVer" Version="6.0.0"/>
-		<PackageReference Include="Hamunii.BepInEx.AutoPlugin" Version="2.1.0"/>
 	</ItemGroup>
 </Project>
