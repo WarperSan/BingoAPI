@@ -24,14 +24,23 @@ internal class SlotIndexConverter : JsonConverter<int>
 		JsonSerializer serializer
 	)
 	{
+		if (reader.TokenType is JsonToken.Integer)
+			return Convert.ToInt32(reader.Value);
+
 		if (reader.Value is not string rawIndex)
 			throw new JsonException($"Expected a '{nameof(String)}', but  got '{reader.ValueType}'.");
 
-		rawIndex = rawIndex.Replace(PREFIX, "");
+		if (!rawIndex.StartsWith(PREFIX))
+			throw new JsonException($"Expected value starting with '{PREFIX}'.");
+
+		rawIndex = rawIndex.Substring(PREFIX.Length);
 
 		// ReSharper disable once ConvertIfStatementToReturnStatement
 		if (!int.TryParse(rawIndex, out var index))
 			throw new JsonException($"Could not parse index from '{rawIndex}'.");
+
+		if (index <= 0)
+			throw new JsonException($"Index must be greater than 0.");
 
 		return index - 1;
 	}
