@@ -17,6 +17,8 @@
     <ItemGroup>
         <!-- Mod Files -->
         <ThunderstoreFile Include="$(TargetPath)" Destination="plugins/"/>
+        <ThunderstoreFile Include="$(OutputPath)BingoAPI.dll" Destination="plugins/"/>
+        <ThunderstoreFile Include="$(OutputPath)BingoAPI.xml" Destination="plugins/"/>
 
         <!-- Package Files -->
         <ThunderstorePackageFile Include="$(ProjectRoot)README.md"/>
