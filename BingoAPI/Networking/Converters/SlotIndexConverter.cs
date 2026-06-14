@@ -1,3 +1,4 @@
+using BingoAPI.Networking.DTOs;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Networking.Converters;
@@ -5,43 +6,44 @@ namespace BingoAPI.Networking.Converters;
 /// <summary>
 /// Converts a 0-based <see cref="int"/> index to and from a 1-based <see cref="string"/> slot index
 /// </summary>
-internal class SlotIndexConverter : JsonConverter<int>
+internal class SlotIndexConverter : JsonConverter<SlotIndex>
 {
 	private const string PREFIX = "slot";
 
 	/// <inheritdoc />
-	public override void WriteJson(JsonWriter writer, int value, JsonSerializer serializer)
+	public override void WriteJson(JsonWriter writer, SlotIndex? value, JsonSerializer serializer)
 	{
-		writer.WriteValue($"{PREFIX}{value + 1}");
+		var index = 0;
+
+		if (value != null)
+			index = value.Index + 1;
+
+		writer.WriteValue($"{PREFIX}{index}");
 	}
 
 	/// <inheritdoc />
-	public override int ReadJson(
+	public override SlotIndex ReadJson(
 		JsonReader reader,
 		Type objectType,
-		int existingValue,
+		SlotIndex? existingValue,
 		bool hasExistingValue,
 		JsonSerializer serializer
 	)
 	{
-		if (reader.TokenType is JsonToken.Integer)
-			return Convert.ToInt32(reader.Value);
-
 		if (reader.Value is not string rawIndex)
 			throw new JsonException($"Expected a '{nameof(String)}', but  got '{reader.ValueType}'.");
 
 		if (!rawIndex.StartsWith(PREFIX))
 			throw new JsonException($"Expected value starting with '{PREFIX}'.");
 
-		rawIndex = rawIndex.Substring(PREFIX.Length);
+		rawIndex = rawIndex[PREFIX.Length..];
 
-		// ReSharper disable once ConvertIfStatementToReturnStatement
 		if (!int.TryParse(rawIndex, out var index))
 			throw new JsonException($"Could not parse index from '{rawIndex}'.");
 
 		if (index <= 0)
-			throw new JsonException($"Index must be greater than 0.");
+			throw new JsonException("Index must be greater than 0.");
 
-		return index - 1;
+		return new SlotIndex(index - 1);
 	}
 }

@@ -1,4 +1,5 @@
 using BingoAPI.Networking.Converters;
+using BingoAPI.Networking.DTOs;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Models;
@@ -13,20 +14,19 @@ public record Square
 	/// </summary>
 	[JsonProperty("name")]
 	[JsonRequired]
-	public readonly string Name = string.Empty;
+	public required string Name { get; init; }
 
 	/// <summary>
 	/// Index of this square
 	/// </summary>
 	[JsonProperty("slot")]
 	[JsonRequired]
-	[JsonConverter(typeof(SlotIndexConverter))]
-	public readonly int Index;
+	public required SlotIndex Slot { get; init; }
 
 	/// <summary>
 	/// Teams currently owning this square
 	/// </summary>
 	[JsonProperty("colors")]
 	[JsonRequired]
-	public readonly Team Teams;
+	public required Team Teams { get; init; }
 }

@@ -34,13 +34,15 @@ public sealed class Card
 
 		foreach (var square in squares)
 		{
-			if (square.Index < 0 || square.Index >= _squares.Length)
+			var index = square.Slot.Index;
+
+			if (index < 0 || index >= _squares.Length)
 				throw new ArgumentOutOfRangeException(nameof(square));
 
 			if (!pool.TryGet(square.Name, out var goal) || goal == null)
 				throw new KeyNotFoundException($"Failed to find a goal under the name '{square.Name}'.");
 
-			_squares[square.Index] = new CardSquare(square, goal);
+			_squares[index] = new CardSquare(square, goal);
 		}
 	}
 
