@@ -189,6 +189,14 @@
 		}
 	},
 	"properties": {
+		"name": {
+			"description": "Name of the set",
+			"type": "string"
+		},
+		"description": {
+			"description": "Description of the set",
+			"type": "string"
+		},
 		"goals": {
 			"description": "List of goals added by this set",
 			"type": "array",
