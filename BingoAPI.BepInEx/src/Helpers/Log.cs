@@ -10,6 +10,29 @@ internal static class Log
 	private static readonly Lazy<ManualLogSource> Logger = new(() => global::BepInEx.Logging.Logger.CreateLogSource(Plugin.Id));
 
 	/// <summary>
+	/// Logs any message incoming from <see cref="BingoAPI"/> directly
+	/// </summary>
+	public static void LogCore(BingoAPI.Helpers.Log.LogLevel level, string message)
+	{
+		switch (level)
+		{
+			case BingoAPI.Helpers.Log.LogLevel.Debug:
+				Debug(message);
+				break;
+			case BingoAPI.Helpers.Log.LogLevel.Warning:
+				Warning(message);
+				break;
+			case BingoAPI.Helpers.Log.LogLevel.Error:
+				Error(message);
+				break;
+			case BingoAPI.Helpers.Log.LogLevel.Info:
+			default:
+				Info(message);
+				break;
+		}
+	}
+
+	/// <summary>
 	/// Logs information for developers that helps to debug the mod
 	/// </summary>
 	public static void Debug(string? message) => Logger.Value.LogDebug(message);
