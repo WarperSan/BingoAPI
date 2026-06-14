@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using BingoAPI.Conditions;
+using BingoAPI.Helpers;
 
 namespace BingoAPI.Goals;
 
@@ -36,7 +37,18 @@ public sealed class GoalTracker
 		foreach (var goal in _trackedGoals)
 		{
 			var wasMet = _metGoals.Contains(goal);
-			var isMet = goal.Condition.IsMet();
+
+			bool isMet;
+
+			try
+			{
+				isMet = goal.Condition.IsMet();
+			}
+			catch (Exception e)
+			{
+				Log.Error($"Error while evaluating '{goal.Name}': {e}");
+				isMet = false;
+			}
 
 			DispatchChange(wasMet, isMet, goal);
 		}
@@ -44,6 +56,9 @@ public sealed class GoalTracker
 
 	#region Callbacks
 
+	/// <summary>
+	/// Callback used when a goal changes status
+	/// </summary>
 	public delegate void GoalChangedCallback(Goal goal);
 
 	/// <summary>
