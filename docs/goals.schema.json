@@ -1,0 +1,205 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/WarperSan/BingoAPI/goals.schema.json",
+	"title": "Goals",
+	"description": "A set of goals available",
+	"type": "object",
+	"$defs": {
+		"goal": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string",
+					"description": "Text to display for this goal"
+				},
+				"condition": {
+					"$ref": "#/$defs/condition",
+					"description": "Condition to meet to complete this goal"
+				}
+			},
+			"required": [
+				"name",
+				"condition"
+			]
+		},
+		"condition": {
+			"$comment": "This collection has to be kept up to date",
+			"allOf": [
+				{
+					"if": {
+						"properties": {
+							"action": {
+								"const": "AND"
+							}
+						}
+					},
+					"then": {
+						"$ref": "#/$defs/and-condition"
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"action": {
+								"const": "OR"
+							}
+						}
+					},
+					"then": {
+						"$ref": "#/$defs/or-condition"
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"action": {
+								"const": "NOT"
+							}
+						}
+					},
+					"then": {
+						"$ref": "#/$defs/not-condition"
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"action": {
+								"const": "SOME"
+							}
+						}
+					},
+					"then": {
+						"$ref": "#/$defs/some-condition"
+					}
+				},
+				{
+					"$ref": "#/$defs/user-condition"
+				}
+			]
+		},
+		"user-condition": {
+			"type": "object",
+			"properties": {
+				"action": {
+					"type": "string",
+					"description": "Key used to find the condition type"
+				},
+				"params": {
+					"type": "object",
+					"description": "Parameters of the condition"
+				}
+			},
+			"required": [
+				"action"
+			]
+		},
+		"and-condition": {
+			"type": "object",
+			"properties": {
+				"params": {
+					"type": "object",
+					"properties": {
+						"conditions": {
+							"type": "array",
+							"items": {
+								"$ref": "#/$defs/condition"
+							},
+							"minItems": 2
+						}
+					},
+					"required": [
+						"conditions"
+					]
+				}
+			},
+			"required": [
+				"params"
+			]
+		},
+		"or-condition": {
+			"type": "object",
+			"properties": {
+				"params": {
+					"type": "object",
+					"properties": {
+						"conditions": {
+							"type": "array",
+							"items": {
+								"$ref": "#/$defs/condition"
+							},
+							"minItems": 2
+						}
+					},
+					"required": [
+						"conditions"
+					]
+				}
+			},
+			"required": [
+				"params"
+			]
+		},
+		"not-condition": {
+			"type": "object",
+			"properties": {
+				"params": {
+					"type": "object",
+					"properties": {
+						"condition": {
+							"$ref": "#/$defs/condition"
+						}
+					},
+					"required": [
+						"condition"
+					]
+				}
+			},
+			"required": [
+				"params"
+			]
+		},
+		"some-condition": {
+			"type": "object",
+			"properties": {
+				"params": {
+					"type": "object",
+					"properties": {
+						"conditions": {
+							"type": "array",
+							"items": {
+								"$ref": "#/$defs/condition"
+							},
+							"minItems": 2
+						},
+						"amount": {
+							"type": "number",
+							"default": 2,
+							"minimum": 2
+						}
+					},
+					"required": [
+						"conditions"
+					]
+				}
+			},
+			"required": [
+				"params"
+			]
+		}
+	},
+	"properties": {
+		"goals": {
+			"description": "List of goals added by this set",
+			"type": "array",
+			"items": {
+				"$ref": "#/$defs/goal"
+			},
+			"minItems": 1,
+			"uniqueItems": true
+		}
+	},
+	"required": [
+		"goals"
+	]
+}
