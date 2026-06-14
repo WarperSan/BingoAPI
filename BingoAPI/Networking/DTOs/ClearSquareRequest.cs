@@ -1,4 +1,5 @@
 using BingoAPI.Models;
+using BingoAPI.Networking.Clients;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Networking.DTOs;
@@ -9,13 +10,13 @@ namespace BingoAPI.Networking.DTOs;
 internal record ClearSquareRequest
 {
 	[JsonProperty("room")]
-	public string Code = string.Empty;
+	public required string Code { get; init; }
 
 	[JsonProperty("color")]
-	public Team Team;
+	public required Team Team { get; init; }
 
 	[JsonProperty("slot")]
-	public string Index = string.Empty;
+	public required string Index { get; init; }
 
 	[JsonProperty("remove_color")]
 	public bool RemoveColor => true;

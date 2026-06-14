@@ -1,3 +1,4 @@
+using BingoAPI.Networking.Clients;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Networking.DTOs;
@@ -8,14 +9,14 @@ namespace BingoAPI.Networking.DTOs;
 internal record JoinRoomRequest
 {
 	[JsonProperty("room")]
-	public string Code = string.Empty;
+	public required string Code { get; init; }
 
 	[JsonProperty("password")]
-	public string Password = string.Empty;
+	public required string Password { get; init; }
 
 	[JsonProperty("nickname")]
-	public string Username = string.Empty;
+	public required string Username { get; init; }
 
 	[JsonProperty("is_spectator")]
-	public bool IsSpectator;
+	public required bool IsSpectator { get; init; }
 }

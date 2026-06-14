@@ -1,3 +1,4 @@
+using BingoAPI.Networking.Clients;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Networking.DTOs;
@@ -8,5 +9,5 @@ namespace BingoAPI.Networking.DTOs;
 internal record RevealCardRequest
 {
 	[JsonProperty("room")]
-	public string Code = string.Empty;
+	public required string Code { get; init; }
 }

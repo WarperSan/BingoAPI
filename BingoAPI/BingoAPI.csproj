@@ -36,8 +36,9 @@
 
 	<!-- Dependencies -->
 	<ItemGroup>
-		<PackageReference Include="UnityEngine.Modules" Version="2021.3.33"/>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
-		<PackageReference Include="MinVer" Version="6.0.0"/>
+		<PackageReference Include="PolySharp" Version="1.16.0" PrivateAssets="all"/>
+		<PackageReference Include="UnityEngine.Modules" Version="2021.3.33" PrivateAssets="all"/>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" PrivateAssets="all"/>
+		<PackageReference Include="MinVer" Version="6.0.0" PrivateAssets="all"/>
 	</ItemGroup>
 </Project>

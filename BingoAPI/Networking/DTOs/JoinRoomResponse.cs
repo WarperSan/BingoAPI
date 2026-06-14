@@ -1,3 +1,4 @@
+using BingoAPI.Networking.Clients;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Networking.DTOs;
@@ -9,5 +10,5 @@ internal record JoinRoomResponse
 {
 	[JsonProperty("socket_key")]
 	[JsonRequired]
-	public readonly string SocketKey = string.Empty;
+	public required string SocketKey { get; init; }
 }

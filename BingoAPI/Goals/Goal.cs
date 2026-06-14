@@ -13,12 +13,12 @@ public sealed record Goal
 	/// </summary>
 	[JsonProperty("name")]
 	[JsonRequired]
-	public readonly string Name = string.Empty;
+	public required string Name { get; init; }
 
 	/// <summary>
 	/// Condition that must be met for this goal to be completed
 	/// </summary>
 	[JsonProperty("condition")]
 	[JsonRequired]
-	public readonly ICondition Condition = null!;
+	public required ICondition Condition { get; init; }
 }

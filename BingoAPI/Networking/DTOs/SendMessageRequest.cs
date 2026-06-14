@@ -1,3 +1,4 @@
+using BingoAPI.Networking.Clients;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Networking.DTOs;
@@ -8,8 +9,8 @@ namespace BingoAPI.Networking.DTOs;
 internal record SendMessageRequest
 {
 	[JsonProperty("room")]
-	public string Code = string.Empty;
+	public required string Code { get; init; }
 
 	[JsonProperty("text")]
-	public string Message = string.Empty;
+	public required string Message { get; init; }
 }

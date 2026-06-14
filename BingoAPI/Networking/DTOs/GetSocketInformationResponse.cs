@@ -1,3 +1,4 @@
+using BingoAPI.Networking.Clients;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Networking.DTOs;
@@ -9,9 +10,9 @@ internal record GetSocketInformationResponse
 {
 	[JsonProperty("room")]
 	[JsonRequired]
-	public readonly string Code = string.Empty;
+	public required string Code { get; init; }
 
 	[JsonProperty("player")]
 	[JsonRequired]
-	public readonly string PlayerUUID = string.Empty;
+	public required string PlayerUUID { get; init; }
 }

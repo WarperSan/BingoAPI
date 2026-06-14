@@ -1,4 +1,5 @@
 using BingoAPI.Models;
+using BingoAPI.Networking.Clients;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Networking.DTOs;
@@ -9,8 +10,8 @@ namespace BingoAPI.Networking.DTOs;
 internal record ChangeTeamRequest
 {
 	[JsonProperty("room")]
-	public string Code = string.Empty;
+	public required string Code { get; init; }
 
 	[JsonProperty("color")]
-	public Team Team;
+	public required Team Team { get; init; }
 }
