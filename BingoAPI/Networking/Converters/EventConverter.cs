@@ -8,23 +8,22 @@ namespace BingoAPI.Networking.Converters;
 /// <summary>
 /// Converts a <see cref="string"/> to a <see cref="IEvent"/>
 /// </summary>
-internal class EventConverter : JsonConverter<IEvent>
+internal class EventConverter : JsonConverter
 {
 	/// <inheritdoc />
 	public override bool CanWrite => false;
 
 	/// <inheritdoc />
-	public override void WriteJson(JsonWriter writer, IEvent? value, JsonSerializer serializer)
+	public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
 	{
-		throw new NotImplementedException();
+		throw new InvalidOperationException();
 	}
 
 	/// <inheritdoc />
-	public override IEvent ReadJson(
+	public override object? ReadJson(
 		JsonReader reader,
 		Type objectType,
-		IEvent? existingValue,
-		bool hasExistingValue,
+		object? existingValue,
 		JsonSerializer serializer
 	)
 	{
@@ -32,18 +31,18 @@ internal class EventConverter : JsonConverter<IEvent>
 
 		var type = obj.Value<string>("type");
 
-		IEvent evt = type switch
+		return type switch
 		{
-			"chat" => new ChatEvent(),
-			"goal" => new GoalEvent(),
-			"color" => new ColorEvent(),
-			"revealed" => new CardRevealedEvent(),
-			"new-card" => new CardGeneratedEvent(),
-			"connection" => new ConnectionEvent(),
+			"chat" => obj.ToObject<ChatEvent>(),
+			"goal" => obj.ToObject<GoalEvent>(),
+			"color" => obj.ToObject<ColorEvent>(),
+			"revealed" => obj.ToObject<CardRevealedEvent>(),
+			"new-card" => obj.ToObject<CardGeneratedEvent>(),
+			"connection" => obj.ToObject<ConnectionEvent>(),
 			_ => throw new InvalidOperationException($"No event was found of type '{type}': {obj}")
 		};
-
-		serializer.Populate(obj.CreateReader(), evt);
-		return evt;
 	}
+
+	/// <inheritdoc />
+	public override bool CanConvert(Type objectType) => objectType == typeof(IEvent);
 }
