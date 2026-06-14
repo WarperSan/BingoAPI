@@ -338,33 +338,6 @@ public sealed class Session : IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Gets the setting of the room
-	/// </summary>
-	public async Task<RoomSettings?> GetRoomSettings(CancellationToken ct = default)
-	{
-		if (_roomCode == null)
-		{
-			Log.Error("Tried to get the room settings before being connected.");
-			return null;
-		}
-
-		Log.Info($"Getting the room settings of the room '{_roomCode}'...");
-
-		try
-		{
-			var settings = await _api.GetRoomSettings(_roomCode, ct);
-
-			Log.Info($"Got the room settings of the room '{_roomCode}'.");
-			return settings;
-		}
-		catch (Exception e)
-		{
-			Log.Error($"Failed to get the room settings of the room '{_roomCode}': {e}");
-			return null;
-		}
-	}
-
 	private void OnMessageReceived(string message)
 	{
 		var evt = JsonConvert.DeserializeObject<IEvent>(message);

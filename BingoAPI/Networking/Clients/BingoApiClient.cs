@@ -225,20 +225,5 @@ internal sealed class BingoApiClient
 		return await SendAndParse<GetSocketInformationResponse>(request, ct);
 	}
 
-	/// <summary>
-	/// Gets the settings of the room
-	/// </summary>
-	public async Task<RoomSettings> GetRoomSettings(string room, CancellationToken ct)
-	{
-		using var request = new RequestBuilder()
-							.Get()
-							.ToEndpoint($"/room/{room}/room-settings")
-							.Build();
-
-		var response = await SendAndParse<GetRoomSettingsResponse>(request, ct);
-
-		return response.Settings;
-	}
-
 	#endregion
 }
