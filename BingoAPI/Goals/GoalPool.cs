@@ -12,6 +12,11 @@ public sealed class GoalPool
 	private readonly Dictionary<string, Goal> _goals = new(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>
+	/// Number of <see cref="Goal"/> stored in this pool
+	/// </summary>
+	public int Count => _goals.Count;
+
+	/// <summary>
 	/// Adds the given <see cref="Goal"/> to this pool
 	/// </summary>
 	public void Add(Goal goal)
