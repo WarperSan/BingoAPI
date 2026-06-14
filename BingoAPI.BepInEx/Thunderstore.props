@@ -12,8 +12,6 @@
         <!--<ThunderstoreCategories></ThunderstoreCategories>-->
 
         <ThunderstoreToken>$(THUNDERSTORE_TOKEN)</ThunderstoreToken>
-
-        <ThunderstorePackageSource Condition="'$(ThunderstorePackageSource)' == ''">$(SolutionDir)</ThunderstorePackageSource>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,10 +19,10 @@
         <ThunderstoreFile Include="$(TargetPath)" Destination="plugins/"/>
 
         <!-- Package Files -->
-        <ThunderstorePackageFile Include="$(ThunderstorePackageSource)README.md"/>
-        <ThunderstorePackageFile Include="$(ThunderstorePackageSource)icon.png"/>
-        <ThunderstorePackageFile Include="$(ThunderstorePackageSource)LICENSE"/>
-        <ThunderstorePackageFile Include="$(ThunderstorePackageSource)CHANGELOG.md"/>
+        <ThunderstorePackageFile Include="$(ProjectRoot)README.md"/>
+        <ThunderstorePackageFile Include="$(ProjectRoot)icon.png"/>
+        <ThunderstorePackageFile Include="$(ProjectRoot)LICENSE"/>
+        <ThunderstorePackageFile Include="$(ProjectRoot)CHANGELOG.md"/>
 
         <!-- Thunderstore Dependencies -->
         <!--<ThunderstoreDependency Include="TEAM-PACKAGE" Version="VERSION"/>-->
