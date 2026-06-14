@@ -13,26 +13,26 @@ internal record ColorEvent : IEvent
 	/// </summary>
 	[JsonProperty("player")]
 	[JsonRequired]
-	public readonly Player Player = null!;
+	public required Player Player { get; init; }
 
 	/// <summary>
 	/// Previous color of the player
 	/// </summary>
 	[JsonProperty("player_color")]
 	[JsonRequired]
-	public readonly Team PreviousColor;
+	public required Team PreviousColor { get; init; }
 
 	/// <summary>
 	/// New color of the player
 	/// </summary>
 	[JsonProperty("color")]
 	[JsonRequired]
-	public readonly Team NewColor;
+	public required Team NewColor { get; init; }
 
 	/// <summary>
 	/// Time when this event was sent
 	/// </summary>
 	[JsonProperty("timestamp")]
 	[JsonRequired]
-	public readonly ulong Timestamp;
+	public required ulong Timestamp { get; init; }
 }

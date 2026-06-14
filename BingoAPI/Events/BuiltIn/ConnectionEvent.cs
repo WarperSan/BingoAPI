@@ -14,26 +14,26 @@ internal record ConnectionEvent : IEvent
 	/// </summary>
 	[JsonProperty("player")]
 	[JsonRequired]
-	public readonly Player Player = null!;
+	public required Player Player { get; init; }
 
 	/// <summary>
 	/// Identifier of the room
 	/// </summary>
 	[JsonProperty("room")]
 	[JsonRequired]
-	public readonly string RoomId = string.Empty;
+	public required string RoomId { get; init; }
 
 	/// <summary>
 	/// Time when this event was sent
 	/// </summary>
 	[JsonProperty("timestamp")]
 	[JsonRequired]
-	public readonly ulong Timestamp;
+	public required ulong Timestamp { get; init; }
 
 	/// <summary>
 	/// Defines if the player has connected or disconnected
 	/// </summary>
 	[JsonProperty("event_type")]
 	[JsonConverter(typeof(StringEqualConverter), "connected")]
-	public readonly bool IsConnected;
+	public required bool IsConnected { get; init; }
 }

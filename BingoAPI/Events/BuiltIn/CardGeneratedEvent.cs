@@ -13,19 +13,19 @@ internal record CardGeneratedEvent : IEvent
 	/// </summary>
 	[JsonProperty("player")]
 	[JsonRequired]
-	public readonly Player Player = null!;
+	public required Player Player { get; init; }
 
 	/// <summary>
 	/// Determines if the card was generated as hidden
 	/// </summary>
 	[JsonProperty("hide_card")]
 	[JsonRequired]
-	public readonly bool IsCardHidden;
+	public required bool IsCardHidden { get; init; }
 
 	/// <summary>
 	/// Time when this event was sent
 	/// </summary>
 	[JsonProperty("timestamp")]
 	[JsonRequired]
-	public readonly ulong Timestamp;
+	public required ulong Timestamp { get; init; }
 }

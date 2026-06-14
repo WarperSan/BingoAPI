@@ -13,33 +13,33 @@ internal record GoalEvent : IEvent
 	/// </summary>
 	[JsonProperty("player")]
 	[JsonRequired]
-	public readonly Player Player = null!;
+	public required Player Player { get; init; }
 
 	/// <summary>
 	/// Time when this event was sent
 	/// </summary>
 	[JsonProperty("timestamp")]
 	[JsonRequired]
-	public readonly ulong Timestamp;
+	public required ulong Timestamp { get; init; }
 
 	/// <summary>
 	/// Square modified by this event
 	/// </summary>
 	[JsonProperty("square")]
 	[JsonRequired]
-	public readonly Square Square = null!;
+	public required Square Square { get; init; }
 
 	/// <summary>
 	/// Team that was added or removed
 	/// </summary>
 	[JsonProperty("color")]
 	[JsonRequired]
-	public readonly Team Team;
+	public required Team Team { get; init; }
 
 	/// <summary>
 	/// Defines if the selected square has been cleared or marked
 	/// </summary>
 	[JsonProperty("remove")]
 	[JsonRequired]
-	public readonly bool HasBeenCleared;
+	public required bool HasBeenCleared { get; init; }
 }
