@@ -10,6 +10,8 @@ namespace BingoAPI.Goals;
 [PublicAPI]
 public sealed class GoalPool
 {
+	// TODO: Implement collision-safe ID
+
 	private readonly Dictionary<string, Goal> _goals = new(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>
