@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace BingoAPI.Helpers;
 
 // TODO: Find a way to implement an universal solution without adding our own
@@ -35,14 +33,12 @@ public static class Log
 		Error,
 	}
 
-	private static Action<LogLevel, string>? _logger;
-
 	/// <summary>
-	/// Sets the <see cref="ILogger"/> to use
+	/// Callback to use for any log
 	/// </summary>
-	public static void SetLogger(Action<LogLevel, string> logger) => _logger = logger;
+	public static Action<LogLevel, string>? Logger { private get; set; }
 
-	private static void LogMessage(LogLevel level, string? message) => _logger?.Invoke(level, message ?? string.Empty);
+	private static void LogMessage(LogLevel level, string? message) => Logger?.Invoke(level, message ?? string.Empty);
 
 	/// <summary>
 	/// Logs information for developers that helps to debug the mod

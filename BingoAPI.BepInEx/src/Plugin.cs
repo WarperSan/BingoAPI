@@ -8,7 +8,7 @@ public partial class Plugin : BaseUnityPlugin
 {
 	private void Awake()
 	{
-		BingoAPI.Helpers.Log.SetLogger(Helpers.Log.LogCore);
+		BingoAPI.Helpers.Log.Logger = Helpers.Log.LogCore;
 
 		Helpers.Log.Info($"{Name} v{Version} has loaded!");
 	}
