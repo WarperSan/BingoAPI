@@ -27,6 +27,6 @@
         <ThunderstorePackageFile Include="$(ProjectRoot)CHANGELOG.md"/>
 
         <!-- Thunderstore Dependencies -->
-        <!--<ThunderstoreDependency Include="TEAM-PACKAGE" Version="VERSION"/>-->
+        <ThunderstoreDependency Include="BepInEx-BepInExPack" Version="5.4.2100"/>
     </ItemGroup>
 </Project>
