@@ -39,8 +39,8 @@ public sealed class Card
 			if (index < 0 || index >= _squares.Length)
 				throw new ArgumentOutOfRangeException(nameof(square));
 
-			if (!pool.TryGet(square.Name, out var goal) || goal == null)
-				throw new KeyNotFoundException($"Failed to find a goal under the name '{square.Name}'.");
+			if (!pool.TryGet(square, out var goal))
+				throw new KeyNotFoundException($"Failed to find a goal under the name '{square.Text}'.");
 
 			_squares[index] = new CardSquare(square, goal);
 		}

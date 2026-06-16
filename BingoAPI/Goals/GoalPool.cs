@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using BingoAPI.Models;
 using JetBrains.Annotations;
 
 namespace BingoAPI.Goals;
@@ -41,10 +42,7 @@ public sealed class GoalPool
 	}
 
 	/// <summary>
-	/// Tries to get the <see cref="Goal"/> from the given name
+	/// Attempts to get the <see cref="Goal"/> represented by the given <see cref="Square"/>
 	/// </summary>
-	/// <param name="name">Name of the target goal</param>
-	/// <param name="goal">Matched goal, or <c>null</c> if not found</param>
-	/// <returns>Success of the attempt</returns>
-	public bool TryGet(string name, out Goal? goal) => _goals.TryGetValue(name, out goal);
+	public bool TryGet(Square square, [NotNullWhen(true)] out Goal? goal) => _goals.TryGetValue(square.Text, out goal);
 }

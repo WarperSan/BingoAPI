@@ -1,4 +1,3 @@
-using BingoAPI.Networking.Converters;
 using BingoAPI.Networking.DTOs;
 using Newtonsoft.Json;
 
@@ -14,7 +13,7 @@ public record Square
 	/// </summary>
 	[JsonProperty("name")]
 	[JsonRequired]
-	public required string Name { get; init; }
+	public required string Text { get; init; }
 
 	/// <summary>
 	/// Index of this square
