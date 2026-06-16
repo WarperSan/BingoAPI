@@ -3,7 +3,7 @@ using BingoAPI.Conditions;
 
 namespace BingoAPI.BepInEx;
 
-[BepInAutoPlugin]
+[BepInAutoPlugin("dev.warpersan.bingoapi.bepinex")]
 public partial class Plugin : BaseUnityPlugin
 {
 	private void Awake()
