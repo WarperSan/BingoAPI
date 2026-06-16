@@ -6,32 +6,28 @@
 		<Product>BingoAPI</Product>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<RootNamespace>BingoAPI</RootNamespace>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 
-	<!-- NuGet Metadata -->
+	<!-- Nuget Properties -->
 	<PropertyGroup>
+		<IsPackable>true</IsPackable>
+
 		<PackageId>WarperSan.BingoAPI</PackageId>
 		<PackageTags>Bingo;BingoSync</PackageTags>
 		<Title>BingoAPI</Title>
 		<Description>Library that allows to communicate with BingoSync's servers through code</Description>
-		<Authors>WarperSan</Authors>
 
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-
-		<RepositoryUrl>https://github.com/WarperSan/BingoAPI</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-	  <DocumentationFile>bin\Debug\netstandard2.0\BingoAPI.xml</DocumentationFile>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-	  <DocumentationFile>bin\Release\netstandard2.0\BingoAPI.xml</DocumentationFile>
 	</PropertyGroup>
 
+	<!-- Content includes -->
 	<ItemGroup>
 		<None Include="../icon.png" Pack="true" PackagePath=""/>
+		<None Include="../README.md" Pack="true" PackagePath=""/>
+		<None Include="../LICENSE" Pack="true" PackagePath=""/>
 	</ItemGroup>
 
 	<!-- Dependencies -->

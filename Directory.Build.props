@@ -6,6 +6,13 @@
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
+	<!-- Default Metadata -->
+	<PropertyGroup>
+		<Authors>WarperSan</Authors>
+		<RepositoryUrl>https://github.com/WarperSan/BingoAPI</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+	</PropertyGroup>
+
     <!-- Debug -->
     <PropertyGroup>
         <DebugSymbols>true</DebugSymbols>
