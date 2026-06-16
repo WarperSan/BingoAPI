@@ -37,7 +37,7 @@ internal sealed class BingoApiClient
 	}
 
 	/// <summary>
-	/// Sensd the given <see cref="HttpRequestMessage"/>, and parses the JSON payload to <see cref="T"/>
+	/// Sends the given <see cref="HttpRequestMessage"/>, and parses the JSON payload to <typeparamref name="T"/>
 	/// </summary>
 	private async Task<T> SendAndParse<T>(HttpRequestMessage request, CancellationToken ct)
 	{

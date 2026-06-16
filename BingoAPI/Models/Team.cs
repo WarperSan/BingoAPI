@@ -10,6 +10,7 @@ namespace BingoAPI.Models;
 [JsonConverter(typeof(TeamConverter))]
 public enum Team : ushort
 {
+#pragma warning disable CS1591
 	None = 0,
 	Pink = 1 << 0,
 	Red = 1 << 1,
@@ -21,4 +22,5 @@ public enum Team : ushort
 	Blue = 1 << 7,
 	Navy = 1 << 8,
 	Purple = 1 << 9,
+#pragma warning restore CS1591
 }

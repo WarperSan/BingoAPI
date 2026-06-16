@@ -29,6 +29,10 @@ public sealed class Session : IDisposable
 	/// </summary>
 	public Team Team { get; private set; } = Team.None;
 
+	/// <summary>
+	/// Creates a new <see cref="Session"/>
+	/// </summary>
+	/// <param name="dispatcher">Instance used to dispatch events</param>
 	public Session(EventDispatcher dispatcher)
 	{
 		_dispatcher = dispatcher;
