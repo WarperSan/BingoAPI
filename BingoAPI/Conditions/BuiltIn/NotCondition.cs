@@ -7,6 +7,7 @@ internal sealed class NotCondition : ICondition
 {
 	private readonly ICondition _condition;
 
+	[Condition("NOT")]
 	public NotCondition(ConditionData data)
 	{
 		_condition = data.GetRequiredParameter<ICondition>("condition");

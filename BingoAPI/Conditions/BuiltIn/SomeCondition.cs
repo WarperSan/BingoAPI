@@ -8,6 +8,7 @@ internal sealed class SomeCondition : ICondition
 	private readonly ICondition[] _conditions;
 	private readonly uint _amount;
 
+	[Condition("SOME")]
 	public SomeCondition(ConditionData data)
 	{
 		_conditions = data.GetRequiredParameter<ICondition[]>("conditions");

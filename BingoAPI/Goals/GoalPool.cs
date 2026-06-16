@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using BingoAPI.Models;
 using JetBrains.Annotations;
@@ -8,7 +9,7 @@ namespace BingoAPI.Goals;
 /// Collection of <see cref="Goal"/> instances, accessible by name
 /// </summary>
 [PublicAPI]
-public sealed class GoalPool
+public sealed class GoalPool : IEnumerable<Goal>
 {
 	// TODO: Implement collision-safe ID
 
@@ -47,4 +48,10 @@ public sealed class GoalPool
 	/// Attempts to get the <see cref="Goal"/> represented by the given <see cref="Square"/>
 	/// </summary>
 	public bool TryGet(Square square, [NotNullWhen(true)] out Goal? goal) => _goals.TryGetValue(square.Text, out goal);
+
+	/// <inheritdoc />
+	public IEnumerator<Goal> GetEnumerator() => _goals.Values.GetEnumerator();
+
+	/// <inheritdoc />
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

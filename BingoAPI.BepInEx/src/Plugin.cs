@@ -10,7 +10,11 @@ public partial class Plugin : BaseUnityPlugin
 	{
 		BingoAPI.Helpers.Log.SetLogger(Helpers.Log.LogCore);
 
-		ConditionRegistry.AddBuiltIn();
 		Helpers.Log.Info($"{Name} v{Version} has loaded!");
+	}
+
+	private void Start()
+	{
+		ConditionRegistry.AddAll();
 	}
 }
