@@ -1,14 +1,13 @@
-using System.Diagnostics.CodeAnalysis;
 using BingoAPI.Conditions;
 using BingoAPI.Helpers;
+using JetBrains.Annotations;
 
 namespace BingoAPI.Goals;
 
 /// <summary>
 /// Tracks a fixed set of <see cref="Goal"/> and notifies when their <see cref="ICondition"/> is met or cleared
 /// </summary>
-[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[PublicAPI]
 public sealed class GoalTracker
 {
 	private readonly HashSet<Goal> _trackedGoals = [];

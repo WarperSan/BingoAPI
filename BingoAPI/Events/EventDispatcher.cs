@@ -1,13 +1,13 @@
-using System.Diagnostics.CodeAnalysis;
 using BingoAPI.Events.BuiltIn;
 using BingoAPI.Models;
+using JetBrains.Annotations;
 
 namespace BingoAPI.Events;
 
 /// <summary>
 /// Dispatches incoming <see cref="IEvent"/> into respective callbacks
 /// </summary>
-[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[PublicAPI]
 public sealed class EventDispatcher
 {
 	private string? _localUUID;

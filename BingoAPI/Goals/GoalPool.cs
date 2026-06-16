@@ -1,12 +1,12 @@
 using System.Diagnostics.CodeAnalysis;
+using JetBrains.Annotations;
 
 namespace BingoAPI.Goals;
 
 /// <summary>
 /// Collection of <see cref="Goal"/> instances, accessible by name
 /// </summary>
-[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[PublicAPI]
 public sealed class GoalPool
 {
 	private readonly Dictionary<string, Goal> _goals = new(StringComparer.OrdinalIgnoreCase);

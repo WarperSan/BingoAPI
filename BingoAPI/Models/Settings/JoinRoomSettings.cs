@@ -1,13 +1,12 @@
-using System.Diagnostics.CodeAnalysis;
 using BingoAPI.Networking.Clients;
+using JetBrains.Annotations;
 
 namespace BingoAPI.Models.Settings;
 
 /// <summary>
 /// Data used to join a room when calling <see cref="BingoApiClient.JoinRoom"/>
 /// </summary>
-[SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
-[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[PublicAPI]
 public record JoinRoomSettings
 {
 	/// <summary>

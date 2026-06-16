@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using BingoAPI.Events;
 using BingoAPI.Goals;
@@ -6,6 +5,7 @@ using BingoAPI.Helpers;
 using BingoAPI.Models;
 using BingoAPI.Models.Settings;
 using BingoAPI.Networking.Clients;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Networking;
@@ -13,7 +13,7 @@ namespace BingoAPI.Networking;
 /// <summary>
 /// Represents an active connection to a room
 /// </summary>
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
+[PublicAPI]
 public sealed class Session : IDisposable
 {
 	private readonly HttpClient _client;
