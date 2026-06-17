@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using BingoAPI.Events;
 using BingoAPI.Goals;
@@ -64,7 +65,7 @@ public sealed class Session : IDisposable
 	/// </summary>
 	public async Task<bool> JoinRoom(JoinRoomSettings settings, CancellationToken ct = default)
 	{
-		if (_roomCode != null)
+		if (IsInRoom)
 		{
 			Log.Error("Tried to join a room while being connected.");
 			return false;
@@ -100,7 +101,7 @@ public sealed class Session : IDisposable
 	/// </summary>
 	public async Task<bool> LeaveRoom(CancellationToken ct = default)
 	{
-		if (_roomCode == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to leave the room before being connected.");
 			return false;
@@ -131,7 +132,7 @@ public sealed class Session : IDisposable
 	/// </summary>
 	public async Task<bool> SendMessage(string message, CancellationToken ct = default)
 	{
-		if (_roomCode == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to send a message before being connected.");
 			return false;
@@ -158,7 +159,7 @@ public sealed class Session : IDisposable
 	/// </summary>
 	public async Task<bool> ChangeTeam(Team team, CancellationToken ct = default)
 	{
-		if (_roomCode == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to change team before being connected.");
 			return false;
@@ -193,7 +194,7 @@ public sealed class Session : IDisposable
 	/// </summary>
 	public async Task<Card?> GetCard(GoalPool pool, CancellationToken ct = default)
 	{
-		if (_roomCode == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to get the squares before being connected.");
 			return null;
@@ -220,7 +221,7 @@ public sealed class Session : IDisposable
 	/// </summary>
 	public async Task<Square[]?> GetSquares(CancellationToken ct = default)
 	{
-		if (_roomCode == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to get the squares before being connected.");
 			return null;
@@ -247,7 +248,7 @@ public sealed class Session : IDisposable
 	/// </summary>
 	public async Task<bool> MarkSquare(int index, CancellationToken ct = default)
 	{
-		if (_roomCode == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to mark a square before being connected.");
 			return false;
@@ -285,7 +286,7 @@ public sealed class Session : IDisposable
 	/// </summary>
 	public async Task<bool> ClearSquare(int index, CancellationToken ct = default)
 	{
-		if (_roomCode == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to clear a square before being connected.");
 			return false;
@@ -323,7 +324,7 @@ public sealed class Session : IDisposable
 	/// </summary>
 	public async Task<bool> RevealCard(CancellationToken ct = default)
 	{
-		if (_roomCode == null)
+		if (!IsInRoom)
 		{
 			Log.Error("Tried to reveal the card before being connected.");
 			return false;
