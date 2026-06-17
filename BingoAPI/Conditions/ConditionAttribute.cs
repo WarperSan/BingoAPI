@@ -25,7 +25,7 @@ public class ConditionAttribute : Attribute
 		Action = action;
 	}
 
-	internal record FactoryEntry
+	private record FactoryEntry
 	{
 		public required string Action { get; init; }
 		public required Func<ConditionData, ICondition> Factory { get; init; }
@@ -33,15 +33,51 @@ public class ConditionAttribute : Attribute
 	}
 
 	/// <summary>
-	/// Gets all the factories from the given type
+	/// Adds every factory defined using <see cref="ConditionAttribute"/>
 	/// </summary>
-	internal static IEnumerable<FactoryEntry> GetFactoriesFromType(Type type)
+	public static void AddAll()
 	{
-		foreach (var method in GetFactoryMethods(type))
-			yield return method;
+		foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+			AddAll(assembly);
+	}
 
-		foreach (var ctor in GetFactoryConstructors(type))
-			yield return ctor;
+	/// <summary>
+	/// Adds every factory defined using <see cref="ConditionAttribute"/> in the given <see cref="Assembly"/>
+	/// </summary>
+	public static void AddAll(Assembly assembly)
+	{
+		IEnumerable<Type?> types;
+
+		try
+		{
+			types = assembly.GetTypes();
+		}
+		catch (ReflectionTypeLoadException ex)
+		{
+			types = ex.Types;
+		}
+
+		foreach (var type in types)
+		{
+			if (type == null)
+				continue;
+
+			AddAll(type);
+		}
+	}
+
+	/// <summary>
+	/// Adds every factory defined using <see cref="ConditionAttribute"/> in the given <see cref="Type"/>
+	/// </summary>
+	public static void AddAll(Type type)
+	{
+		var factories = GetFactoryMethods(type).Concat(GetFactoryConstructors(type));
+
+		foreach (var factory in factories)
+		{
+			Log.Debug($"Trying to add '{factory.Action}' from '{factory.SourceName}'.");
+			ConditionRegistry.TryAdd(factory.Action, factory.Factory);
+		}
 	}
 
 	/// <summary>
@@ -57,9 +93,6 @@ public class ConditionAttribute : Attribute
 
 		foreach (var method in methods)
 		{
-			if (method.IsGenericMethodDefinition)
-				continue;
-
 			var attribute = method.GetCustomAttribute<ConditionAttribute>();
 
 			if (attribute == null)
@@ -106,6 +139,9 @@ public class ConditionAttribute : Attribute
 			if (attribute == null)
 				continue;
 
+			if (!typeof(ICondition).IsAssignableFrom(type))
+				continue;
+
 			var parameters = ctor.GetParameters();
 
 			if (parameters.Length != 1 || parameters[0].ParameterType != typeof(ConditionData))
@@ -114,14 +150,11 @@ public class ConditionAttribute : Attribute
 				continue;
 			}
 
-			if (!typeof(ICondition).IsAssignableFrom(type))
-				continue;
-
 			yield return new FactoryEntry
 			{
 				Action = attribute.Action,
 				Factory = data => (ICondition)ctor.Invoke([data]),
-				SourceName = type.FullName + ctor.Name,
+				SourceName = type.FullName ?? type.Name,
 			};
 		}
 	}

@@ -1,45 +1,14 @@
-using System.Reflection;
-using BingoAPI.Helpers;
+using JetBrains.Annotations;
 
 namespace BingoAPI.Conditions;
 
 /// <summary>
 /// Registry of all known condition factories, keyed by their action
 /// </summary>
+[PublicAPI]
 public static class ConditionRegistry
 {
 	private static readonly Dictionary<string, Func<ConditionData, ICondition>> Factories = new(StringComparer.OrdinalIgnoreCase);
-
-	/// <summary>
-	/// Adds every factory defined using <see cref="ConditionAttribute"/>
-	/// </summary>
-	public static void AddAll()
-	{
-		foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-		{
-			Type[] types;
-
-			try
-			{
-				types = assembly.GetTypes();
-			}
-			catch (ReflectionTypeLoadException ex)
-			{
-				types = ex.Types.Where(t => t != null).ToArray();
-			}
-
-			foreach (var type in types)
-			{
-				var factories = ConditionAttribute.GetFactoriesFromType(type);
-
-				foreach (var factory in factories)
-				{
-					Log.Debug($"Trying to add '{factory.Action}' from '{factory.SourceName}'.");
-					TryAdd(factory.Action, factory.Factory);
-				}
-			}
-		}
-	}
 
 	/// <summary>
 	/// Tries to add the given factory under the given action key
