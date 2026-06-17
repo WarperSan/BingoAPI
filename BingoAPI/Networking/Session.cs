@@ -30,6 +30,12 @@ public sealed class Session : IDisposable
 	public Team Team { get; private set; } = Team.None;
 
 	/// <summary>
+	/// Defines if this session is connected to a room
+	/// </summary>
+	[MemberNotNullWhen(true, nameof(_roomCode))]
+	public bool IsInRoom => _roomCode != null;
+
+	/// <summary>
 	/// Creates a new <see cref="Session"/>
 	/// </summary>
 	/// <param name="dispatcher">Instance used to dispatch events</param>
