@@ -82,9 +82,17 @@ public sealed class Session : IDisposable
 			var socketInfo = await _api.GetSocketInformation(socketKey, ct);
 
 			_roomCode = socketInfo.Code;
+
 			Team = BingoApiClient.DEFAULT_TEAM;
 
-			_dispatcher.SetLocalPlayer(socketInfo.PlayerUUID);
+			var player = new Player
+			{
+				Name = settings.Nickname,
+				Team = Team,
+				UUID = socketInfo.PlayerUUID,
+			};
+
+			_dispatcher.DispatchConnect(player);
 
 			Log.Info($"Room '{settings.Code}' was joined.");
 			return true;
@@ -116,6 +124,7 @@ public sealed class Session : IDisposable
 			await _socket.Disconnect(ct);
 
 			_roomCode = null;
+			_dispatcher.DispatchDisconnect();
 
 			Log.Info($"Left the room '{room}'.");
 			return true;

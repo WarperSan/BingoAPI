@@ -12,19 +12,19 @@ public record Player
 	/// </summary>
 	[JsonProperty("uuid")]
 	[JsonRequired]
-	public readonly string UUID = string.Empty;
+	public required string UUID { get; init; }
 
 	/// <summary>
 	/// Display name of this player
 	/// </summary>
 	[JsonProperty("name")]
 	[JsonRequired]
-	public readonly string Name = string.Empty;
+	public required string Name { get; init; }
 
 	/// <summary>
 	/// Team this player belongs to
 	/// </summary>
 	[JsonProperty("color")]
 	[JsonRequired]
-	public readonly Team Team;
+	public required Team Team { get; init; }
 }

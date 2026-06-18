@@ -10,17 +10,12 @@ namespace BingoAPI.Events;
 [PublicAPI]
 public sealed class EventDispatcher
 {
-	private string? _localUUID;
-
-	/// <summary>
-	/// Sets the local player used to differentiate self events from others
-	/// </summary>
-	internal void SetLocalPlayer(string uuid) => _localUUID = uuid;
+	private Player? _localPlayer;
 
 	/// <summary>
 	/// Checks if the given <see cref="Player"/> is the local player
 	/// </summary>
-	private bool IsLocal(Player player) => player.UUID == _localUUID;
+	private bool IsLocal(Player player) => player.UUID == _localPlayer?.UUID;
 
 	#region Delegates
 
@@ -153,6 +148,27 @@ public sealed class EventDispatcher
 	#region Dispatch
 
 	/// <summary>
+	/// Notifies that the player has connected under the given identifier
+	/// </summary>
+	internal void DispatchConnect(Player player)
+	{
+		_localPlayer = player;
+		OnSelfConnected?.Invoke(player);
+	}
+
+	/// <summary>
+	/// Notifies that the player has disconnected
+	/// </summary>
+	internal void DispatchDisconnect()
+	{
+		if (_localPlayer == null)
+			return;
+
+		OnSelfDisconnected?.Invoke(_localPlayer);
+		_localPlayer = null;
+	}
+
+	/// <summary>
 	/// Called when a <see cref="IEvent"/> is received
 	/// </summary>
 	internal void Dispatch(IEvent evt)
@@ -189,17 +205,17 @@ public sealed class EventDispatcher
 	private void DispatchConnectedEvent(ConnectionEvent evt)
 	{
 		if (IsLocal(evt.Player))
-			OnSelfConnected?.Invoke(evt.Player);
-		else
-			OnOtherConnected?.Invoke(evt.Player);
+			return;
+
+		OnOtherConnected?.Invoke(evt.Player);
 	}
 
 	private void DispatchDisconnectedEvent(ConnectionEvent evt)
 	{
 		if (IsLocal(evt.Player))
-			OnSelfDisconnected?.Invoke(evt.Player);
-		else
-			OnOtherDisconnected?.Invoke(evt.Player);
+			return;
+
+		OnOtherDisconnected?.Invoke(evt.Player);
 	}
 
 	private void DispatchChatEvent(ChatEvent evt)
