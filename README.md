@@ -3,6 +3,9 @@
 </p>
 
 # BingoAPI
+[![NuGet Badge](https://img.shields.io/nuget/v/BingoAPI.Core)](https://www.nuget.org/packages/BingoAPI.Core)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/BingoAPI.Core?color=purple)](https://www.nuget.org/packages/BingoAPI.Core)
+[![License](https://img.shields.io/github/license/WarperSan/BingoAPI)](https://raw.githubusercontent.com/WarperSan/BingoAPI/master/LICENSE)
 
 ## Overview
 BingoAPI is a library that allows to communicate with a [BingoSync](https://github.com/kbuzsaki/bingosync) server through code.
