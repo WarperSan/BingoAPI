@@ -3,8 +3,8 @@
 </p>
 
 # BingoAPI
-[![NuGet Badge](https://img.shields.io/nuget/v/BingoAPI.Core)](https://www.nuget.org/packages/BingoAPI.Core)
-[![NuGet Downloads](https://img.shields.io/nuget/dt/BingoAPI.Core?color=purple)](https://www.nuget.org/packages/BingoAPI.Core)
+[![NuGet Badge](https://img.shields.io/nuget/v/WarperSan.BingoAPI)](https://www.nuget.org/packages/WarperSan.BingoAPI)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/WarperSan.BingoAPI?color=purple)](https://www.nuget.org/packages/WarperSan.BingoAPI)
 [![License](https://img.shields.io/github/license/WarperSan/BingoAPI)](https://raw.githubusercontent.com/WarperSan/BingoAPI/master/LICENSE)
 
 ## Overview
