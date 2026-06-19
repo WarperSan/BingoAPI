@@ -30,9 +30,14 @@ internal sealed class BingoApiClient
 	/// <summary>
 	/// Sends the given <see cref="HttpRequestMessage"/>
 	/// </summary>
+	private Task<HttpResponseMessage> Send(HttpRequestMessage request, CancellationToken ct) => _client.SendAsync(request, ct);
+
+	/// <summary>
+	/// Sends the given <see cref="HttpRequestMessage"/>
+	/// </summary>
 	private async Task SendAsync(HttpRequestMessage request, CancellationToken ct)
 	{
-		using var response = await _client.SendAsync(request, ct);
+		using var response = await Send(request, ct);
 		response.EnsureSuccessStatusCode();
 	}
 
