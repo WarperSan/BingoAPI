@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -58,7 +60,7 @@ internal sealed class RequestBuilder
 	private HttpContent? _content;
 
 	/// <summary>
-	/// Sets the JSON payload of this request
+	/// Sets the payload of this request to the given JSON payload
 	/// </summary>
 	public RequestBuilder WithJson(object json)
 	{
@@ -69,6 +71,27 @@ internal sealed class RequestBuilder
 			Encoding.UTF8,
 			"application/json"
 		);
+
+		return this;
+	}
+
+	/// <summary>
+	/// Sets the payload of this request to the given form payload
+	/// </summary>
+	public RequestBuilder WithForm(object form)
+	{
+		var fields = new List<KeyValuePair<string, string>>();
+
+		foreach (var property in form.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+		{
+			var dataMember = property.GetCustomAttribute<DataMemberAttribute>();
+			var key = dataMember?.Name ?? property.Name;
+			var value = property.GetValue(form)?.ToString() ?? "";
+
+			fields.Add(new KeyValuePair<string, string>(key, value));
+		}
+
+		_content = new FormUrlEncodedContent(fields);
 
 		return this;
 	}
