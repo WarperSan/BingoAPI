@@ -43,7 +43,7 @@ internal record CreateRoomRequest
 
 	public required bool IsRandomized;
 
-	[DataMember(Name = "required")]
+	[DataMember(Name = "custom_json")]
 	public required string Board;
 
 	// TODO: Make this a parameter

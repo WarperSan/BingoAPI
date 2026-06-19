@@ -82,11 +82,29 @@ internal sealed class RequestBuilder
 	{
 		var fields = new List<KeyValuePair<string, string>>();
 
-		foreach (var property in form.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+		var members = form
+					  .GetType()
+					  .GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+					  .Where(m => m.MemberType is MemberTypes.Field or MemberTypes.Property)
+					  .Select(m => new
+					  {
+						  Member = m,
+						  Attribute = m.GetCustomAttribute<DataMemberAttribute>(),
+					  })
+					  .Where(m => m.Attribute != null);
+
+		foreach (var member in members)
 		{
-			var dataMember = property.GetCustomAttribute<DataMemberAttribute>();
-			var key = dataMember?.Name ?? property.Name;
-			var value = property.GetValue(form)?.ToString() ?? "";
+			var key = member.Attribute?.Name ?? member.Member.Name;
+
+			var value = member.Member switch
+			{
+				FieldInfo field => field.GetValue(form)?.ToString(),
+				PropertyInfo property => property.GetValue(form)?.ToString(),
+				_ => null,
+			};
+
+			value ??= "";
 
 			fields.Add(new KeyValuePair<string, string>(key, value));
 		}
