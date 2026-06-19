@@ -61,6 +61,45 @@ public sealed class Session : IDisposable
 	}
 
 	/// <summary>
+	/// Creates a room and joins it
+	/// </summary>
+	public async Task<bool> CreateRoom(CreateRoomSettings settings, CancellationToken ct = default)
+	{
+		if (IsInRoom)
+		{
+			Log.Error("Tried to create a room while being connected.");
+			return false;
+		}
+
+		Log.Info("Creating a room...");
+
+		string code;
+
+		try
+		{
+			code = await _api.CreateRoom(settings, ct);
+
+			Log.Info($"Room created at '{code}'.");
+		}
+		catch (Exception e)
+		{
+			Log.Error($"Failed to create a room: {e}");
+			return false;
+		}
+
+		Log.Info($"Joining room '{code}' from creation...");
+
+		var joinSettings = new JoinRoomSettings
+		{
+			Code = code,
+			Nickname = settings.Nickname,
+			Password = settings.Password,
+		};
+
+		return await JoinRoom(joinSettings, ct);
+	}
+
+	/// <summary>
 	/// Joins the room
 	/// </summary>
 	public async Task<bool> JoinRoom(JoinRoomSettings settings, CancellationToken ct = default)
