@@ -1,4 +1,7 @@
+using System.Net;
 using System.Net.WebSockets;
+using System.Text.RegularExpressions;
+using BingoAPI.Helpers;
 using BingoAPI.Models;
 using BingoAPI.Models.Settings;
 using BingoAPI.Networking.DTOs;
@@ -62,6 +65,98 @@ internal sealed class BingoApiClient
 	#endregion
 
 	#region Endpoints
+
+	/// <summary>
+	/// Gets the necessary tokens
+	/// </summary>
+	private async Task<Tokens> GetTokens(CancellationToken ct)
+	{
+		// ReSharper disable StringLiteralTypo
+		const string PUBLIC_TOKEN = "csrftoken";
+		const string CREATION_TOKEN = "csrfmiddlewaretoken";
+		// ReSharper restore StringLiteralTypo
+
+		using var request = new RequestBuilder()
+							.Get()
+							.ToEndpoint("")
+							.Build();
+
+		using var response = await Send(request, ct);
+		response.EnsureSuccessStatusCode();
+
+		var container = new CookieContainer();
+		var setCookie = response.Headers.GetValues("Set-Cookie");
+
+		foreach (var cookieHeader in setCookie)
+			container.SetCookies(_client.BaseAddress, cookieHeader);
+
+		var cookies = container.GetCookies(_client.BaseAddress);
+		var publicTokenCookie = cookies[PUBLIC_TOKEN];
+
+		if (publicTokenCookie == null)
+			throw new KeyNotFoundException($"No cookie was set for '{PUBLIC_TOKEN}'.");
+
+		var content = await response.Content.ReadAsStringAsync();
+
+		var match = Regex.Match(
+			content,
+			$"<input[^>]*name=\"{CREATION_TOKEN}\"[^>]*value=\"(.*?)\"[^>]*>"
+		);
+
+		if (!match.Success)
+			throw new KeyNotFoundException($"Could not find any input with '{CREATION_TOKEN}'.");
+
+		return new Tokens
+		{
+			PublicToken = publicTokenCookie.Value,
+			CreationToken = match.Groups[1].Value,
+		};
+	}
+
+	/// <summary>
+	/// Creates a room with the given settings
+	/// </summary>
+	/// <returns>Code of the room</returns>
+	public async Task<string> CreateRoom(
+		CreateRoomSettings settings,
+		CancellationToken ct
+	)
+	{
+		var tokens = await GetTokens(ct);
+
+		var body = new CreateRoomRequest
+		{
+			RoomName = settings.Name,
+			Password = settings.Password,
+			Nickname = nameof(BingoAPI),
+			IsLockout = settings.IsLockout,
+			Seed = settings.Seed,
+			IsRandomized = settings.IsRandomized,
+			Board = "",
+			CreationToken = tokens.CreationToken,
+		};
+
+		using var request = new RequestBuilder()
+							.Post()
+							.ToEndpoint("/")
+							.WithForm(body)
+							.Build();
+
+		// ReSharper disable StringLiteralTypo
+		request.Headers.Add("Cookie", $"csrftoken={tokens.PublicToken}");
+		request.Headers.Add("X-CSRFToken", tokens.CreationToken);
+		// ReSharper restore StringLiteralTypo
+
+		using var response = await Send(request, ct);
+		response.EnsureSuccessStatusCode();
+
+		var url = request.RequestUri.ToString();
+
+		if (!Network.TryGetRoomCode(url, out var code))
+			throw new KeyNotFoundException($"Could not find room code from '{url}'.");
+
+		return code;
+	}
 
 	/// <summary>
 	/// Joins the room with the given settings
