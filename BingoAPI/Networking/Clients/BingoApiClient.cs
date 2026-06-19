@@ -122,6 +122,7 @@ internal sealed class BingoApiClient
 		CancellationToken ct
 	)
 	{
+		throw new NotImplementedException();
 		var tokens = await GetTokens(ct);
 
 		var body = new CreateRoomRequest

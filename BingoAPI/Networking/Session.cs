@@ -65,6 +65,7 @@ public sealed class Session : IDisposable
 	/// </summary>
 	public async Task<bool> CreateRoom(CreateRoomSettings settings, CancellationToken ct = default)
 	{
+		throw new NotImplementedException();
 		if (IsInRoom)
 		{
 			Log.Error("Tried to create a room while being connected.");
