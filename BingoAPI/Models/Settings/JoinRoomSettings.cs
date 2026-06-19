@@ -1,10 +1,10 @@
-using BingoAPI.Networking.Clients;
+using BingoAPI.Networking;
 using JetBrains.Annotations;
 
 namespace BingoAPI.Models.Settings;
 
 /// <summary>
-/// Data used to join a room when calling <see cref="BingoApiClient.JoinRoom"/>
+/// Data used to join a room when calling <see cref="Session.JoinRoom"/>
 /// </summary>
 [PublicAPI]
 public record JoinRoomSettings
@@ -23,9 +23,4 @@ public record JoinRoomSettings
 	/// Name of the player to connect as
 	/// </summary>
 	public string Nickname { get; set; } = string.Empty;
-
-	/// <summary>
-	/// Should the user be connected as a spectator or not
-	/// </summary>
-	public bool IsSpectator { get; set; }
 }

@@ -17,6 +17,8 @@ internal record JoinRoomRequest
 	[JsonProperty("nickname")]
 	public required string Username { get; init; }
 
+	// TODO: Make this a parameter
+
 	[JsonProperty("is_spectator")]
-	public required bool IsSpectator { get; init; }
+	public bool IsSpectator => false;
 }

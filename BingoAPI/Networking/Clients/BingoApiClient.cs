@@ -74,7 +74,6 @@ internal sealed class BingoApiClient
 			Code = settings.Code,
 			Password = settings.Password,
 			Username = settings.Nickname,
-			IsSpectator = settings.IsSpectator,
 		};
 
 		using var request = new RequestBuilder()
