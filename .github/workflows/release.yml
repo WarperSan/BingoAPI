@@ -60,4 +60,5 @@ jobs:
                 with:
                     name: v${{ github.ref_name }}
                     files: ./nupkg/*.nupkg
+                    generate_release_notes: true
                     prerelease: ${{ contains(github.ref_name, '-') }}
