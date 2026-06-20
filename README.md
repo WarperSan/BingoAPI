@@ -11,7 +11,7 @@
 BingoAPI is a library that allows to communicate with a [BingoSync](https://github.com/kbuzsaki/bingosync) server through code.
 
 ## Documentation
-- [Conditions](docs/conditions.md)
+- [Conditions](https://github.com/WarperSan/BingoAPI/blob/master/docs/conditions.md)
 
 ## Contributing
 
