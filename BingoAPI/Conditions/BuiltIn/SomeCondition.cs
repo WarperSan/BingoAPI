@@ -1,37 +1,39 @@
+using System.ComponentModel;
+using Newtonsoft.Json;
+
 namespace BingoAPI.Conditions.BuiltIn;
 
 /// <summary>
 /// Condition that is valid when at least the given amount of the conditions are valid
 /// </summary>
+[Condition("SOME")]
 internal sealed class SomeCondition : ICondition
 {
-	private readonly ICondition[] _conditions;
-	private readonly uint _amount;
+	[JsonProperty("conditions")]
+	[JsonRequired]
+	public required ICondition[] Conditions { get; init; }
 
-	[Condition("SOME")]
-	public SomeCondition(ConditionData data)
-	{
-		_conditions = data.GetRequiredParameter<ICondition[]>("conditions");
-		_amount = data.GetOptionalParameter<uint>("amount", 1);
-	}
+	[JsonProperty("amount")]
+	[DefaultValue(1)]
+	public uint Amount { get; init; }
 
 	/// <inheritdoc/>
 	public bool IsMet()
 	{
 		// Skip if always false
-		if (_conditions.Length < _amount)
+		if (Conditions.Length < Amount)
 			return false;
 
 		var currentAmount = 0;
 
-		foreach (var condition in _conditions)
+		foreach (var condition in Conditions)
 		{
 			if (!condition.IsMet())
 				continue;
 
 			currentAmount++;
 
-			if (currentAmount >= _amount)
+			if (currentAmount >= Amount)
 				return true;
 		}
 

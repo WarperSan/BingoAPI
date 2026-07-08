@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using BingoAPI.Helpers;
 using JetBrains.Annotations;
 
 namespace BingoAPI.Conditions;
@@ -8,27 +11,50 @@ namespace BingoAPI.Conditions;
 [PublicAPI]
 public static class ConditionRegistry
 {
-	private static readonly Dictionary<string, Func<ConditionData, ICondition>> Factories = new(StringComparer.OrdinalIgnoreCase);
+	private static readonly Dictionary<string, Type> TypePerAction = new(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>
-	/// Tries to add the given factory under the given action key
+	/// Adds every <see cref="ICondition"/> defined using <see cref="ConditionAttribute"/>
 	/// </summary>
-	public static void TryAdd(string action, Func<ConditionData, ICondition> factory)
+	public static void AddAll()
 	{
-		if (Factories.ContainsKey(action))
-			return;
+		foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		{
+			IEnumerable<Type?> types;
 
-		Factories.Add(action, factory);
+			try
+			{
+				types = assembly.GetTypes();
+			}
+			catch (ReflectionTypeLoadException ex)
+			{
+				types = ex.Types;
+			}
+
+			foreach (var type in types)
+			{
+				if (type == null)
+					continue;
+
+				if (type.IsAbstract || type.IsInterface)
+					continue;
+
+				if (!typeof(ICondition).IsAssignableFrom(type))
+					continue;
+
+				var attribute = type.GetCustomAttribute<ConditionAttribute>();
+
+				if (attribute == null)
+					continue;
+
+				Log.Debug($"Registering '{type}' under '{attribute.Action}'.");
+				TypePerAction[attribute.Action] = type;
+			}
+		}
 	}
 
 	/// <summary>
-	/// Creates a <see cref="ICondition"/> registered under the given action
+	/// Attempts to find the type associated with the given action
 	/// </summary>
-	internal static ICondition Create(string action, ConditionData data)
-	{
-		if (!Factories.TryGetValue(action, out var factory))
-			throw new InvalidOperationException($"No condition registered under the action '{action}'.");
-
-		return factory.Invoke(data);
-	}
+	public static bool TryGetType(string action, [NotNullWhen(true)] out Type? type) => TypePerAction.TryGetValue(action, out type);
 }

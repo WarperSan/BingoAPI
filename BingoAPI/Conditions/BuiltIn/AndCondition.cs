@@ -1,18 +1,17 @@
+using Newtonsoft.Json;
+
 namespace BingoAPI.Conditions.BuiltIn;
 
 /// <summary>
 /// Condition that is valid when all the conditions are valid
 /// </summary>
+[Condition("AND")]
 internal sealed class AndCondition : ICondition
 {
-	private readonly ICondition[] _conditions;
-
-	[Condition("AND")]
-	public AndCondition(ConditionData data)
-	{
-		_conditions = data.GetRequiredParameter<ICondition[]>("conditions");
-	}
+	[JsonProperty("conditions")]
+	[JsonRequired]
+	public required ICondition[] Conditions { get; init; }
 
 	/// <inheritdoc/>
-	public bool IsMet() => _conditions.All(condition => condition.IsMet());
+	public bool IsMet() => Conditions.All(condition => condition.IsMet());
 }

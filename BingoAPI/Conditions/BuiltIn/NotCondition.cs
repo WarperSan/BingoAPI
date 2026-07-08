@@ -1,18 +1,17 @@
+using Newtonsoft.Json;
+
 namespace BingoAPI.Conditions.BuiltIn;
 
 /// <summary>
 /// Condition that is valid when the condition is invalid
 /// </summary>
+[Condition("NOT")]
 internal sealed class NotCondition : ICondition
 {
-	private readonly ICondition _condition;
-
-	[Condition("NOT")]
-	public NotCondition(ConditionData data)
-	{
-		_condition = data.GetRequiredParameter<ICondition>("condition");
-	}
+	[JsonProperty("condition")]
+	[JsonRequired]
+	public required ICondition Condition { get; init; }
 
 	/// <inheritdoc/>
-	public bool IsMet() => !_condition.IsMet();
+	public bool IsMet() => !Condition.IsMet();
 }
