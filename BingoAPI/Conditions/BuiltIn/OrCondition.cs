@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace BingoAPI.Conditions.BuiltIn;
 
 /// <summary>
@@ -6,13 +8,10 @@ namespace BingoAPI.Conditions.BuiltIn;
 [Condition("OR")]
 internal sealed class OrCondition : ICondition
 {
-	private readonly ICondition[] _conditions;
-
-	public OrCondition(ConditionData data)
-	{
-		_conditions = data.GetRequiredParameter<ICondition[]>("conditions");
-	}
+	[JsonProperty("conditions")]
+	[JsonRequired]
+	public required ICondition[] Conditions { get; init; }
 
 	/// <inheritdoc/>
-	public bool IsMet() => _conditions.Any(condition => condition.IsMet());
+	public bool IsMet() => Conditions.Any(condition => condition.IsMet());
 }

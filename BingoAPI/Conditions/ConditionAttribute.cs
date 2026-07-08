@@ -1,7 +1,7 @@
 namespace BingoAPI.Conditions;
 
 /// <summary>
-/// Defines any method that can make a <see cref="ICondition"/> from a given <see cref="ConditionData"/>
+/// Registers any class inheriting <see cref="ICondition"/> to the given action
 /// </summary>
 [AttributeUsage(AttributeTargets.Class)]
 public class ConditionAttribute : Attribute
