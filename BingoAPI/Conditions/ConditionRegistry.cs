@@ -1,3 +1,4 @@
+using System.Reflection;
 using JetBrains.Annotations;
 
 namespace BingoAPI.Conditions;
@@ -19,6 +20,43 @@ public static class ConditionRegistry
 			return;
 
 		Factories.Add(action, factory);
+	}
+
+	/// <summary>
+	/// Adds every <see cref="ICondition"/> defined using <see cref="ConditionAttribute"/>
+	/// </summary>
+	public static void AddAll()
+	{
+		foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		{
+			IEnumerable<Type?> types;
+
+			try
+			{
+				types = assembly.GetTypes();
+			}
+			catch (ReflectionTypeLoadException ex)
+			{
+				types = ex.Types;
+			}
+
+			foreach (var type in types)
+			{
+				if (type == null)
+					continue;
+
+				if (!type.IsAssignableFrom(typeof(ICondition)))
+					continue;
+
+				var attribute = type.GetCustomAttribute<ConditionAttribute>();
+
+				if (attribute == null)
+					continue;
+
+				// TODO: Change register
+				//TryAdd(attribute.Action, data => );
+			}
+		}
 	}
 
 	/// <summary>
