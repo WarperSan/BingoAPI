@@ -3,12 +3,12 @@ namespace BingoAPI.Conditions.BuiltIn;
 /// <summary>
 /// Condition that is valid when at least the given amount of the conditions are valid
 /// </summary>
+[Condition("SOME")]
 internal sealed class SomeCondition : ICondition
 {
 	private readonly ICondition[] _conditions;
 	private readonly uint _amount;
 
-	[Condition("SOME")]
 	public SomeCondition(ConditionData data)
 	{
 		_conditions = data.GetRequiredParameter<ICondition[]>("conditions");

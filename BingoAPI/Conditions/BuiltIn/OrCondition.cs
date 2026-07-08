@@ -3,11 +3,11 @@ namespace BingoAPI.Conditions.BuiltIn;
 /// <summary>
 /// Condition that is valid if any of the conditions is valid
 /// </summary>
+[Condition("OR")]
 internal sealed class OrCondition : ICondition
 {
 	private readonly ICondition[] _conditions;
 
-	[Condition("OR")]
 	public OrCondition(ConditionData data)
 	{
 		_conditions = data.GetRequiredParameter<ICondition[]>("conditions");
