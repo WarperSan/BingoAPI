@@ -1,5 +1,4 @@
 using BingoAPI.Conditions;
-using BingoAPI.Helpers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -30,8 +29,6 @@ internal class ConditionConverter : JsonConverter
 		JsonSerializer serializer
 	)
 	{
-		Log.Info("B: " + objectType.Name);
-
 		var obj = JObject.Load(reader);
 
 		var action = obj.Value<string>(ACTION_KEY);
@@ -45,10 +42,18 @@ internal class ConditionConverter : JsonConverter
 		if (!obj.TryGetValue(PARAMS_KEY, out var paramsToken))
 			throw new JsonException($"Expected '{PARAMS_KEY}' property: {obj}");
 
-		if (paramsToken.ToObject(type) is not ICondition condition)
-			throw new JsonException($"Failed to parse '{type}': {paramsToken}");
+		try
+		{
+			var condition = (ICondition)Activator.CreateInstance(type);
 
-		return condition;
+			serializer.Populate(paramsToken.CreateReader(), condition);
+
+			return condition;
+		}
+		catch (Exception e)
+		{
+			throw new JsonException("Error while parsing the condition.", e);
+		}
 	}
 
 	/// <inheritdoc />
