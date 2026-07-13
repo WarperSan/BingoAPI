@@ -1,8 +1,7 @@
-using BingoAPI.Conditions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Networking.Converters;
+namespace BingoAPI.Conditions;
 
 /// <summary>
 /// Converts a <see cref="string"/> to a <see cref="ICondition"/>

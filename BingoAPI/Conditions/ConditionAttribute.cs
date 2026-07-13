@@ -12,11 +12,8 @@ public class ConditionAttribute : Attribute
 	public readonly string Action;
 
 	/// <summary>
-	/// Defines this method as a valid factory for <see cref="ICondition"/>
+	/// Initializes a new instance of the <see cref="ConditionAttribute"/> class.
 	/// </summary>
-	/// <param name="action">
-	///	<inheritdoc cref="Action"/>
-	/// </param>
 	public ConditionAttribute(string action)
 	{
 		Action = action;
