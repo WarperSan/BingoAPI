@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Conditions.BuiltIn;
@@ -10,6 +11,7 @@ internal sealed class NotCondition : ICondition
 {
 	[JsonProperty("condition")]
 	[JsonRequired]
+	[Description("Condition to inverse")]
 	public required ICondition Condition { get; init; }
 
 	/// <inheritdoc/>

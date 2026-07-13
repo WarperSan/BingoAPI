@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Conditions.BuiltIn;
@@ -10,6 +11,7 @@ internal sealed class AndCondition : ICondition
 {
 	[JsonProperty("conditions")]
 	[JsonRequired]
+	[Description("Conditions that must all be met")]
 	public required ICondition[] Conditions { get; init; }
 
 	/// <inheritdoc/>

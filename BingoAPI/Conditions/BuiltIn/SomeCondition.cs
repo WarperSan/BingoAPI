@@ -11,10 +11,12 @@ internal sealed class SomeCondition : ICondition
 {
 	[JsonProperty("conditions")]
 	[JsonRequired]
+	[Description("Conditions that could be met")]
 	public required ICondition[] Conditions { get; init; }
 
 	[JsonProperty("amount")]
 	[DefaultValue(1)]
+	[Description("Minimum number of conditions that must be met")]
 	public uint Amount { get; init; }
 
 	/// <inheritdoc/>
