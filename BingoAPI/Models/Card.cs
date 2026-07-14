@@ -30,6 +30,11 @@ public sealed class Card
 
 	internal Card(Square[] squares, GoalPool pool)
 	{
+		var size = (int)Math.Sqrt(squares.Length);
+
+		if (size * size != squares.Length)
+			throw new ArgumentException($"Card must be a perfect square, but received '{size}'.");
+
 		_squares = new CardSquare[squares.Length];
 
 		foreach (var square in squares)
