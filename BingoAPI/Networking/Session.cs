@@ -16,42 +16,6 @@ namespace BingoAPI.Networking;
 [PublicAPI]
 public sealed class Session : IDisposable
 {
-	/// <summary>
-	/// Options used to create a <see cref="Session"/>
-	/// </summary>
-	public record Options
-	{
-		/// <summary>
-		/// Base of the URL for the web requests
-		/// </summary>
-		public string BaseUrl { get; init; } = "https://bingosync.com";
-
-		/// <summary>
-		/// Time required before a request is considered "Timed out"
-		/// </summary>
-		public TimeSpan Timeout { get; init; } = TimeSpan.FromSeconds(30);
-
-		/// <summary>
-		/// Creates a <see cref="HttpClient"/> from these options
-		/// </summary>
-		public HttpClient CreateClient()
-		{
-			var client = new HttpClient(
-				new LoggingHandler(
-					new HttpClientHandler()
-				)
-			);
-
-			client.BaseAddress = new Uri(BaseUrl);
-			client.Timeout = Timeout;
-
-			return client;
-		}
-	}
-
-	private readonly HttpClient _client;
-	private readonly bool _shouldDisposeClient;
-
 	private readonly BingoApiClient _api;
 	private readonly BingoSocketClient _socket = new();
 
@@ -70,24 +34,6 @@ public sealed class Session : IDisposable
 	[MemberNotNullWhen(true, nameof(_roomCode))]
 	public bool IsInRoom => _roomCode != null;
 
-	#region Constructors
-
-	/// <summary>
-	/// <inheritdoc cref="Session(BingoAPI.Events.EventDispatcher,System.Net.Http.HttpClient)"/>
-	/// </summary>
-	/// <param name="dispatcher"><inheritdoc cref="Session(BingoAPI.Events.EventDispatcher,System.Net.Http.HttpClient)"/></param>
-	public Session(EventDispatcher dispatcher) : this(dispatcher, new Options()) { }
-
-	/// <summary>
-	/// <inheritdoc cref="Session(BingoAPI.Events.EventDispatcher,System.Net.Http.HttpClient)"/>
-	/// </summary>
-	/// <param name="dispatcher"><inheritdoc cref="Session(BingoAPI.Events.EventDispatcher,System.Net.Http.HttpClient)"/></param>
-	/// <param name="options">Options from which to create a <see cref="HttpClient"/></param>
-	public Session(EventDispatcher dispatcher, Options options) : this(dispatcher, options.CreateClient())
-	{
-		_shouldDisposeClient = true;
-	}
-
 	/// <summary>
 	/// Creates a new instance of <see cref="Session"/>
 	/// </summary>
@@ -96,12 +42,8 @@ public sealed class Session : IDisposable
 	public Session(EventDispatcher dispatcher, HttpClient client)
 	{
 		_dispatcher = dispatcher;
-		_client = client;
-		_shouldDisposeClient = false;
 		_api = new BingoApiClient(client);
 	}
-
-	#endregion
 
 	/// <summary>
 	/// Creates a room and joins it
@@ -458,8 +400,6 @@ public sealed class Session : IDisposable
 	/// <inheritdoc />
 	public void Dispose()
 	{
-		if (_shouldDisposeClient)
-			_client.Dispose();
 		_socket.Dispose();
 	}
 }
