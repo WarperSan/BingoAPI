@@ -33,19 +33,19 @@ public sealed class Card
 	/// </summary>
 	public int Size { get; init; }
 
-	internal Card(Square[] squares, GoalPool pool)
+	internal Card(ICollection<Square> squares, GoalPool pool)
 	{
-		if (squares.Length == 0)
+		if (squares.Count == 0)
 			throw new ArgumentException("Tried to create a card without providing any square.");
 
-		var size = (int)Math.Sqrt(squares.Length);
+		var size = (int)Math.Sqrt(squares.Count);
 
-		if (size * size != squares.Length)
+		if (size * size != squares.Count)
 			throw new ArgumentException($"Card must be a perfect square, but received '{size}'.");
 
 		Size = size;
 
-		_squares = new CardSquare[squares.Length];
+		_squares = new CardSquare[squares.Count];
 
 		foreach (var square in squares)
 		{

@@ -241,35 +241,8 @@ public sealed class Session : IDisposable
 		{
 			var squares = await _api.GetSquares(_roomCode, ct);
 
-			Log.Info($"Got {squares.Length} squares for room '{_roomCode}'.");
+			Log.Info($"Got {squares.Count} squares for room '{_roomCode}'.");
 			return new Card(squares, pool);
-		}
-		catch (Exception e)
-		{
-			Log.Error($"Failed to get squares for room '{_roomCode}': {e}");
-			return null;
-		}
-	}
-
-	/// <summary>
-	/// Gets all the <see cref="Square"/> of the room
-	/// </summary>
-	public async Task<Square[]?> GetSquares(CancellationToken ct = default)
-	{
-		if (!IsInRoom)
-		{
-			Log.Error("Tried to get the squares before being connected.");
-			return null;
-		}
-
-		Log.Info($"Getting the squares of the room '{_roomCode}'...");
-
-		try
-		{
-			var squares = await _api.GetSquares(_roomCode, ct);
-
-			Log.Info($"Got {squares.Length} squares for room '{_roomCode}'.");
-			return squares;
 		}
 		catch (Exception e)
 		{

@@ -283,7 +283,7 @@ internal sealed class BingoApiClient
 	/// <summary>
 	/// Gets all the squares of the room
 	/// </summary>
-	public async Task<Square[]> GetSquares(string room, CancellationToken ct)
+	public async Task<ICollection<Square>> GetSquares(string room, CancellationToken ct)
 	{
 		using var request = new RequestBuilder()
 							.Get()
