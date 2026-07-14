@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Net.Http.Headers;
 using BingoAPI.Events;
 using BingoAPI.Goals;
 using BingoAPI.Helpers;
@@ -17,7 +16,6 @@ namespace BingoAPI.Networking;
 [PublicAPI]
 public sealed class Session : IDisposable
 {
-	private readonly HttpClient _client;
 	private readonly BingoApiClient _api;
 	private readonly BingoSocketClient _socket = new();
 
@@ -37,27 +35,14 @@ public sealed class Session : IDisposable
 	public bool IsInRoom => _roomCode != null;
 
 	/// <summary>
-	/// Creates a new <see cref="Session"/>
+	/// Creates a new instance of <see cref="Session"/>
 	/// </summary>
 	/// <param name="dispatcher">Instance used to dispatch events</param>
-	public Session(EventDispatcher dispatcher)
+	/// <param name="client">Client used for HTTP requests</param>
+	public Session(EventDispatcher dispatcher, HttpClient client)
 	{
 		_dispatcher = dispatcher;
-
-		_client = new HttpClient(
-			new LoggingHandler(
-				new HttpClientHandler()
-			)
-		);
-		_client.Timeout = TimeSpan.FromSeconds(30);
-
-		_client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(
-			"BingoAPI",
-			"1.0.0"
-		));
-		_client.BaseAddress = new Uri("https://bingosync.com");
-
-		_api = new BingoApiClient(_client);
+		_api = new BingoApiClient(client);
 	}
 
 	/// <summary>
@@ -66,6 +51,7 @@ public sealed class Session : IDisposable
 	public async Task<bool> CreateRoom(CreateRoomSettings settings, CancellationToken ct = default)
 	{
 		throw new NotImplementedException();
+
 		if (IsInRoom)
 		{
 			Log.Error("Tried to create a room while being connected.");
@@ -414,7 +400,6 @@ public sealed class Session : IDisposable
 	/// <inheritdoc />
 	public void Dispose()
 	{
-		_client.Dispose();
 		_socket.Dispose();
 	}
 }
