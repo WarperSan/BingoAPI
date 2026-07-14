@@ -30,6 +30,9 @@ public sealed class Card
 
 	internal Card(Square[] squares, GoalPool pool)
 	{
+		if (squares.Length == 0)
+			throw new ArgumentException("Tried to create a card without providing any square.");
+
 		var size = (int)Math.Sqrt(squares.Length);
 
 		if (size * size != squares.Length)
