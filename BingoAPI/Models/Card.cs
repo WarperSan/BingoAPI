@@ -28,6 +28,11 @@ public sealed class Card
 
 	private readonly CardSquare[] _squares;
 
+	/// <summary>
+	/// Size of the card on both axes
+	/// </summary>
+	public int Size { get; init; }
+
 	internal Card(Square[] squares, GoalPool pool)
 	{
 		if (squares.Length == 0)
@@ -37,6 +42,8 @@ public sealed class Card
 
 		if (size * size != squares.Length)
 			throw new ArgumentException($"Card must be a perfect square, but received '{size}'.");
+
+		Size = size;
 
 		_squares = new CardSquare[squares.Length];
 
