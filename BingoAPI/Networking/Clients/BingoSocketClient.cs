@@ -14,6 +14,24 @@ internal sealed class BingoSocketClient : IDisposable
 	private CancellationTokenSource? _cts;
 	private Task? _socketReceiveTask;
 
+	private readonly Uri _broadcastUri;
+
+	private BingoSocketClient(string domain)
+	{
+		_broadcastUri = new Uri($"wss://sockets.{domain}/broadcast");
+	}
+
+	/// <summary>
+	/// Creates a <see cref="BingoSocketClient"/> from the given <see cref="HttpClient"/>
+	/// </summary>
+	public static BingoSocketClient CreateFromClient(HttpClient client)
+	{
+		var host = client.BaseAddress.Host;
+		var domain = host.StartsWith("www.") ? host[4..] : host;
+
+		return new BingoSocketClient(domain);
+	}
+
 	/// <summary>
 	/// Opens a <see cref="WebSocket"/> using the given key
 	/// </summary>
@@ -30,10 +48,7 @@ internal sealed class BingoSocketClient : IDisposable
 
 		try
 		{
-			await socket.ConnectAsync(
-				new Uri("wss://sockets.bingosync.com/broadcast"),
-				ct
-			);
+			await socket.ConnectAsync(_broadcastUri, ct);
 
 			var json = JsonConvert.SerializeObject(new
 			{

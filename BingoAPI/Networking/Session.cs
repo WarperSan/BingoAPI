@@ -17,8 +17,7 @@ namespace BingoAPI.Networking;
 public sealed class Session : IDisposable
 {
 	private readonly BingoApiClient _api;
-	private readonly BingoSocketClient _socket = new();
-
+	private readonly BingoSocketClient _socket;
 	private readonly EventDispatcher _dispatcher;
 
 	private string? _roomCode;
@@ -43,6 +42,7 @@ public sealed class Session : IDisposable
 	{
 		_dispatcher = dispatcher;
 		_api = new BingoApiClient(client);
+		_socket = BingoSocketClient.CreateFromClient(client);
 	}
 
 	/// <summary>
