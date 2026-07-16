@@ -38,11 +38,12 @@ public sealed class Session : IDisposable
 	/// </summary>
 	/// <param name="dispatcher">Instance used to dispatch events</param>
 	/// <param name="client">Client used for HTTP requests</param>
-	public Session(EventDispatcher dispatcher, HttpClient client)
+	/// <param name="socketAddress">Address of the web socket</param>
+	public Session(EventDispatcher dispatcher, HttpClient client, Uri socketAddress)
 	{
 		_dispatcher = dispatcher;
 		_api = new BingoApiClient(client);
-		_socket = BingoSocketClient.CreateFromClient(client);
+		_socket = new BingoSocketClient(socketAddress);
 	}
 
 	/// <summary>

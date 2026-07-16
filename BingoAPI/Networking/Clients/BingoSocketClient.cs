@@ -16,20 +16,14 @@ internal sealed class BingoSocketClient : IDisposable
 
 	private readonly Uri _broadcastUri;
 
-	private BingoSocketClient(string domain)
+	public BingoSocketClient(Uri socketAddress)
 	{
-		_broadcastUri = new Uri($"wss://sockets.{domain}/broadcast");
-	}
+		var builder = new UriBuilder(socketAddress)
+		{
+			Path = "broadcast",
+		};
 
-	/// <summary>
-	/// Creates a <see cref="BingoSocketClient"/> from the given <see cref="HttpClient"/>
-	/// </summary>
-	public static BingoSocketClient CreateFromClient(HttpClient client)
-	{
-		var host = client.BaseAddress.Host;
-		var domain = host.StartsWith("www.") ? host[4..] : host;
-
-		return new BingoSocketClient(domain);
+		_broadcastUri = builder.Uri;
 	}
 
 	/// <summary>
