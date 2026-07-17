@@ -84,9 +84,9 @@ internal sealed class BingoSocketClient : IDisposable
 
 		_cts?.Cancel();
 
-		try
+		if (_socket.State == WebSocketState.Open)
 		{
-			if (_socket.State == WebSocketState.Open)
+			try
 			{
 				await _socket.CloseAsync(
 					WebSocketCloseStatus.NormalClosure,
@@ -94,10 +94,10 @@ internal sealed class BingoSocketClient : IDisposable
 					ct
 				);
 			}
-		}
-		catch (Exception ex)
-		{
-			Log.Error($"Error closing WebSocket: {ex.Message}");
+			catch (Exception ex)
+			{
+				Log.Error($"Error closing WebSocket: {ex.Message}");
+			}
 		}
 
 		if (_socketReceiveTask != null)
