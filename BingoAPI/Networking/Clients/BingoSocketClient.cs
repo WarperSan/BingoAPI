@@ -110,10 +110,6 @@ internal sealed class BingoSocketClient : IDisposable
 			{
 				// Expected
 			}
-			catch (ObjectDisposedException)
-			{
-				// Expected
-			}
 			catch (Exception ex)
 			{
 				Log.Error($"Receive loop failed during disconnect: {ex.Message}");
