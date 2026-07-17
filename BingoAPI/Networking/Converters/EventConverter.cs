@@ -39,7 +39,7 @@ internal class EventConverter : JsonConverter
 			"revealed" => obj.ToObject<CardRevealedEvent>(),
 			"new-card" => obj.ToObject<CardGeneratedEvent>(),
 			"connection" => obj.ToObject<ConnectionEvent>(),
-			_ => throw new InvalidOperationException($"No event was found of type '{type}': {obj}")
+			_ => throw new InvalidOperationException($"No event was found of type '{type}': {obj}"),
 		};
 	}
 
