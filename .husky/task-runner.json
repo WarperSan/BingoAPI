@@ -1,19 +1,21 @@
 {
-  "$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
-  "tasks": [
-    {
-      "name": "dotnet-format",
-      "group": "pre-commit",
-      "command": "dotnet",
-      "args": [
-        "format",
-        "BingoAPI.sln",
-        "--include",
-        "${staged}"
-      ],
-      "include": [
-        "**/*.cs"
-      ]
-    }
-  ]
+	"$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
+	"tasks": [
+		{
+			"name": "Run CSharpier",
+			"group": "pre-commit",
+			"command": "dotnet",
+			"args": [
+				"csharpier",
+				"format",
+				"${staged}"
+			],
+			"include": [
+				"**/*.cs",
+				"**/*.csproj",
+				"**/*.props",
+				"**/*.targets"
+			]
+		}
+	]
 }
