@@ -1,5 +1,5 @@
 {
-d"$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
+	"$schema": "https://alirezanet.github.io/Husky.Net/schema.json",
 	"tasks": [
 		{
 			"name": "Run CSharpier",
