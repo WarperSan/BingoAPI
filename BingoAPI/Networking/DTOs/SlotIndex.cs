@@ -7,7 +7,7 @@ namespace BingoAPI.Networking.DTOs;
 /// Wrapper around <see cref="int"/> to identify a bingo slot
 /// </summary>
 [JsonConverter(typeof(SlotIndexConverter))]
-public record SlotIndex
+internal record SlotIndex
 {
 	internal SlotIndex(int index)
 	{

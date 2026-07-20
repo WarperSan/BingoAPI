@@ -20,7 +20,12 @@ public record Square
 	/// </summary>
 	[JsonProperty("slot")]
 	[JsonRequired]
-	public required SlotIndex Slot { get; init; }
+	private SlotIndex? _slot;
+
+	/// <summary>
+	/// Index of this square
+	/// </summary>
+	public int Index => _slot?.Index ?? 0;
 
 	/// <summary>
 	/// Teams currently owning this square
