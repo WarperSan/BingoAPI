@@ -1,3 +1,4 @@
+using System.Runtime.Serialization;
 using BingoAPI.Models;
 using Newtonsoft.Json;
 
@@ -8,29 +9,37 @@ namespace BingoAPI.Networking.Converters;
 /// </summary>
 internal class TeamConverter : JsonConverter<Team>
 {
-	private static readonly Dictionary<string, Team> TeamMappings = new(StringComparer.OrdinalIgnoreCase)
+	private static readonly Lazy<Dictionary<string, Team>> TeamMappings = new(() =>
 	{
-		["pink"] = Team.Pink,
-		["red"] = Team.Red,
-		["orange"] = Team.Orange,
-		["brown"] = Team.Brown,
-		["yellow"] = Team.Yellow,
-		["green"] = Team.Green,
-		["teal"] = Team.Teal,
-		["blue"] = Team.Blue,
-		["navy"] = Team.Navy,
-		["purple"] = Team.Purple,
-		["blank"] = Team.None,
-	};
+		var teamMap = new Dictionary<string, Team>();
+		var names = Enum.GetNames(typeof(Team));
+
+		foreach (var name in names)
+		{
+			var field = typeof(Team).GetField(name)!;
+			var value = (Team)field.GetValue(null)!;
+
+			var specifiedName = field
+				.GetCustomAttributes(typeof(EnumMemberAttribute), false)
+				.Cast<EnumMemberAttribute>()
+				.Select(a => a.Value)
+				.SingleOrDefault();
+
+			teamMap.Add(specifiedName ?? name, value);
+		}
+
+		return teamMap;
+	});
 
 	/// <inheritdoc />
 	public override void WriteJson(JsonWriter writer, Team value, JsonSerializer serializer)
 	{
 		var colors = new List<string>();
 
-		foreach (var pair in TeamMappings)
+		// ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
+		foreach (var pair in TeamMappings.Value)
 		{
-			if (pair.Value == Team.None)
+			if (pair.Value == Team.None && value != Team.None)
 				continue;
 
 			if (!value.HasFlag(pair.Value))
@@ -52,13 +61,15 @@ internal class TeamConverter : JsonConverter<Team>
 	)
 	{
 		if (reader.Value is not string rawTeam)
-			throw new JsonException($"Expected a '{typeof(string)}', but got '{reader.ValueType}'.");
+			throw new JsonException(
+				$"Expected a '{typeof(string)}', but got '{reader.ValueType}'."
+			);
 
 		var result = Team.None;
 
 		foreach (var part in rawTeam.Split([' '], StringSplitOptions.RemoveEmptyEntries))
 		{
-			if (!TeamMappings.TryGetValue(part, out var team))
+			if (!TeamMappings.Value.TryGetValue(part, out var team))
 				throw new InvalidOperationException($"Unknown team '{part}'");
 
 			result |= team;
