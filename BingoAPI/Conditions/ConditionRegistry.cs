@@ -11,7 +11,9 @@ namespace BingoAPI.Conditions;
 [PublicAPI]
 public static class ConditionRegistry
 {
-	private static readonly Dictionary<string, Type> TypePerAction = new(StringComparer.OrdinalIgnoreCase);
+	private static readonly Dictionary<string, Type> TypePerAction = new(
+		StringComparer.OrdinalIgnoreCase
+	);
 
 	/// <summary>
 	/// Adds every <see cref="ICondition"/> defined using <see cref="ConditionAttribute"/>
@@ -39,7 +41,10 @@ public static class ConditionRegistry
 				if (type.IsAbstract || type.IsInterface)
 					continue;
 
-				if (!typeof(ICondition).IsAssignableFrom(type))
+				if (
+					!typeof(IConditionGenerator).IsAssignableFrom(type)
+					&& !typeof(ICondition).IsAssignableFrom(type)
+				)
 					continue;
 
 				var attribute = type.GetCustomAttribute<ConditionAttribute>();
@@ -56,5 +61,6 @@ public static class ConditionRegistry
 	/// <summary>
 	/// Attempts to find the type associated with the given action
 	/// </summary>
-	public static bool TryGetType(string action, [NotNullWhen(true)] out Type? type) => TypePerAction.TryGetValue(action, out type);
+	public static bool TryGetType(string action, [NotNullWhen(true)] out Type? type) =>
+		TypePerAction.TryGetValue(action, out type);
 }

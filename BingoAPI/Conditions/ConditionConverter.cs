@@ -36,23 +36,33 @@ internal class ConditionConverter : JsonConverter
 			throw new JsonException($"Expected '{ACTION_KEY}' property: {obj}");
 
 		if (!ConditionRegistry.TryGetType(action, out var type))
-			throw new InvalidOperationException($"No condition has been registered under '{action}'.");
+			throw new InvalidOperationException(
+				$"No condition has been registered under '{action}'."
+			);
 
 		if (!obj.TryGetValue(PARAMS_KEY, out var paramsToken))
 			throw new JsonException($"Expected '{PARAMS_KEY}' property: {obj}");
 
+		object instance;
+
 		try
 		{
-			var condition = (ICondition)Activator.CreateInstance(type);
-
-			serializer.Populate(paramsToken.CreateReader(), condition);
-
-			return condition;
+			instance = Activator.CreateInstance(type);
+			serializer.Populate(paramsToken.CreateReader(), instance);
 		}
 		catch (Exception e)
 		{
 			throw new JsonException("Error while parsing the condition.", e);
 		}
+
+		return instance switch
+		{
+			IConditionGenerator generator => generator.Generate(),
+			ICondition condition => condition,
+			_ => throw new InvalidOperationException(
+				$"Type '{type}' is not handled by '{nameof(ConditionConverter)}'."
+			),
+		};
 	}
 
 	/// <inheritdoc />
