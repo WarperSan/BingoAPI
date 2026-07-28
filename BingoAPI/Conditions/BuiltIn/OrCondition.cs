@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Conditions.BuiltIn;
@@ -7,7 +8,8 @@ namespace BingoAPI.Conditions.BuiltIn;
 /// Condition that is valid if any of the conditions is valid
 /// </summary>
 [Condition("OR")]
-internal sealed class OrCondition : ICondition
+[SuppressMessage("ReSharper", "CS1591")]
+public sealed class OrCondition : ICondition
 {
 	[JsonProperty("conditions")]
 	[JsonRequired]

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Conditions.BuiltIn;
@@ -7,7 +8,8 @@ namespace BingoAPI.Conditions.BuiltIn;
 /// Condition that is valid when all the conditions are valid
 /// </summary>
 [Condition("AND")]
-internal sealed class AndCondition : ICondition
+[SuppressMessage("ReSharper", "CS1591")]
+public sealed class AndCondition : ICondition
 {
 	[JsonProperty("conditions")]
 	[JsonRequired]
