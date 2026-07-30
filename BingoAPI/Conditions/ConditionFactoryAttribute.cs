@@ -5,6 +5,11 @@ namespace BingoAPI.Conditions;
 /// <summary>
 /// Registers any class inheriting <see cref="IConditionFactory"/> to the given action
 /// </summary>
+/// <remarks>
+/// Use this attribute only if the factory must be registered from
+/// <see cref="ConditionRegistry.TryRegisterFactory(Type)"/>. Otherwise,
+/// use <see cref="ConditionRegistry.RegisterFactory(string,IConditionFactory)"/>
+/// </remarks>
 [AttributeUsage(AttributeTargets.Class)]
 [PublicAPI]
 public class ConditionFactoryAttribute : Attribute
