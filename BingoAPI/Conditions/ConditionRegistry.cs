@@ -1,8 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using BingoAPI.Conditions.Factories;
 using BingoAPI.Helpers;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 
 namespace BingoAPI.Conditions;
 
@@ -12,6 +12,14 @@ namespace BingoAPI.Conditions;
 public static class ConditionRegistry
 {
 	private static readonly Dictionary<string, IConditionFactory> FactoryPerAction = new();
+
+	/// <summary>
+	/// Attempts to get the <see cref="IConditionFactory"/> registered under the given <paramref name="action"/>
+	/// </summary>
+	internal static bool TryGetFactory(
+		string action,
+		[NotNullWhen(true)] out IConditionFactory? factory
+	) => FactoryPerAction.TryGetValue(action, out factory);
 
 	/// <summary>
 	/// Adds every <see cref="ICondition"/> defined using <see cref="ConditionAttribute"/>
@@ -83,7 +91,10 @@ public static class ConditionRegistry
 	/// </summary>
 	[PublicAPI]
 	public static bool TryRegisterCondition<T>()
-		where T : ICondition => TryRegisterCondition(typeof(T));
+		where T : ICondition
+	{
+		return TryRegisterCondition(typeof(T));
+	}
 
 	/// <summary>
 	/// Registers the given <see cref="IConditionFactory"/> under the given action
@@ -104,7 +115,10 @@ public static class ConditionRegistry
 	/// </summary>
 	[PublicAPI]
 	public static void RegisterFactory<T>(string action)
-		where T : IConditionFactory, new() => RegisterFactory(action, new T());
+		where T : IConditionFactory, new()
+	{
+		RegisterFactory(action, new T());
+	}
 
 	/// <summary>
 	/// Registers an new instance of <paramref name="type"/> under the given action
@@ -120,20 +134,8 @@ public static class ConditionRegistry
 	/// </summary>
 	[PublicAPI]
 	public static void RegisterCondition<T>(string action)
-		where T : ICondition => RegisterCondition(action, typeof(T));
-
-	/// <summary>
-	/// Creates an instance of <see cref="ICondition"/> by using the given action and parameters
-	/// </summary>
-	internal static ICondition CreateFromJson(
-		string action,
-		JsonReader reader,
-		JsonSerializer serializer
-	)
+		where T : ICondition
 	{
-		if (!FactoryPerAction.TryGetValue(action, out var factory))
-			throw new ArgumentException($"No factory has been registered under '{action}'.");
-
-		return factory.Generate(reader, serializer);
+		RegisterCondition(action, typeof(T));
 	}
 }

@@ -38,9 +38,12 @@ internal class ConditionConverter : JsonConverter
 		if (!obj.TryGetValue(PARAMS_KEY, out var paramsToken))
 			throw new JsonException($"Expected '{PARAMS_KEY}' property: {obj}");
 
+		if (!ConditionRegistry.TryGetFactory(action, out var factory))
+			throw new ArgumentException($"No factory has been registered under '{action}'.");
+
 		try
 		{
-			return ConditionRegistry.CreateFromJson(action, paramsToken.CreateReader(), serializer);
+			return factory.Generate(paramsToken.CreateReader(), serializer);
 		}
 		catch (Exception e)
 		{
