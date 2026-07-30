@@ -138,4 +138,96 @@ public static class ConditionRegistry
 	{
 		RegisterCondition(action, typeof(T));
 	}
+
+	/// <summary>
+	/// Attempts to register a <see cref="ICondition"/> from the given <paramref name="type"/>
+	/// </summary>
+	[PublicAPI]
+	public static bool TryRegisterCondition(Type type)
+	{
+		if (type.IsAbstract || type.IsInterface)
+			return false;
+
+		var attribute = type.GetCustomAttribute<ConditionAttribute>();
+
+		if (attribute == null)
+			return false;
+
+		if (!typeof(ICondition).IsAssignableFrom(type))
+		{
+			Log.Warning(
+				$"The attribute '{nameof(ConditionAttribute)}' must be used on a class inheriting the interface '{nameof(ICondition)}'."
+			);
+			return false;
+		}
+
+		try
+		{
+			Log.Debug($"Registering the condition '{type}' under '{attribute.Action}'.");
+			RegisterCondition(attribute.Action, type);
+		}
+		catch (Exception e)
+		{
+			Log.Error($"Error while registering '{type}' under '{attribute.Action}': {e}");
+			return false;
+		}
+
+		return true;
+	}
+
+	/// <summary>
+	/// Attempts to register a <see cref="ICondition"/> from the given <typeparamref name="T"/>
+	/// </summary>
+	[PublicAPI]
+	public static bool TryRegisterCondition<T>()
+		where T : ICondition
+	{
+		return TryRegisterCondition(typeof(T));
+	}
+
+	/// <summary>
+	/// Registers all <see cref="ICondition"/> and <see cref="IConditionFactory"/> from the given <paramref name="type"/>
+	/// </summary>
+	[PublicAPI]
+	public static void RegisterAllFromType(Type type)
+	{
+		TryRegisterCondition(type);
+		//TryRegisterFactory(type);
+	}
+
+	/// <summary>
+	/// Registers all <see cref="ICondition"/> and <see cref="IConditionFactory"/> from the given <paramref name="assembly"/>
+	/// </summary>
+	[PublicAPI]
+	public static void RegisterAllFromAssembly(Assembly assembly)
+	{
+		IEnumerable<Type?> types;
+
+		try
+		{
+			types = assembly.GetTypes();
+		}
+		catch (ReflectionTypeLoadException ex)
+		{
+			types = ex.Types;
+		}
+
+		foreach (var type in types)
+		{
+			if (type == null)
+				continue;
+
+			RegisterAllFromType(type);
+		}
+	}
+
+	/// <summary>
+	/// Registers all <see cref="ICondition"/> and <see cref="IConditionFactory"/> from the loaded assemblies
+	/// </summary>
+	[PublicAPI]
+	public static void RegisterAll()
+	{
+		foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+			RegisterAllFromAssembly(assembly);
+	}
 }
