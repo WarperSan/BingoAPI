@@ -41,15 +41,20 @@ public static class ConditionRegistry
 				if (type.IsAbstract || type.IsInterface)
 					continue;
 
-				if (
-					!typeof(IConditionGenerator).IsAssignableFrom(type)
-					&& !typeof(ICondition).IsAssignableFrom(type)
-				)
-					continue;
-
 				var attribute = type.GetCustomAttribute<ConditionAttribute>();
 
 				if (attribute == null)
+					continue;
+
+				if (!typeof(ICondition).IsAssignableFrom(type))
+				{
+					Log.Error(
+						$"The attribute '{nameof(ConditionAttribute)}' must be used on a class inheriting the interface '{nameof(ICondition)}'."
+					);
+					continue;
+				}
+
+				if (!typeof(IConditionGenerator).IsAssignableFrom(type))
 					continue;
 
 				Log.Debug($"Registering '{type}' under '{attribute.Action}'.");
