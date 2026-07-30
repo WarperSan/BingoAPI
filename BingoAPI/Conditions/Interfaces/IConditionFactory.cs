@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace BingoAPI.Conditions;
+namespace BingoAPI.Conditions.Interfaces;
 
 /// <summary>
 /// Represents any class that can be used to generate a <see cref="ICondition"/>

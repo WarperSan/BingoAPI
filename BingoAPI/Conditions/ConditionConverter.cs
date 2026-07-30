@@ -1,3 +1,4 @@
+using BingoAPI.Conditions.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 

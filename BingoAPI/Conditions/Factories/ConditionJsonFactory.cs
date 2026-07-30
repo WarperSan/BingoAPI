@@ -1,3 +1,4 @@
+using BingoAPI.Conditions.Interfaces;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Conditions.Factories;
