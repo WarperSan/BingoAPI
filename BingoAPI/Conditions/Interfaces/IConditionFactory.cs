@@ -8,7 +8,7 @@ namespace BingoAPI.Conditions.Interfaces;
 public interface IConditionFactory
 {
 	/// <summary>
-	/// Generates the appropriate <see cref="ICondition"/>
+	/// Generates a <see cref="ICondition"/>
 	/// </summary>
 	ICondition Generate(JsonReader reader, JsonSerializer serializer);
 }
