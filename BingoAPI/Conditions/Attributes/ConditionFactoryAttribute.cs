@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace BingoAPI.Conditions;
+namespace BingoAPI.Conditions.Attributes;
 
 /// <summary>
 /// Registers any class inheriting <see cref="IConditionFactory"/> to the given action

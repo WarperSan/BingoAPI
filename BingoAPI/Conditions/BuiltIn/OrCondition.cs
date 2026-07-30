@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using BingoAPI.Conditions.Attributes;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Conditions.BuiltIn;

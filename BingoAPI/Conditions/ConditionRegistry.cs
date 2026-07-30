@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using BingoAPI.Conditions.Attributes;
 using BingoAPI.Conditions.Factories;
 using BingoAPI.Helpers;
 using JetBrains.Annotations;
