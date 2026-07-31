@@ -1,3 +1,4 @@
+using BingoAPI.Conditions.Interfaces;
 using BingoAPI.Helpers;
 using JetBrains.Annotations;
 
