@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using BingoAPI.Conditions.Attributes;
 using BingoAPI.Conditions.Interfaces;
 using Newtonsoft.Json;
@@ -10,9 +9,11 @@ namespace BingoAPI.Conditions.BuiltIn;
 /// Condition that is valid when all the conditions are valid
 /// </summary>
 [Condition("AND")]
-[SuppressMessage("ReSharper", "CS1591")]
 public sealed class AndCondition : ICondition
 {
+	/// <summary>
+	/// Every <see cref="ICondition"/> that must be met in order for <see cref="IsMet"/> to return <c>true</c>
+	/// </summary>
 	[JsonProperty("conditions")]
 	[JsonRequired]
 	[Description("Conditions that must all be met")]

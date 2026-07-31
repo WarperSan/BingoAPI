@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using BingoAPI.Conditions.Attributes;
 using BingoAPI.Conditions.Interfaces;
 using Newtonsoft.Json;
@@ -10,12 +9,14 @@ namespace BingoAPI.Conditions.BuiltIn;
 /// Condition that is valid when the condition is invalid
 /// </summary>
 [Condition("NOT")]
-[SuppressMessage("ReSharper", "CS1591")]
 public sealed class NotCondition : ICondition
 {
+	/// <summary>
+	/// <see cref="ICondition"/> that will be negated
+	/// </summary>
 	[JsonProperty("condition")]
 	[JsonRequired]
-	[Description("Condition to inverse")]
+	[Description("Condition to negate")]
 	public required ICondition Condition { get; init; }
 
 	/// <inheritdoc/>
