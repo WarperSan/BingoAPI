@@ -16,7 +16,7 @@ public sealed class OrCondition : ICondition
 	[JsonProperty("conditions")]
 	[JsonRequired]
 	[Description("Conditions where at least one must be met")]
-	public required ICondition[] Conditions { get; init; }
+	public required IReadOnlyCollection<ICondition> Conditions { get; init; }
 
 	/// <inheritdoc/>
 	public bool IsMet() => Conditions.Any(condition => condition.IsMet());

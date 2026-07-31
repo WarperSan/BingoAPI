@@ -16,7 +16,7 @@ public sealed class SomeCondition : ICondition
 	[JsonProperty("conditions")]
 	[JsonRequired]
 	[Description("Conditions that could be met")]
-	public required ICondition[] Conditions { get; init; }
+	public required IReadOnlyCollection<ICondition> Conditions { get; init; }
 
 	[JsonProperty("amount")]
 	[DefaultValue(1)]
@@ -27,7 +27,7 @@ public sealed class SomeCondition : ICondition
 	public bool IsMet()
 	{
 		// Skip if always false
-		if (Conditions.Length < Amount)
+		if (Conditions.Count < Amount)
 			return false;
 
 		var currentAmount = 0;
