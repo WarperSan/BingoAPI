@@ -20,7 +20,9 @@ public record Square
 	/// </summary>
 	[JsonProperty("slot")]
 	[JsonRequired]
+#pragma warning disable CS0649
 	private SlotIndex? _slot;
+#pragma warning restore CS0649
 
 	/// <summary>
 	/// Index of this square
