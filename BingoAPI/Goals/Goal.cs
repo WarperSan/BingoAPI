@@ -1,4 +1,4 @@
-using BingoAPI.Conditions;
+using BingoAPI.Conditions.Interfaces;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Goals;

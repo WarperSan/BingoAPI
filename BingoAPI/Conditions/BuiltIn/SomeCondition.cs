@@ -1,4 +1,7 @@
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using BingoAPI.Conditions.Attributes;
+using BingoAPI.Conditions.Interfaces;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Conditions.BuiltIn;
@@ -7,7 +10,8 @@ namespace BingoAPI.Conditions.BuiltIn;
 /// Condition that is valid when at least the given amount of the conditions are valid
 /// </summary>
 [Condition("SOME")]
-internal sealed class SomeCondition : ICondition
+[SuppressMessage("ReSharper", "CS1591")]
+public sealed class SomeCondition : ICondition
 {
 	[JsonProperty("conditions")]
 	[JsonRequired]

@@ -1,3 +1,4 @@
+using BingoAPI.Conditions.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -35,19 +36,15 @@ internal class ConditionConverter : JsonConverter
 		if (action == null)
 			throw new JsonException($"Expected '{ACTION_KEY}' property: {obj}");
 
-		if (!ConditionRegistry.TryGetType(action, out var type))
-			throw new InvalidOperationException($"No condition has been registered under '{action}'.");
-
 		if (!obj.TryGetValue(PARAMS_KEY, out var paramsToken))
 			throw new JsonException($"Expected '{PARAMS_KEY}' property: {obj}");
 
+		if (!ConditionRegistry.TryGetFactory(action, out var factory))
+			throw new ArgumentException($"No factory has been registered under '{action}'.");
+
 		try
 		{
-			var condition = (ICondition)Activator.CreateInstance(type);
-
-			serializer.Populate(paramsToken.CreateReader(), condition);
-
-			return condition;
+			return factory.Generate(paramsToken.CreateReader(), serializer);
 		}
 		catch (Exception e)
 		{
