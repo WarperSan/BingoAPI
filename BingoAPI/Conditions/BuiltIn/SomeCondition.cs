@@ -23,9 +23,8 @@ public sealed class SomeCondition : ICondition
 	/// Minimum amount of items in <see cref="Conditions"/> that must be met in order for <see cref="IsMet"/> to return <c>true</c>
 	/// </summary>
 	[JsonProperty("amount")]
-	[DefaultValue(2)]
 	[Description("Minimum number of conditions that must be met")]
-	public uint Amount { get; init; }
+	public required uint Amount { get; init; }
 
 	/// <inheritdoc/>
 	public bool IsMet()
