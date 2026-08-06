@@ -1,4 +1,6 @@
+using BingoAPI.Conditions.BuiltIn;
 using BingoAPI.Goals;
+using BingoAPI.Helpers;
 
 namespace BingoAPI.Models;
 
@@ -7,6 +9,12 @@ namespace BingoAPI.Models;
 /// </summary>
 public sealed class Card
 {
+	private static readonly Goal UnknownGoal = new()
+	{
+		Name = "???",
+		Condition = new ManualCondition(),
+	};
+
 	private struct CardSquare
 	{
 		public CardSquare(Square square, Goal goal)
@@ -55,9 +63,12 @@ public sealed class Card
 				throw new ArgumentOutOfRangeException(nameof(square));
 
 			if (!pool.TryGet(square, out var goal))
-				throw new KeyNotFoundException(
-					$"Failed to find a goal under the name '{square.Text}'."
+			{
+				Log.Error(
+					$"Failed to find a goal under the name '{square.Text}', defaulting to unknown."
 				);
+				goal = UnknownGoal;
+			}
 
 			_squares[index] = new CardSquare(square, goal);
 		}
