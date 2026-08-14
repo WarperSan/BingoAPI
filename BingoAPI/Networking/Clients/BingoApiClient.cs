@@ -33,7 +33,8 @@ internal sealed class BingoApiClient
 	/// <summary>
 	/// Sends the given <see cref="HttpRequestMessage"/>
 	/// </summary>
-	private Task<HttpResponseMessage> Send(HttpRequestMessage request, CancellationToken ct) => _client.SendAsync(request, ct);
+	private Task<HttpResponseMessage> Send(HttpRequestMessage request, CancellationToken ct) =>
+		_client.SendAsync(request, ct);
 
 	/// <summary>
 	/// Sends the given <see cref="HttpRequestMessage"/>
@@ -57,7 +58,9 @@ internal sealed class BingoApiClient
 
 		// ReSharper disable once ConvertIfStatementToReturnStatement
 		if (typedResponse == null)
-			throw new InvalidOperationException($"Failed to deserialize response to {typeof(T).Name}");
+			throw new InvalidOperationException(
+				$"Failed to deserialize response to {typeof(T).Name}"
+			);
 
 		return typedResponse;
 	}
@@ -76,10 +79,7 @@ internal sealed class BingoApiClient
 		const string CREATION_TOKEN = "csrfmiddlewaretoken";
 		// ReSharper restore StringLiteralTypo
 
-		using var request = new RequestBuilder()
-							.Get()
-							.ToEndpoint("")
-							.Build();
+		using var request = new RequestBuilder().Get().ToEndpoint("").Build();
 
 		using var response = await Send(request, ct);
 		response.EnsureSuccessStatusCode();
@@ -117,15 +117,12 @@ internal sealed class BingoApiClient
 	/// Creates a room with the given settings
 	/// </summary>
 	/// <returns>Code of the room</returns>
-	public async Task<string> CreateRoom(
-		CreateRoomSettings settings,
-		CancellationToken ct
-	)
+	public async Task<string> CreateRoom(CreateRoomSettings settings, CancellationToken ct)
 	{
 		throw new NotImplementedException();
 		var tokens = await GetTokens(ct);
 
-		var body = new CreateRoomRequest
+		var body = new BingoAPI.DTOs.CreateRoom.Request
 		{
 			RoomName = settings.Name,
 			Password = settings.Password,
@@ -137,11 +134,7 @@ internal sealed class BingoApiClient
 			CreationToken = tokens.CreationToken,
 		};
 
-		using var request = new RequestBuilder()
-							.Post()
-							.ToEndpoint("/")
-							.WithForm(body)
-							.Build();
+		using var request = new RequestBuilder().Post().ToEndpoint("/").WithForm(body).Build();
 
 		// ReSharper disable StringLiteralTypo
 		request.Headers.Add("Cookie", $"csrftoken={tokens.PublicToken}");
@@ -165,12 +158,9 @@ internal sealed class BingoApiClient
 	/// <returns>
 	///	Socket key of the <see cref="WebSocket"/>
 	/// </returns>
-	public async Task<string> JoinRoom(
-		JoinRoomSettings settings,
-		CancellationToken ct
-	)
+	public async Task<string> JoinRoom(JoinRoomSettings settings, CancellationToken ct)
 	{
-		var body = new JoinRoomRequest
+		var body = new BingoAPI.DTOs.JoinRoom.Request
 		{
 			Code = settings.Code,
 			Password = settings.Password,
@@ -178,12 +168,12 @@ internal sealed class BingoApiClient
 		};
 
 		using var request = new RequestBuilder()
-							.Post()
-							.ToEndpoint("/api/join-room")
-							.WithJson(body)
-							.Build();
+			.Post()
+			.ToEndpoint("/api/join-room")
+			.WithJson(body)
+			.Build();
 
-		var response = await SendAndParse<JoinRoomResponse>(request, ct);
+		var response = await SendAndParse<BingoAPI.DTOs.JoinRoom.Response>(request, ct);
 
 		return response.SocketKey;
 	}
@@ -191,14 +181,9 @@ internal sealed class BingoApiClient
 	/// <summary>
 	/// Marks the square at the given index for a certain team
 	/// </summary>
-	public async Task MarkSquare(
-		string room,
-		Team team,
-		int index,
-		CancellationToken ct
-	)
+	public async Task MarkSquare(string room, Team team, int index, CancellationToken ct)
 	{
-		var body = new MarkSquareRequest
+		var body = new BingoAPI.DTOs.MarkSquare.Request
 		{
 			Code = room,
 			Team = team,
@@ -206,10 +191,10 @@ internal sealed class BingoApiClient
 		};
 
 		using var request = new RequestBuilder()
-							.Put()
-							.ToEndpoint("/api/select")
-							.WithJson(body)
-							.Build();
+			.Put()
+			.ToEndpoint("/api/select")
+			.WithJson(body)
+			.Build();
 
 		await SendAsync(request, ct);
 	}
@@ -217,14 +202,9 @@ internal sealed class BingoApiClient
 	/// <summary>
 	/// Clears the square at the given index for a certain team
 	/// </summary>
-	public async Task ClearSquare(
-		string room,
-		Team team,
-		int index,
-		CancellationToken ct
-	)
+	public async Task ClearSquare(string room, Team team, int index, CancellationToken ct)
 	{
-		var body = new ClearSquareRequest
+		var body = new BingoAPI.DTOs.ClearSquare.Request
 		{
 			Code = room,
 			Team = team,
@@ -232,10 +212,10 @@ internal sealed class BingoApiClient
 		};
 
 		using var request = new RequestBuilder()
-							.Put()
-							.ToEndpoint("/api/select")
-							.WithJson(body)
-							.Build();
+			.Put()
+			.ToEndpoint("/api/select")
+			.WithJson(body)
+			.Build();
 
 		await SendAsync(request, ct);
 	}
@@ -245,17 +225,13 @@ internal sealed class BingoApiClient
 	/// </summary>
 	public async Task SendMessage(string room, string message, CancellationToken ct)
 	{
-		var body = new SendMessageRequest
-		{
-			Code = room,
-			Message = message,
-		};
+		var body = new BingoAPI.DTOs.SendMessage.Request { Code = room, Message = message };
 
 		using var request = new RequestBuilder()
-							.Put()
-							.ToEndpoint("/api/chat")
-							.WithJson(body)
-							.Build();
+			.Put()
+			.ToEndpoint("/api/chat")
+			.WithJson(body)
+			.Build();
 
 		await SendAsync(request, ct);
 	}
@@ -265,17 +241,13 @@ internal sealed class BingoApiClient
 	/// </summary>
 	public async Task ChangeTeam(string room, Team team, CancellationToken ct)
 	{
-		var body = new ChangeTeamRequest
-		{
-			Code = room,
-			Team = team,
-		};
+		var body = new BingoAPI.DTOs.ChangeTeam.Request { Code = room, Team = team };
 
 		using var request = new RequestBuilder()
-							.Put()
-							.ToEndpoint("/api/color")
-							.WithJson(body)
-							.Build();
+			.Put()
+			.ToEndpoint("/api/color")
+			.WithJson(body)
+			.Build();
 
 		await SendAsync(request, ct);
 	}
@@ -285,10 +257,7 @@ internal sealed class BingoApiClient
 	/// </summary>
 	public async Task<ICollection<Square>> GetSquares(string room, CancellationToken ct)
 	{
-		using var request = new RequestBuilder()
-							.Get()
-							.ToEndpoint($"/room/{room}/board")
-							.Build();
+		using var request = new RequestBuilder().Get().ToEndpoint($"/room/{room}/board").Build();
 
 		return await SendAndParse<Square[]>(request, ct);
 	}
@@ -298,16 +267,13 @@ internal sealed class BingoApiClient
 	/// </summary>
 	public async Task RevealCard(string room, CancellationToken ct)
 	{
-		var body = new RevealCardRequest
-		{
-			Code = room,
-		};
+		var body = new BingoAPI.DTOs.RevealCard.Request { Code = room };
 
 		using var request = new RequestBuilder()
-							.Put()
-							.ToEndpoint("/api/revealed")
-							.WithJson(body)
-							.Build();
+			.Put()
+			.ToEndpoint("/api/revealed")
+			.WithJson(body)
+			.Build();
 
 		await SendAsync(request, ct);
 	}
@@ -315,14 +281,17 @@ internal sealed class BingoApiClient
 	/// <summary>
 	/// Gets the information related to the given socket key
 	/// </summary>
-	public async Task<GetSocketInformationResponse> GetSocketInformation(string socketKey, CancellationToken ct)
+	public async Task<BingoAPI.DTOs.GetSocketInformation.Response> GetSocketInformation(
+		string socketKey,
+		CancellationToken ct
+	)
 	{
 		using var request = new RequestBuilder()
-							.Get()
-							.ToEndpoint($"/api/socket/{socketKey}")
-							.Build();
+			.Get()
+			.ToEndpoint($"/api/socket/{socketKey}")
+			.Build();
 
-		return await SendAndParse<GetSocketInformationResponse>(request, ct);
+		return await SendAndParse<BingoAPI.DTOs.GetSocketInformation.Response>(request, ct);
 	}
 
 	#endregion

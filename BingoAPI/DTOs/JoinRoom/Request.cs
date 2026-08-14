@@ -1,12 +1,8 @@
-using BingoAPI.Networking.Clients;
 using Newtonsoft.Json;
 
-namespace BingoAPI.Networking.DTOs;
+namespace BingoAPI.DTOs.JoinRoom;
 
-/// <summary>
-/// Model used as the request's payload of <see cref="BingoApiClient.JoinRoom"/>
-/// </summary>
-internal record JoinRoomRequest
+internal record Request
 {
 	[JsonProperty("room")]
 	public required string Code { get; init; }

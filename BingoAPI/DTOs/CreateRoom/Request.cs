@@ -1,12 +1,8 @@
 using System.Runtime.Serialization;
-using BingoAPI.Networking.Clients;
 
-namespace BingoAPI.Networking.DTOs;
+namespace BingoAPI.DTOs.CreateRoom;
 
-/// <summary>
-/// Model used as the request's payload of <see cref="BingoApiClient.CreateRoom"/>
-/// </summary>
-internal record CreateRoomRequest
+internal record Request
 {
 	private const int RANDOMIZED_VARIANT_TYPE = 172;
 	private const int FIXED_BOARD_VARIANT_TYPE = 18;
