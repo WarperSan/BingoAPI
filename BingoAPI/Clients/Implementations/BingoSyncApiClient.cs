@@ -1,11 +1,11 @@
 using System.Net;
 using System.Text.RegularExpressions;
 using BingoAPI.Clients.Interfaces;
+using BingoAPI.DTOs.CreateRoom;
 using BingoAPI.Helpers;
-using BingoAPI.Models.Settings;
 using BingoAPI.Models;
+using BingoAPI.Models.Settings;
 using BingoAPI.Networking;
-using BingoAPI.Networking.DTOs;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Clients.Implementations;
@@ -29,7 +29,8 @@ public class BingoSyncApiClient : IBingoApiClient
 	/// <summary>
 	/// Sends the given <see cref="HttpRequestMessage"/>
 	/// </summary>
-	private Task<HttpResponseMessage> Send(HttpRequestMessage request, CancellationToken ct) => _client.SendAsync(request, ct);
+	private Task<HttpResponseMessage> Send(HttpRequestMessage request, CancellationToken ct) =>
+		_client.SendAsync(request, ct);
 
 	/// <summary>
 	/// Sends the given <see cref="HttpRequestMessage"/>
@@ -111,11 +112,9 @@ public class BingoSyncApiClient : IBingoApiClient
 	/// <inheritdoc />
 	public async Task<string> CreateRoom(CreateRoomSettings settings, CancellationToken ct)
 	{
-		throw new NotImplementedException();
-
 		var tokens = await GetTokens(ct);
 
-		var body = new BingoAPI.DTOs.CreateRoom.Request
+		var body = new Request
 		{
 			RoomName = settings.Name,
 			Password = settings.Password,
@@ -156,10 +155,10 @@ public class BingoSyncApiClient : IBingoApiClient
 		};
 
 		using var request = new RequestBuilder()
-		                    .Post()
-		                    .ToEndpoint("/api/join-room")
-		                    .WithJson(body)
-		                    .Build();
+			.Post()
+			.ToEndpoint("/api/join-room")
+			.WithJson(body)
+			.Build();
 
 		var response = await SendAndParse<DTOs.JoinRoom.Response>(request, ct);
 
@@ -167,12 +166,7 @@ public class BingoSyncApiClient : IBingoApiClient
 	}
 
 	/// <inheritdoc />
-	public async Task MarkSquare(
-		string            room,
-		Team              team,
-		int               index,
-		CancellationToken ct
-	)
+	public async Task MarkSquare(string room, Team team, int index, CancellationToken ct)
 	{
 		var body = new DTOs.MarkSquare.Request
 		{
@@ -182,21 +176,16 @@ public class BingoSyncApiClient : IBingoApiClient
 		};
 
 		using var request = new RequestBuilder()
-		                    .Put()
-		                    .ToEndpoint("/api/select")
-		                    .WithJson(body)
-		                    .Build();
+			.Put()
+			.ToEndpoint("/api/select")
+			.WithJson(body)
+			.Build();
 
 		await SendAsync(request, ct);
 	}
 
 	/// <inheritdoc />
-	public async Task ClearSquare(
-		string            room,
-		Team              team,
-		int               index,
-		CancellationToken ct
-	)
+	public async Task ClearSquare(string room, Team team, int index, CancellationToken ct)
 	{
 		var body = new DTOs.ClearSquare.Request
 		{
@@ -206,10 +195,10 @@ public class BingoSyncApiClient : IBingoApiClient
 		};
 
 		using var request = new RequestBuilder()
-		                    .Put()
-		                    .ToEndpoint("/api/select")
-		                    .WithJson(body)
-		                    .Build();
+			.Put()
+			.ToEndpoint("/api/select")
+			.WithJson(body)
+			.Build();
 
 		await SendAsync(request, ct);
 	}
@@ -220,10 +209,10 @@ public class BingoSyncApiClient : IBingoApiClient
 		var body = new DTOs.SendMessage.Request { Code = room, Message = message };
 
 		using var request = new RequestBuilder()
-		                    .Put()
-		                    .ToEndpoint("/api/chat")
-		                    .WithJson(body)
-		                    .Build();
+			.Put()
+			.ToEndpoint("/api/chat")
+			.WithJson(body)
+			.Build();
 
 		await SendAsync(request, ct);
 	}
@@ -234,10 +223,10 @@ public class BingoSyncApiClient : IBingoApiClient
 		var body = new DTOs.ChangeTeam.Request { Code = room, Team = team };
 
 		using var request = new RequestBuilder()
-		                    .Put()
-		                    .ToEndpoint("/api/color")
-		                    .WithJson(body)
-		                    .Build();
+			.Put()
+			.ToEndpoint("/api/color")
+			.WithJson(body)
+			.Build();
 
 		await SendAsync(request, ct);
 	}
@@ -256,21 +245,24 @@ public class BingoSyncApiClient : IBingoApiClient
 		var body = new DTOs.RevealCard.Request { Code = room };
 
 		using var request = new RequestBuilder()
-		                    .Put()
-		                    .ToEndpoint("/api/revealed")
-		                    .WithJson(body)
-		                    .Build();
+			.Put()
+			.ToEndpoint("/api/revealed")
+			.WithJson(body)
+			.Build();
 
 		await SendAsync(request, ct);
 	}
 
 	/// <inheritdoc />
-	public async Task<DTOs.GetSocketInformation.Response> GetSocketInformation(string socketKey, CancellationToken ct)
+	public async Task<DTOs.GetSocketInformation.Response> GetSocketInformation(
+		string socketKey,
+		CancellationToken ct
+	)
 	{
 		using var request = new RequestBuilder()
-		                    .Get()
-		                    .ToEndpoint($"/api/socket/{socketKey}")
-		                    .Build();
+			.Get()
+			.ToEndpoint($"/api/socket/{socketKey}")
+			.Build();
 
 		return await SendAndParse<DTOs.GetSocketInformation.Response>(request, ct);
 	}
