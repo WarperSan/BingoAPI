@@ -14,6 +14,8 @@ public interface IBingoApiClient
 	/// </summary>
 	public Team DefaultTeam { get; }
 
+	// TODO: NewCard
+
 	/// <summary>
 	/// Creates a room with the given settings
 	/// </summary>

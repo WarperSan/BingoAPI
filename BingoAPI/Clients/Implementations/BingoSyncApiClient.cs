@@ -10,12 +10,16 @@ using Newtonsoft.Json;
 
 namespace BingoAPI.Clients.Implementations;
 
+/// <summary>
+/// Default implementation of <see cref="IBingoApiClient"/> for BingoSync
+/// </summary>
 public class BingoSyncApiClient : IBingoApiClient
 {
-	// TODO: CreateRoom, NewCard
-
 	private readonly HttpClient _client;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="BingoSyncApiClient"/> class.
+	/// </summary>
 	public BingoSyncApiClient(HttpClient client)
 	{
 		_client = client;

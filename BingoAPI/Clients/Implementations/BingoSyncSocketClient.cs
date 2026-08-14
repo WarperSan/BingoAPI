@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 
 namespace BingoAPI.Clients.Implementations;
 
+/// <summary>
+/// Default implementation of <see cref="IBingoSocketClient"/> for BingoSync
+/// </summary>
 public class BingoSyncSocketClient : IBingoSocketClient
 {
 	private WebSocket? _socket;
@@ -15,12 +18,12 @@ public class BingoSyncSocketClient : IBingoSocketClient
 	private readonly Uri _broadcastUri;
 	private readonly Action<string> _onMessageReceived;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="BingoSyncSocketClient"/> class.
+	/// </summary>
 	public BingoSyncSocketClient(Uri socketAddress, Action<string> onMessageReceived)
 	{
-		var builder = new UriBuilder(socketAddress)
-		{
-			Path = "broadcast",
-		};
+		var builder = new UriBuilder(socketAddress) { Path = "broadcast" };
 
 		_broadcastUri = builder.Uri;
 		_onMessageReceived = onMessageReceived;
@@ -38,15 +41,10 @@ public class BingoSyncSocketClient : IBingoSocketClient
 		{
 			await socket.ConnectAsync(_broadcastUri, ct);
 
-			var json = JsonConvert.SerializeObject(new
-			{
-				socket_key = socketKey,
-			});
+			var json = JsonConvert.SerializeObject(new { socket_key = socketKey });
 
 			await socket.SendAsync(
-				new ArraySegment<byte>(
-					Encoding.UTF8.GetBytes(json)
-				),
+				new ArraySegment<byte>(Encoding.UTF8.GetBytes(json)),
 				WebSocketMessageType.Text,
 				true,
 				ct
@@ -55,10 +53,7 @@ public class BingoSyncSocketClient : IBingoSocketClient
 			_socket = socket;
 			_cts = new CancellationTokenSource();
 
-			_socketReceiveTask = ReceiveLoop(
-				_socket,
-				_cts.Token
-			);
+			_socketReceiveTask = ReceiveLoop(_socket, _cts.Token);
 		}
 		catch
 		{
@@ -113,10 +108,7 @@ public class BingoSyncSocketClient : IBingoSocketClient
 	/// <summary>
 	/// Receives data on the given <see cref="WebSocket"/>, and notifies the given callback
 	/// </summary>
-	private async Task ReceiveLoop(
-		WebSocket         socket,
-		CancellationToken ct
-	)
+	private async Task ReceiveLoop(WebSocket socket, CancellationToken ct)
 	{
 		var buffer = new byte[1024];
 
@@ -128,10 +120,7 @@ public class BingoSyncSocketClient : IBingoSocketClient
 
 			do
 			{
-				result = await socket.ReceiveAsync(
-					new ArraySegment<byte>(buffer),
-					ct
-				);
+				result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), ct);
 				ms.Write(buffer, 0, result.Count);
 			} while (!result.EndOfMessage);
 

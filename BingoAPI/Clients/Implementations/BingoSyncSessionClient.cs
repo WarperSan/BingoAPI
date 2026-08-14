@@ -9,6 +9,9 @@ using Newtonsoft.Json;
 
 namespace BingoAPI.Clients.Implementations;
 
+/// <summary>
+/// Default implementation of <see cref="IBingoSessionClient"/> for BingoSync
+/// </summary>
 public class BingoSyncSessionClient : IBingoSessionClient
 {
 	private readonly IBingoApiClient _api;
@@ -222,7 +225,8 @@ public class BingoSyncSessionClient : IBingoSessionClient
 	}
 
 	/// <inheritdoc />
-	public async Task<Card?> GetCard(GoalPool pool, CancellationToken ct) {
+	public async Task<Card?> GetCard(GoalPool pool, CancellationToken ct)
+	{
 		if (!IsInRoom)
 		{
 			Log.Error("Tried to get the squares before being connected.");
