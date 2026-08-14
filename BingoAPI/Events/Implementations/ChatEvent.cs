@@ -2,24 +2,25 @@ using BingoAPI.Events.Interfaces;
 using BingoAPI.Models;
 using Newtonsoft.Json;
 
-namespace BingoAPI.Events.BuiltIn;
+namespace BingoAPI.Events.Implementations;
 
 /// <summary>
-/// Event sent when a player reveals the card
+/// Event sent when a player sends a message in the room
 /// </summary>
-internal record CardRevealedEvent : IEvent
+internal record ChatEvent : IChatEvent
 {
-	/// <summary>
-	/// Player responsible for this event
-	/// </summary>
+	/// <inheritdoc/>
 	[JsonProperty("player")]
 	[JsonRequired]
 	public required Player Player { get; init; }
 
-	/// <summary>
-	/// Time when this event was sent
-	/// </summary>
+	/// <inheritdoc/>
 	[JsonProperty("timestamp")]
 	[JsonRequired]
 	public required ulong Timestamp { get; init; }
+
+	/// <inheritdoc/>
+	[JsonProperty("text")]
+	[JsonRequired]
+	public required string Text { get; init; }
 }

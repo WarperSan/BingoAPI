@@ -1,4 +1,4 @@
-using BingoAPI.Events.BuiltIn;
+using BingoAPI.Events.Implementations;
 using BingoAPI.Events.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

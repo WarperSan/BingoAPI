@@ -1,4 +1,3 @@
-using BingoAPI.Events.BuiltIn;
 using BingoAPI.Events.Interfaces;
 using BingoAPI.Models;
 
@@ -149,28 +148,28 @@ public class CallbackEventHandler : IEventHandler
 	{
 		switch (evt)
 		{
-			case ConnectionEvent connection:
+			case IConnectionEvent connection:
 				if (connection.IsConnected)
 					DispatchConnectedEvent(connection);
 				else
 					DispatchDisconnectedEvent(connection);
 				break;
-			case ChatEvent chat:
+			case IChatEvent chat:
 				DispatchChatEvent(chat);
 				break;
-			case ColorEvent color:
+			case IColorEvent color:
 				DispatchColorEvent(color);
 				break;
-			case GoalEvent goal:
+			case IGoalEvent goal:
 				if (goal.HasBeenCleared)
 					DispatchGoalCleared(goal);
 				else
 					DispatchGoalMarked(goal);
 				break;
-			case CardRevealedEvent reveal:
+			case ICardRevealedEvent reveal:
 				DispatchCardRevealed(reveal);
 				break;
-			case CardGeneratedEvent generate:
+			case ICardGeneratedEvent generate:
 				DispatchCardGenerated(generate);
 				break;
 		}
@@ -193,7 +192,7 @@ public class CallbackEventHandler : IEventHandler
 		_localPlayer = null;
 	}
 
-	private void DispatchConnectedEvent(ConnectionEvent evt)
+	private void DispatchConnectedEvent(IConnectionEvent evt)
 	{
 		if (IsLocal(evt.Player))
 			return;
@@ -201,7 +200,7 @@ public class CallbackEventHandler : IEventHandler
 		OnOtherConnected?.Invoke(evt.Player);
 	}
 
-	private void DispatchDisconnectedEvent(ConnectionEvent evt)
+	private void DispatchDisconnectedEvent(IConnectionEvent evt)
 	{
 		if (IsLocal(evt.Player))
 			return;
@@ -209,7 +208,7 @@ public class CallbackEventHandler : IEventHandler
 		OnOtherDisconnected?.Invoke(evt.Player);
 	}
 
-	private void DispatchChatEvent(ChatEvent evt)
+	private void DispatchChatEvent(IChatEvent evt)
 	{
 		if (IsLocal(evt.Player))
 			OnSelfMessageSent?.Invoke(evt.Player, evt.Text, evt.Timestamp);
@@ -217,7 +216,7 @@ public class CallbackEventHandler : IEventHandler
 			OnOtherMessageSent?.Invoke(evt.Player, evt.Text, evt.Timestamp);
 	}
 
-	private void DispatchColorEvent(ColorEvent evt)
+	private void DispatchColorEvent(IColorEvent evt)
 	{
 		if (IsLocal(evt.Player))
 			OnSelfTeamChanged?.Invoke(evt.Player, evt.NewColor);
@@ -225,7 +224,7 @@ public class CallbackEventHandler : IEventHandler
 			OnOtherTeamChanged?.Invoke(evt.Player, evt.NewColor);
 	}
 
-	private void DispatchGoalMarked(GoalEvent evt)
+	private void DispatchGoalMarked(IGoalEvent evt)
 	{
 		if (IsLocal(evt.Player))
 			OnSelfSquareMarked?.Invoke(evt.Player, evt.Square, evt.Team);
@@ -233,7 +232,7 @@ public class CallbackEventHandler : IEventHandler
 			OnOtherSquareMarked?.Invoke(evt.Player, evt.Square, evt.Team);
 	}
 
-	private void DispatchGoalCleared(GoalEvent evt)
+	private void DispatchGoalCleared(IGoalEvent evt)
 	{
 		if (IsLocal(evt.Player))
 			OnSelfSquareCleared?.Invoke(evt.Player, evt.Square, evt.Team);
@@ -241,7 +240,7 @@ public class CallbackEventHandler : IEventHandler
 			OnOtherSquareCleared?.Invoke(evt.Player, evt.Square, evt.Team);
 	}
 
-	private void DispatchCardRevealed(CardRevealedEvent evt)
+	private void DispatchCardRevealed(ICardRevealedEvent evt)
 	{
 		if (IsLocal(evt.Player))
 			OnSelfCardRevealed?.Invoke(evt.Player);
@@ -249,7 +248,7 @@ public class CallbackEventHandler : IEventHandler
 			OnOtherCardRevealed?.Invoke(evt.Player);
 	}
 
-	private void DispatchCardGenerated(CardGeneratedEvent evt)
+	private void DispatchCardGenerated(ICardGeneratedEvent evt)
 	{
 		if (IsLocal(evt.Player))
 			OnSelfCardGenerated?.Invoke(evt.Player, evt.IsCardHidden);
