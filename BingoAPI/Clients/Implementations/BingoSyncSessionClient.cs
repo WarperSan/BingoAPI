@@ -20,14 +20,10 @@ public class BingoSyncSessionClient : IBingoSessionClient
 
 	private string? _roomCode;
 
-	/// <summary>
-	/// Team of the player
-	/// </summary>
+	/// <inheritdoc />
 	public Team Team { get; private set; } = Team.None;
 
-	/// <summary>
-	/// Defines if this session is connected to a room
-	/// </summary>
+	/// <inheritdoc />
 	[MemberNotNullWhen(true, nameof(_roomCode))]
 	public bool IsInRoom => _roomCode != null;
 
