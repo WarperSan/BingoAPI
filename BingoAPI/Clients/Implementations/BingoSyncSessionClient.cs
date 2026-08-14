@@ -1,21 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
-using BingoAPI.Clients.Implementations;
 using BingoAPI.Clients.Interfaces;
 using BingoAPI.Events;
 using BingoAPI.Goals;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
 using BingoAPI.Models.Settings;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace BingoAPI.Networking;
+namespace BingoAPI.Clients.Implementations;
 
-/// <summary>
-/// Represents an active connection to a room
-/// </summary>
-[PublicAPI]
-public sealed class Session : IDisposable
+public class BingoSyncSessionClient : IBingoSessionClient
 {
 	private readonly IBingoApiClient _api;
 	private readonly IBingoSocketClient _socket;
@@ -35,21 +29,32 @@ public sealed class Session : IDisposable
 	public bool IsInRoom => _roomCode != null;
 
 	/// <summary>
-	/// Creates a new instance of <see cref="Session"/>
+	/// Creates a new instance of <see cref="BingoSyncSessionClient"/>
 	/// </summary>
 	/// <param name="dispatcher">Instance used to dispatch events</param>
 	/// <param name="client">Client used for HTTP requests</param>
 	/// <param name="socketAddress">Address of the web socket</param>
-	public Session(EventDispatcher dispatcher, HttpClient client, Uri socketAddress)
+	public BingoSyncSessionClient(EventDispatcher dispatcher, HttpClient client, Uri socketAddress)
 	{
 		_dispatcher = dispatcher;
 		_api = new BingoSyncApiClient(client);
 		_socket = new BingoSyncSocketClient(socketAddress, OnMessageReceived);
 	}
 
-	/// <summary>
-	/// Creates a room and joins it
-	/// </summary>
+	private void OnMessageReceived(string message)
+	{
+		var evt = JsonConvert.DeserializeObject<IEvent>(message);
+
+		if (evt == null)
+		{
+			Log.Warning($"Failed to deserialize the message into a '{typeof(IEvent)}': {message}");
+			return;
+		}
+
+		_dispatcher.Dispatch(evt);
+	}
+
+	/// <inheritdoc />
 	public async Task<bool> CreateRoom(CreateRoomSettings settings, CancellationToken ct = default)
 	{
 		if (IsInRoom)
@@ -86,9 +91,7 @@ public sealed class Session : IDisposable
 		return await JoinRoom(joinSettings, ct);
 	}
 
-	/// <summary>
-	/// Joins the room
-	/// </summary>
+	/// <inheritdoc />
 	public async Task<bool> JoinRoom(JoinRoomSettings settings, CancellationToken ct = default)
 	{
 		if (IsInRoom)
@@ -130,9 +133,7 @@ public sealed class Session : IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Leaves the room
-	/// </summary>
+	/// <inheritdoc />
 	public async Task<bool> LeaveRoom(CancellationToken ct = default)
 	{
 		if (!IsInRoom)
@@ -162,10 +163,8 @@ public sealed class Session : IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Sends a message in the room
-	/// </summary>
-	public async Task<bool> SendMessage(string message, CancellationToken ct = default)
+	/// <inheritdoc />
+	public async Task<bool> SendMessage(string message, CancellationToken ct)
 	{
 		if (!IsInRoom)
 		{
@@ -189,10 +188,8 @@ public sealed class Session : IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Changes the player's team
-	/// </summary>
-	public async Task<bool> ChangeTeam(Team team, CancellationToken ct = default)
+	/// <inheritdoc />
+	public async Task<bool> ChangeTeam(Team team, CancellationToken ct)
 	{
 		if (!IsInRoom)
 		{
@@ -224,11 +221,8 @@ public sealed class Session : IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Gets the current <see cref="Card"/> of the room
-	/// </summary>
-	public async Task<Card?> GetCard(GoalPool pool, CancellationToken ct = default)
-	{
+	/// <inheritdoc />
+	public async Task<Card?> GetCard(GoalPool pool, CancellationToken ct) {
 		if (!IsInRoom)
 		{
 			Log.Error("Tried to get the squares before being connected.");
@@ -251,9 +245,7 @@ public sealed class Session : IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Marks the square for a team
-	/// </summary>
+	/// <inheritdoc />
 	public async Task<bool> MarkSquare(int index, CancellationToken ct = default)
 	{
 		if (!IsInRoom)
@@ -284,9 +276,7 @@ public sealed class Session : IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Clears the square for a team
-	/// </summary>
+	/// <inheritdoc />
 	public async Task<bool> ClearSquare(int index, CancellationToken ct = default)
 	{
 		if (!IsInRoom)
@@ -317,9 +307,7 @@ public sealed class Session : IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Reveals the card for the room
-	/// </summary>
+	/// <inheritdoc />
 	public async Task<bool> RevealCard(CancellationToken ct = default)
 	{
 		if (!IsInRoom)
@@ -342,19 +330,6 @@ public sealed class Session : IDisposable
 			Log.Error($"Failed to reveal the card for the room '{_roomCode}': {e}");
 			return false;
 		}
-	}
-
-	private void OnMessageReceived(string message)
-	{
-		var evt = JsonConvert.DeserializeObject<IEvent>(message);
-
-		if (evt == null)
-		{
-			Log.Warning($"Failed to deserialize the message into a '{typeof(IEvent)}': {message}");
-			return;
-		}
-
-		_dispatcher.Dispatch(evt);
 	}
 
 	/// <inheritdoc />
