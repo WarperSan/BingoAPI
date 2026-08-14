@@ -1,22 +1,21 @@
 using System.Net.WebSockets;
 using System.Text;
+using BingoAPI.Clients.Interfaces;
 using BingoAPI.Helpers;
 using Newtonsoft.Json;
 
-namespace BingoAPI.Networking.Clients;
+namespace BingoAPI.Clients.Implementations;
 
-/// <summary>
-/// Handles all communication with the BingoSync websocket
-/// </summary>
-internal sealed class BingoSocketClient : IDisposable
+public class BingoSyncSocketClient : IBingoSocketClient
 {
 	private WebSocket? _socket;
 	private CancellationTokenSource? _cts;
 	private Task? _socketReceiveTask;
 
 	private readonly Uri _broadcastUri;
+	private readonly Action<string> _onMessageReceived;
 
-	public BingoSocketClient(Uri socketAddress)
+	public BingoSyncSocketClient(Uri socketAddress, Action<string> onMessageReceived)
 	{
 		var builder = new UriBuilder(socketAddress)
 		{
@@ -24,16 +23,11 @@ internal sealed class BingoSocketClient : IDisposable
 		};
 
 		_broadcastUri = builder.Uri;
+		_onMessageReceived = onMessageReceived;
 	}
 
-	/// <summary>
-	/// Opens a <see cref="WebSocket"/> using the given key
-	/// </summary>
-	public async Task Connect(
-		string socketKey,
-		Action<string> onMessageReceived,
-		CancellationToken ct
-	)
+	/// <inheritdoc />
+	public async Task Connect(string socketKey, CancellationToken ct)
 	{
 		if (_socket != null)
 			throw new InvalidOperationException("Socket is already connected.");
@@ -63,7 +57,6 @@ internal sealed class BingoSocketClient : IDisposable
 
 			_socketReceiveTask = ReceiveLoop(
 				_socket,
-				onMessageReceived,
 				_cts.Token
 			);
 		}
@@ -74,9 +67,7 @@ internal sealed class BingoSocketClient : IDisposable
 		}
 	}
 
-	/// <summary>
-	/// Closes the <see cref="WebSocket"/> gracefully
-	/// </summary>
+	/// <inheritdoc />
 	public async Task Disconnect(CancellationToken ct)
 	{
 		if (_socket == null)
@@ -122,9 +113,8 @@ internal sealed class BingoSocketClient : IDisposable
 	/// <summary>
 	/// Receives data on the given <see cref="WebSocket"/>, and notifies the given callback
 	/// </summary>
-	private static async Task ReceiveLoop(
-		WebSocket socket,
-		Action<string> onReceive,
+	private async Task ReceiveLoop(
+		WebSocket         socket,
 		CancellationToken ct
 	)
 	{
@@ -159,7 +149,7 @@ internal sealed class BingoSocketClient : IDisposable
 
 				try
 				{
-					onReceive.Invoke(message);
+					_onMessageReceived.Invoke(message);
 				}
 				catch (Exception ex)
 				{

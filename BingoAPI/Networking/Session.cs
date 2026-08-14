@@ -6,7 +6,6 @@ using BingoAPI.Goals;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
 using BingoAPI.Models.Settings;
-using BingoAPI.Networking.Clients;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
@@ -19,7 +18,7 @@ namespace BingoAPI.Networking;
 public sealed class Session : IDisposable
 {
 	private readonly IBingoApiClient _api;
-	private readonly BingoSocketClient _socket;
+	private readonly IBingoSocketClient _socket;
 	private readonly EventDispatcher _dispatcher;
 
 	private string? _roomCode;
@@ -45,7 +44,7 @@ public sealed class Session : IDisposable
 	{
 		_dispatcher = dispatcher;
 		_api = new BingoSyncApiClient(client);
-		_socket = new BingoSocketClient(socketAddress);
+		_socket = new BingoSyncSocketClient(socketAddress, OnMessageReceived);
 	}
 
 	/// <summary>
@@ -53,8 +52,6 @@ public sealed class Session : IDisposable
 	/// </summary>
 	public async Task<bool> CreateRoom(CreateRoomSettings settings, CancellationToken ct = default)
 	{
-		throw new NotImplementedException();
-
 		if (IsInRoom)
 		{
 			Log.Error("Tried to create a room while being connected.");
@@ -106,7 +103,7 @@ public sealed class Session : IDisposable
 		{
 			var socketKey = await _api.JoinRoom(settings, ct);
 
-			await _socket.Connect(socketKey, OnMessageReceived, ct);
+			await _socket.Connect(socketKey, ct);
 
 			var socketInfo = await _api.GetSocketInformation(socketKey, ct);
 
