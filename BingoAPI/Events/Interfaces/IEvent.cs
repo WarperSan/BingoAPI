@@ -1,6 +1,6 @@
-namespace BingoAPI.Events;
+namespace BingoAPI.Events.Interfaces;
 
 /// <summary>
 /// Represents any class that can be used as an event
 /// </summary>
-internal interface IEvent;
+public interface IEvent;

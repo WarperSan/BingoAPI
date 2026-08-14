@@ -1,3 +1,4 @@
+using BingoAPI.Events.Interfaces;
 using BingoAPI.Models;
 using BingoAPI.Networking.Converters;
 using Newtonsoft.Json;

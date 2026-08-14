@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using BingoAPI.Clients.Interfaces;
-using BingoAPI.Events;
+using BingoAPI.Events.Interfaces;
 using BingoAPI.Goals;
 using BingoAPI.Helpers;
 using BingoAPI.Models;
@@ -16,7 +16,7 @@ public class BingoSyncSessionClient : IBingoSessionClient
 {
 	private readonly IBingoApiClient _api;
 	private readonly IBingoSocketClient _socket;
-	private readonly EventDispatcher _dispatcher;
+	private readonly IEventHandler _handler;
 
 	private string? _roomCode;
 
@@ -34,12 +34,12 @@ public class BingoSyncSessionClient : IBingoSessionClient
 	/// <summary>
 	/// Creates a new instance of <see cref="BingoSyncSessionClient"/>
 	/// </summary>
-	/// <param name="dispatcher">Instance used to dispatch events</param>
+	/// <param name="handler">Instance used to dispatch events</param>
 	/// <param name="client">Client used for HTTP requests</param>
 	/// <param name="socketAddress">Address of the web socket</param>
-	public BingoSyncSessionClient(EventDispatcher dispatcher, HttpClient client, Uri socketAddress)
+	public BingoSyncSessionClient(IEventHandler handler, HttpClient client, Uri socketAddress)
 	{
-		_dispatcher = dispatcher;
+		_handler = handler;
 		_api = new BingoSyncApiClient(client);
 		_socket = new BingoSyncSocketClient(socketAddress, OnMessageReceived);
 	}
@@ -54,7 +54,7 @@ public class BingoSyncSessionClient : IBingoSessionClient
 			return;
 		}
 
-		_dispatcher.Dispatch(evt);
+		_handler.Handle(evt);
 	}
 
 	/// <inheritdoc />
@@ -124,7 +124,7 @@ public class BingoSyncSessionClient : IBingoSessionClient
 				UUID = socketInfo.PlayerUUID,
 			};
 
-			_dispatcher.DispatchConnect(player);
+			_handler.HandleConnect(player);
 
 			Log.Info($"Room '{settings.Code}' was joined.");
 			return true;
@@ -154,7 +154,7 @@ public class BingoSyncSessionClient : IBingoSessionClient
 			await _socket.Disconnect(ct);
 
 			_roomCode = null;
-			_dispatcher.DispatchDisconnect();
+			_handler.HandleDisconnect();
 
 			Log.Info($"Left the room '{room}'.");
 			return true;

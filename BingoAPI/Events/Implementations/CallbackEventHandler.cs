@@ -1,14 +1,13 @@
 using BingoAPI.Events.BuiltIn;
+using BingoAPI.Events.Interfaces;
 using BingoAPI.Models;
-using JetBrains.Annotations;
 
-namespace BingoAPI.Events;
+namespace BingoAPI.Events.Implementations;
 
 /// <summary>
-/// Dispatches incoming <see cref="IEvent"/> into respective callbacks
+/// Handler that converts incoming <see cref="IEvent"/> into callbacks
 /// </summary>
-[PublicAPI]
-public sealed class EventDispatcher
+public class CallbackEventHandler : IEventHandler
 {
 	private Player? _localPlayer;
 
@@ -145,33 +144,8 @@ public sealed class EventDispatcher
 
 	#endregion
 
-	#region Dispatch
-
-	/// <summary>
-	/// Notifies that the player has connected under the given identifier
-	/// </summary>
-	internal void DispatchConnect(Player player)
-	{
-		_localPlayer = player;
-		OnSelfConnected?.Invoke(player);
-	}
-
-	/// <summary>
-	/// Notifies that the player has disconnected
-	/// </summary>
-	internal void DispatchDisconnect()
-	{
-		if (_localPlayer == null)
-			return;
-
-		OnSelfDisconnected?.Invoke(_localPlayer);
-		_localPlayer = null;
-	}
-
-	/// <summary>
-	/// Called when a <see cref="IEvent"/> is received
-	/// </summary>
-	internal void Dispatch(IEvent evt)
+	/// <inheritdoc />
+	public void Handle(IEvent evt)
 	{
 		switch (evt)
 		{
@@ -200,6 +174,23 @@ public sealed class EventDispatcher
 				DispatchCardGenerated(generate);
 				break;
 		}
+	}
+
+	/// <inheritdoc />
+	public void HandleConnect(Player player)
+	{
+		_localPlayer = player;
+		OnSelfConnected?.Invoke(player);
+	}
+
+	/// <inheritdoc />
+	public void HandleDisconnect()
+	{
+		if (_localPlayer == null)
+			return;
+
+		OnSelfDisconnected?.Invoke(_localPlayer);
+		_localPlayer = null;
 	}
 
 	private void DispatchConnectedEvent(ConnectionEvent evt)
@@ -265,6 +256,4 @@ public sealed class EventDispatcher
 		else
 			OnOtherCardGenerated?.Invoke(evt.Player, evt.IsCardHidden);
 	}
-
-	#endregion
 }

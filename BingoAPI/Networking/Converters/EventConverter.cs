@@ -1,5 +1,5 @@
-using BingoAPI.Events;
 using BingoAPI.Events.BuiltIn;
+using BingoAPI.Events.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
