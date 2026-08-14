@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace BingoAPI.DTOs.GetSocketInformation;
 
-internal record Response
+public record Response
 {
 	[JsonProperty("room")]
 	[JsonRequired]

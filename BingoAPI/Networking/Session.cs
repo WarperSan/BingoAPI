@@ -1,4 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
+using BingoAPI.Clients.Implementations;
+using BingoAPI.Clients.Interfaces;
 using BingoAPI.Events;
 using BingoAPI.Goals;
 using BingoAPI.Helpers;
@@ -16,7 +18,7 @@ namespace BingoAPI.Networking;
 [PublicAPI]
 public sealed class Session : IDisposable
 {
-	private readonly BingoApiClient _api;
+	private readonly IBingoApiClient _api;
 	private readonly BingoSocketClient _socket;
 	private readonly EventDispatcher _dispatcher;
 
@@ -42,7 +44,7 @@ public sealed class Session : IDisposable
 	public Session(EventDispatcher dispatcher, HttpClient client, Uri socketAddress)
 	{
 		_dispatcher = dispatcher;
-		_api = new BingoApiClient(client);
+		_api = new BingoSyncApiClient(client);
 		_socket = new BingoSocketClient(socketAddress);
 	}
 
@@ -110,7 +112,7 @@ public sealed class Session : IDisposable
 
 			_roomCode = socketInfo.Code;
 
-			Team = BingoApiClient.DEFAULT_TEAM;
+			Team = _api.DefaultTeam;
 
 			var player = new Player
 			{
@@ -273,12 +275,7 @@ public sealed class Session : IDisposable
 
 		try
 		{
-			await _api.MarkSquare(
-				_roomCode,
-				Team,
-				index,
-				ct
-			);
+			await _api.MarkSquare(_roomCode, Team, index, ct);
 
 			Log.Info($"Marked the square #{index} for the team '{Team}'.");
 			return true;
@@ -311,12 +308,7 @@ public sealed class Session : IDisposable
 
 		try
 		{
-			await _api.ClearSquare(
-				_roomCode,
-				Team,
-				index,
-				ct
-			);
+			await _api.ClearSquare(_roomCode, Team, index, ct);
 
 			Log.Info($"Cleared the square #{index} for the team '{Team}'.");
 			return true;
@@ -343,10 +335,7 @@ public sealed class Session : IDisposable
 
 		try
 		{
-			await _api.RevealCard(
-				_roomCode,
-				ct
-			);
+			await _api.RevealCard(_roomCode, ct);
 
 			Log.Info($"Revealed the card for the room '{_roomCode}'.");
 			return true;
