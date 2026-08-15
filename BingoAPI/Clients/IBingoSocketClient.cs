@@ -1,8 +1,12 @@
+using System.Net.WebSockets;
+using JetBrains.Annotations;
+
 namespace BingoAPI.Clients;
 
 /// <summary>
 /// Interface that represents any class that handles websocket calls
 /// </summary>
+[PublicAPI]
 public interface IBingoSocketClient : IDisposable
 {
 	/// <summary>

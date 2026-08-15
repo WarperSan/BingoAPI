@@ -1,9 +1,12 @@
+using JetBrains.Annotations;
+
 namespace BingoAPI.Models;
 
 /// <summary>
 /// Teams available for a bingo match
 /// </summary>
 [Flags]
+[PublicAPI]
 public enum Team : ushort
 {
 #pragma warning disable CS1591

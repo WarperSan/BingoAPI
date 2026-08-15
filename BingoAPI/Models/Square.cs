@@ -1,8 +1,11 @@
+using JetBrains.Annotations;
+
 namespace BingoAPI.Models;
 
 /// <summary>
 /// Represents a square on a bingo card
 /// </summary>
+[PublicAPI]
 public record Square
 {
 	/// <summary>

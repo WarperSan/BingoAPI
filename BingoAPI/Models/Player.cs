@@ -1,8 +1,11 @@
+using JetBrains.Annotations;
+
 namespace BingoAPI.Models;
 
 /// <summary>
 /// Represents a player in the room
 /// </summary>
+[PublicAPI]
 public record Player
 {
 	/// <summary>
