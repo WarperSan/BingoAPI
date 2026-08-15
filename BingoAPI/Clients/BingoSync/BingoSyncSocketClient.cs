@@ -34,10 +34,11 @@ public class BingoSyncSocketClient : IBingoSocketClient
 	}
 
 	/// <inheritdoc />
-	public event Action<string>? OnMessageReceived;
-
-	/// <inheritdoc />
-	public async Task Connect(string socketKey, CancellationToken ct)
+	public async Task Connect(
+		string socketKey,
+		Action<string> onMessageReceived,
+		CancellationToken ct
+	)
 	{
 		if (_socket != null)
 			throw new InvalidOperationException("Socket is already connected.");
@@ -60,7 +61,7 @@ public class BingoSyncSocketClient : IBingoSocketClient
 			_socket = socket;
 			_cts = new CancellationTokenSource();
 
-			_socketReceiveTask = ReceiveLoop(_socket, _cts.Token);
+			_socketReceiveTask = ReceiveLoop(_socket, onMessageReceived, _cts.Token);
 		}
 		catch
 		{
@@ -115,7 +116,11 @@ public class BingoSyncSocketClient : IBingoSocketClient
 	/// <summary>
 	/// Receives data on the given <see cref="WebSocket"/>, and notifies the given callback
 	/// </summary>
-	private async Task ReceiveLoop(WebSocket socket, CancellationToken ct)
+	private async Task ReceiveLoop(
+		WebSocket socket,
+		Action<string> onMessageReceived,
+		CancellationToken ct
+	)
 	{
 		var buffer = new byte[1024];
 
@@ -145,7 +150,7 @@ public class BingoSyncSocketClient : IBingoSocketClient
 
 				try
 				{
-					OnMessageReceived?.Invoke(message);
+					onMessageReceived?.Invoke(message);
 				}
 				catch (Exception ex)
 				{

@@ -6,14 +6,9 @@ namespace BingoAPI.Clients;
 public interface IBingoSocketClient : IDisposable
 {
 	/// <summary>
-	/// Callback called when this client receives a message
-	/// </summary>
-	public event Action<string> OnMessageReceived;
-
-	/// <summary>
 	/// Opens a <see cref="WebSocket"/> using the given key
 	/// </summary>
-	public Task Connect(string socketKey, CancellationToken ct);
+	public Task Connect(string socketKey, Action<string> onMessageReceived, CancellationToken ct);
 
 	/// <summary>
 	/// Closes the <see cref="WebSocket"/> gracefully
