@@ -37,7 +37,9 @@ public class BingoSyncSessionClient : IBingoSessionClient
 	{
 		_handler = handler;
 		_api = new BingoSyncApiClient(client);
-		_socket = new BingoSyncSocketClient(socketAddress, OnMessageReceived);
+
+		var builder = new UriBuilder(socketAddress) { Path = "broadcast" };
+		_socket = new BingoSyncSocketClient(builder.Uri, OnMessageReceived);
 	}
 
 	private void OnMessageReceived(string message)

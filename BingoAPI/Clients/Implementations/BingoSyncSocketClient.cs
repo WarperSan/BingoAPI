@@ -21,11 +21,9 @@ public class BingoSyncSocketClient : IBingoSocketClient
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BingoSyncSocketClient"/> class.
 	/// </summary>
-	public BingoSyncSocketClient(Uri socketAddress, Action<string> onMessageReceived)
+	public BingoSyncSocketClient(Uri broadcastUri, Action<string> onMessageReceived)
 	{
-		var builder = new UriBuilder(socketAddress) { Path = "broadcast" };
-
-		_broadcastUri = builder.Uri;
+		_broadcastUri = broadcastUri;
 		_onMessageReceived = onMessageReceived;
 	}
 
