@@ -7,7 +7,7 @@ namespace BingoAPI.Clients;
 /// Interface that represents any class that handles websocket calls
 /// </summary>
 [PublicAPI]
-public interface IBingoSocketClient : IDisposable
+public interface IBingoSocketClient
 {
 	/// <summary>
 	/// Opens a <see cref="WebSocket"/> using the given key

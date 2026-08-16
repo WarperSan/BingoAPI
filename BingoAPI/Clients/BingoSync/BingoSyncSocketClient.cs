@@ -9,7 +9,7 @@ namespace BingoAPI.Clients.BingoSync;
 /// <summary>
 /// Default implementation of <see cref="IBingoSocketClient"/> for BingoSync
 /// </summary>
-public class BingoSyncSocketClient : IBingoSocketClient
+public class BingoSyncSocketClient : IBingoSocketClient, IDisposable
 {
 	private readonly Uri _broadcastUri;
 	private readonly IWebSocketProvider _webSocketProvider;
