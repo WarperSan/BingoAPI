@@ -1,4 +1,5 @@
 using BingoAPI.Models;
+using Newtonsoft.Json;
 
 namespace BingoAPI.Events.BingoSync;
 
@@ -10,5 +11,7 @@ internal record CardRevealedEvent : IEvent
 	/// <summary>
 	/// Player responsible for this event
 	/// </summary>
+	[JsonProperty("player")]
+	[JsonRequired]
 	public required Player Player { get; init; }
 }

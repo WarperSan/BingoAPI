@@ -1,4 +1,6 @@
+using BingoAPI.Converters;
 using BingoAPI.Models;
+using Newtonsoft.Json;
 
 namespace BingoAPI.Events.BingoSync;
 
@@ -10,10 +12,14 @@ internal record ConnectionEvent : IEvent
 	/// <summary>
 	/// Player responsible for this event
 	/// </summary>
+	[JsonProperty("player")]
+	[JsonRequired]
 	public required Player Player { get; init; }
 
 	/// <summary>
 	/// Defines if the player has connected or disconnected
 	/// </summary>
+	[JsonProperty("event_type")]
+	[JsonConverter(typeof(StringEqualConverter), "connected")]
 	public required bool IsConnected { get; init; }
 }
