@@ -12,6 +12,8 @@ public class BingoSyncEventProvider : IEventProvider
 	{
 		var type = obj.Value<string>("type");
 
+		// TODO: Add support for JSON properties, as Player won't parse correctly
+
 		IEvent? evt = type switch
 		{
 			"chat" => obj.ToObject<ChatEvent>(),
