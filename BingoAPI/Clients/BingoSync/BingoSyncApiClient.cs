@@ -90,8 +90,20 @@ public class BingoSyncApiClient : IBingoApiClient
 	}
 
 	/// <inheritdoc />
-	public Task<SocketIdentity> GetSocketIdentity(string socketKey, CancellationToken ct)
+	public async Task<SocketIdentity> GetSocketIdentity(string socketKey, CancellationToken ct)
 	{
-		throw new NotImplementedException();
+		using var request = new RequestBuilder()
+			.Get()
+			.ToEndpoint($"/api/socket/{socketKey}")
+			.Build();
+
+		var response = await _client.SendRequest<DTOs.BingoSync.GetSocketIdentity.Response>(
+			request,
+			ct
+		);
+
+		response.EnsureSuccess(out var data);
+
+		return new SocketIdentity { Code = data.Code, PlayerUUID = data.PlayerUUID };
 	}
 }
