@@ -1,5 +1,8 @@
 using BingoAPI.Configuration.Settings;
 using BingoAPI.Models;
+using BingoAPI.Network;
+using BingoAPI.Networking;
+using Newtonsoft.Json;
 
 namespace BingoAPI.Clients.BingoSync;
 
@@ -8,6 +11,16 @@ namespace BingoAPI.Clients.BingoSync;
 /// </summary>
 public class BingoSyncApiClient : IBingoApiClient
 {
+	private readonly HttpApiClient _client;
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="BingoSyncApiClient"/> class.
+	/// </summary>
+	public BingoSyncApiClient(HttpClient client, JsonSerializerSettings settings)
+	{
+		_client = new HttpApiClient(client, settings);
+	}
+
 	/// <inheritdoc />
 	public Task<string> CreateRoom(CreateRoomSettings settings, CancellationToken ct)
 	{
@@ -51,9 +64,19 @@ public class BingoSyncApiClient : IBingoApiClient
 	}
 
 	/// <inheritdoc />
-	public Task RevealCard(string room, CancellationToken ct)
+	public async Task RevealCard(string room, CancellationToken ct)
 	{
-		throw new NotImplementedException();
+		var payload = new DTOs.BingoSync.RevealCard.Request { Code = room };
+
+		using var request = new RequestBuilder()
+			.Put()
+			.ToEndpoint("/api/revealed")
+			.WithJson(payload)
+			.Build();
+
+		var response = await _client.SendRequest(request, ct);
+
+		response.EnsureSuccessStatusCode();
 	}
 
 	/// <inheritdoc />
