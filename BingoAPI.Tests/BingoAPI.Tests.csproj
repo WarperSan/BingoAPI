@@ -6,7 +6,10 @@
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
+	<!-- Dependencies -->
 	<ItemGroup>
+		<ProjectReference Include="../BingoAPI/BingoAPI.csproj" />
+
 		<PackageReference Include="coverlet.collector" Version="6.0.4" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
 		<PackageReference Include="xunit" Version="2.9.3" />
