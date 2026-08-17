@@ -36,9 +36,8 @@ internal record Request
 	[DataMember(Name = "seed")]
 	public required string Seed { get; init; }
 
-	// TODO: Make this a parameter
 	[DataMember(Name = "is_spectator")]
-	public bool IsSpectator => false;
+	public required bool IsSpectator { get; init; }
 
 	[DataMember(Name = "variant_type")]
 	private int VariantType => IsRandomized ? RANDOMIZED_VARIANT_TYPE : FIXED_BOARD_VARIANT_TYPE;
@@ -48,9 +47,8 @@ internal record Request
 	[DataMember(Name = "custom_json")]
 	public required string Board { get; init; }
 
-	// TODO: Make this a parameter
 	[DataMember(Name = "hide_card")]
-	public bool HideCard => false;
+	public required bool HideCard { get; init; }
 
 	// ReSharper disable once StringLiteralTypo
 	[DataMember(Name = "csrfmiddlewaretoken")]
