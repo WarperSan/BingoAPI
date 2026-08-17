@@ -11,7 +11,7 @@ namespace BingoAPI.Clients.BingoSync;
 /// </summary>
 public class BingoSyncSocketClient : IBingoSocketClient, IDisposable
 {
-	private readonly Uri _broadcastUri;
+	private readonly Uri _connectUri;
 	private readonly IWebSocketProvider _webSocketProvider;
 	private readonly ILogger _logger;
 
@@ -23,12 +23,12 @@ public class BingoSyncSocketClient : IBingoSocketClient, IDisposable
 	/// Initializes a new instance of the <see cref="BingoSyncSocketClient"/> class.
 	/// </summary>
 	public BingoSyncSocketClient(
-		Uri broadcastUri,
+		Uri connectUri,
 		IWebSocketProvider webSocketProvider,
 		ILogger logger
 	)
 	{
-		_broadcastUri = broadcastUri;
+		_connectUri = connectUri;
 		_webSocketProvider = webSocketProvider;
 		_logger = logger;
 	}
@@ -47,7 +47,7 @@ public class BingoSyncSocketClient : IBingoSocketClient, IDisposable
 
 		try
 		{
-			await socket.ConnectAsync(_broadcastUri, ct);
+			await socket.ConnectAsync(_connectUri, ct);
 
 			var json = JsonConvert.SerializeObject(new { socket_key = socketKey });
 
