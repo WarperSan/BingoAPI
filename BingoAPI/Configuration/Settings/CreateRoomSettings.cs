@@ -39,6 +39,11 @@ public record CreateRoomSettings
 	public bool IsLockout { get; set; }
 
 	/// <summary>
+	/// Defines if the card should be hidden initially
+	/// </summary>
+	public bool HideCard { get; init; }
+
+	/// <summary>
 	/// Seed to use for the randomization
 	/// </summary>
 	/// <remarks>

@@ -74,9 +74,8 @@ public class BingoSyncApiClient : IBingoApiClient
 			IsLockout = settings.IsLockout,
 			Seed = settings.Seed,
 			IsRandomized = settings.IsRandomized,
-			// TODO: Make this a parameter
-			HideCard = false,
 			IsSpectator = settings.IsSpectator,
+			HideCard = settings.HideCard,
 			// TODO: Add a proper setter
 			Board = "",
 			CreationToken = tokens.CreationToken,
