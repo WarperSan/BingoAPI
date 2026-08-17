@@ -26,6 +26,21 @@ public sealed class Response<T>
 	}
 
 	/// <summary>
+	/// Throws an exception if <see cref="IsSuccess"/> is <see langword="false" />
+	/// </summary>
+	public void EnsureSuccess(out T data)
+	{
+		if (!IsSuccess)
+			throw new InvalidOperationException("The response was not successful.");
+
+		data =
+			Data
+			?? throw new NullReferenceException(
+				"The response was a success, but the data did not load properly."
+			);
+	}
+
+	/// <summary>
 	/// Creates a new instance of <see cref="Response{T}"/> from the given response
 	/// </summary>
 	public static Response<T> CreateResponse(
