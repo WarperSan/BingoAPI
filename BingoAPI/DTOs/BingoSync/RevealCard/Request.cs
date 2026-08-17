@@ -6,7 +6,7 @@ namespace BingoAPI.DTOs.BingoSync.RevealCard;
 /// <summary>
 /// Model used as the payload of <see cref="BingoSyncApiClient.RevealCard(string,CancellationToken)"/>
 /// </summary>
-internal class Request
+internal record Request
 {
 	[JsonProperty("room")]
 	[JsonRequired]

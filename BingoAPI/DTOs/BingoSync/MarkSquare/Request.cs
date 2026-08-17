@@ -7,7 +7,7 @@ namespace BingoAPI.DTOs.BingoSync.MarkSquare;
 /// <summary>
 /// Model used as the payload of <see cref="BingoSyncApiClient.MarkSquare(string,Models.Team,int,CancellationToken)"/>
 /// </summary>
-internal class Request
+internal record Request
 {
 	[JsonProperty("room")]
 	[JsonRequired]

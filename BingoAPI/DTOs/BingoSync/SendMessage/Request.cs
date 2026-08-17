@@ -6,7 +6,7 @@ namespace BingoAPI.DTOs.BingoSync.SendMessage;
 /// <summary>
 /// Model used as the payload of <see cref="BingoSyncApiClient.SendMessage(string,string,CancellationToken)"/>
 /// </summary>
-internal class Request
+internal record Request
 {
 	[JsonProperty("room")]
 	[JsonRequired]
