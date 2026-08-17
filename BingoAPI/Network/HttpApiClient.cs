@@ -1,3 +1,4 @@
+using BingoAPI.DTOs;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 

@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace BingoAPI.Network;
+namespace BingoAPI.DTOs;
 
 /// <summary>
 /// Wrapper to handle <see cref="HttpResponseMessage"/> better
