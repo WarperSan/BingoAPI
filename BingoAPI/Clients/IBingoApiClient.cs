@@ -11,6 +11,8 @@ namespace BingoAPI.Clients;
 [PublicAPI]
 public interface IBingoApiClient
 {
+	// TODO: Replace String with type appropriate replacements (RoomCode, SocketKey, etc)
+
 	/// <summary>
 	/// Creates a room with the given settings
 	/// </summary>
