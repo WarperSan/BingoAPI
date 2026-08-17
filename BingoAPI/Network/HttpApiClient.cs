@@ -32,19 +32,12 @@ public class HttpApiClient
 	/// <summary>
 	/// Sends the given request, and parses the returning JSON
 	/// </summary>
-	public async Task<T> SendRequest<T>(HttpRequestMessage request, CancellationToken ct)
+	public async Task<Response<T>> SendRequest<T>(HttpRequestMessage request, CancellationToken ct)
 		where T : class
 	{
 		var response = await SendRequest(request, ct);
 		var content = await response.Content.ReadAsStringAsync();
 
-		JsonReader jsonReader = new JsonTextReader(new StringReader(content));
-
-		var value = _jsonSerializer.Deserialize<T>(jsonReader);
-
-		if (value == null)
-			throw new NullReferenceException($"Failed to deserialize JSON to '{typeof(T)}'.");
-
-		return value;
+		return Response<T>.CreateResponse(response, content, _jsonSerializer);
 	}
 }
