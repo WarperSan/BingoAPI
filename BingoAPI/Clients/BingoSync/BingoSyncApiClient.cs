@@ -52,9 +52,19 @@ public class BingoSyncApiClient : IBingoApiClient
 	}
 
 	/// <inheritdoc />
-	public Task ChangeTeam(string room, Team team, CancellationToken ct)
+	public async Task ChangeTeam(string room, Team team, CancellationToken ct)
 	{
-		throw new NotImplementedException();
+		var body = new DTOs.BingoSync.ChangeTeam.Request { Code = room, Team = team };
+
+		using var request = new RequestBuilder()
+			.Put()
+			.ToEndpoint("/api/color")
+			.WithJson(body)
+			.Build();
+
+		var response = await _client.SendRequest(request, ct);
+
+		response.EnsureSuccessStatusCode();
 	}
 
 	/// <inheritdoc />
