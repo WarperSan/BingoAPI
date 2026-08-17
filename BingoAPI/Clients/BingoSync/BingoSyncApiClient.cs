@@ -1,4 +1,6 @@
+using System.Text.RegularExpressions;
 using BingoAPI.Configuration.Settings;
+using BingoAPI.Extensions;
 using BingoAPI.Models;
 using BingoAPI.Network;
 using BingoAPI.Networking;
@@ -21,10 +23,78 @@ public class BingoSyncApiClient : IBingoApiClient
 		_client = new HttpApiClient(client, settings);
 	}
 
-	/// <inheritdoc />
-	public Task<string> CreateRoom(CreateRoomSettings settings, CancellationToken ct)
+	/// <summary>
+	/// Gets the necessary tokens
+	/// </summary>
+	private async Task<DTOs.BingoSync.CreateRoom.Tokens> GetTokens(CancellationToken ct)
 	{
-		throw new NotImplementedException();
+		// ReSharper disable StringLiteralTypo
+		const string PUBLIC_TOKEN = "csrftoken";
+		const string CREATION_TOKEN = "csrfmiddlewaretoken";
+		// ReSharper restore StringLiteralTypo
+
+		using var request = new RequestBuilder().Get().ToEndpoint("").Build();
+
+		using var response = await _client.SendRequest(request, ct);
+
+		response.EnsureSuccessStatusCode();
+
+		var publicToken = response.GetCookieOrDefault(PUBLIC_TOKEN);
+
+		if (publicToken == null)
+			throw new KeyNotFoundException($"No cookie was set for '{PUBLIC_TOKEN}'.");
+
+		var content = await response.Content.ReadAsStringAsync();
+
+		var match = Regex.Match(
+			content,
+			$"<input[^>]*name=\"{CREATION_TOKEN}\"[^>]*value=\"(.*?)\"[^>]*>"
+		);
+
+		if (!match.Success)
+			throw new KeyNotFoundException($"Could not find any input with '{CREATION_TOKEN}'.");
+
+		return new DTOs.BingoSync.CreateRoom.Tokens
+		{
+			PublicToken = publicToken,
+			CreationToken = match.Groups[1].Value,
+		};
+	}
+
+	/// <inheritdoc />
+	public async Task<string> CreateRoom(CreateRoomSettings settings, CancellationToken ct)
+	{
+		var tokens = await GetTokens(ct);
+
+		var body = new DTOs.BingoSync.CreateRoom.Request
+		{
+			RoomName = settings.Name,
+			Password = settings.Password,
+			Nickname = nameof(BingoAPI),
+			IsLockout = settings.IsLockout,
+			Seed = settings.Seed,
+			IsRandomized = settings.IsRandomized,
+			// TODO: Add a proper setter
+			Board = "",
+			CreationToken = tokens.CreationToken,
+		};
+
+		using var request = new RequestBuilder().Post().ToEndpoint("/").WithForm(body).Build();
+
+		// ReSharper disable StringLiteralTypo
+		request.Headers.Add("Cookie", $"csrftoken={tokens.PublicToken}");
+		request.Headers.Add("X-CSRFToken", tokens.CreationToken);
+		// ReSharper restore StringLiteralTypo
+
+		using var response = await _client.SendRequest(request, ct);
+		response.EnsureSuccessStatusCode();
+
+		if (!request.RequestUri.TryGetRoomCode(out var code))
+			throw new KeyNotFoundException(
+				$"Could not find room code from '{request.RequestUri}'."
+			);
+
+		return code;
 	}
 
 	/// <inheritdoc />
