@@ -49,14 +49,11 @@ public class BingoSyncSocketClient : IBingoSocketClient, IDisposable
 		{
 			await socket.ConnectAsync(_connectUri, ct);
 
-			var json = JsonConvert.SerializeObject(new { socket_key = socketKey });
+			var payload = new DTOs.BingoSync.Connect.Request { SocketKey = socketKey };
+			var jsonPayload = JsonConvert.SerializeObject(payload);
+			var bytesPayload = new ArraySegment<byte>(Encoding.UTF8.GetBytes(jsonPayload));
 
-			await socket.SendAsync(
-				new ArraySegment<byte>(Encoding.UTF8.GetBytes(json)),
-				WebSocketMessageType.Text,
-				true,
-				ct
-			);
+			await socket.SendAsync(bytesPayload, WebSocketMessageType.Text, true, ct);
 
 			_socket = socket;
 			_cts = new CancellationTokenSource();
