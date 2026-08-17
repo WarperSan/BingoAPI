@@ -9,8 +9,6 @@ namespace BingoAPI.Network;
 public sealed class Response<T>
 	where T : class
 {
-	private readonly HttpResponseMessage _response;
-
 	/// <summary>
 	/// Determines if the response has been a success
 	/// </summary>
@@ -21,9 +19,8 @@ public sealed class Response<T>
 	/// </summary>
 	public readonly T? Data;
 
-	private Response(HttpResponseMessage response, T data)
+	private Response(T data)
 	{
-		_response = response;
 		IsSuccess = true;
 		Data = data;
 	}
@@ -38,7 +35,7 @@ public sealed class Response<T>
 	)
 	{
 		if (response.IsSuccessStatusCode)
-			return HandleSuccess(response, content, serializer);
+			return HandleSuccess(content, serializer);
 
 		var jToken = JToken.Parse(content);
 
@@ -71,14 +68,10 @@ public sealed class Response<T>
 		return json;
 	}
 
-	private static Response<T> HandleSuccess(
-		HttpResponseMessage response,
-		string content,
-		JsonSerializer serializer
-	)
+	private static Response<T> HandleSuccess(string content, JsonSerializer serializer)
 	{
 		var data = ParseJson<T>(content, serializer);
 
-		return new Response<T>(response, data);
+		return new Response<T>(data);
 	}
 }
