@@ -16,6 +16,9 @@ public record Square
 	/// <summary>
 	/// Index of this square
 	/// </summary>
+	/// <remarks>
+	/// This index is 0-based
+	/// </remarks>
 	public required int Index { get; init; }
 
 	/// <summary>
