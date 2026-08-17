@@ -14,13 +14,15 @@ namespace BingoAPI.Clients.BingoSync;
 public class BingoSyncApiClient : IBingoApiClient
 {
 	private readonly HttpApiClient _client;
+	private readonly JsonSerializerSettings _serializerSettings;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BingoSyncApiClient"/> class.
 	/// </summary>
-	public BingoSyncApiClient(HttpClient client, JsonSerializerSettings settings)
+	public BingoSyncApiClient(HttpClient client, JsonSerializerSettings serializerSettings)
 	{
-		_client = new HttpApiClient(client, settings);
+		_client = new HttpApiClient(client, serializerSettings);
+		_serializerSettings = serializerSettings;
 	}
 
 	/// <summary>
@@ -113,7 +115,7 @@ public class BingoSyncApiClient : IBingoApiClient
 		using var request = new RequestBuilder()
 			.Post()
 			.ToEndpoint("/api/join-room")
-			.WithJson(body)
+			.WithJson(body, _serializerSettings)
 			.Build();
 
 		var response = await _client.SendRequest<DTOs.BingoSync.JoinRoom.Response>(request, ct);
@@ -136,7 +138,7 @@ public class BingoSyncApiClient : IBingoApiClient
 		using var request = new RequestBuilder()
 			.Put()
 			.ToEndpoint("/api/select")
-			.WithJson(body)
+			.WithJson(body, _serializerSettings)
 			.Build();
 
 		var response = await _client.SendRequest(request, ct);
@@ -157,7 +159,7 @@ public class BingoSyncApiClient : IBingoApiClient
 		using var request = new RequestBuilder()
 			.Put()
 			.ToEndpoint("/api/select")
-			.WithJson(body)
+			.WithJson(body, _serializerSettings)
 			.Build();
 
 		var response = await _client.SendRequest(request, ct);
@@ -173,7 +175,7 @@ public class BingoSyncApiClient : IBingoApiClient
 		using var request = new RequestBuilder()
 			.Put()
 			.ToEndpoint("/api/chat")
-			.WithJson(body)
+			.WithJson(body, _serializerSettings)
 			.Build();
 
 		var response = await _client.SendRequest(request, ct);
@@ -189,7 +191,7 @@ public class BingoSyncApiClient : IBingoApiClient
 		using var request = new RequestBuilder()
 			.Put()
 			.ToEndpoint("/api/color")
-			.WithJson(body)
+			.WithJson(body, _serializerSettings)
 			.Build();
 
 		var response = await _client.SendRequest(request, ct);
@@ -220,12 +222,12 @@ public class BingoSyncApiClient : IBingoApiClient
 	/// <inheritdoc />
 	public async Task RevealCard(string room, CancellationToken ct)
 	{
-		var payload = new DTOs.BingoSync.RevealCard.Request { Code = room };
+		var body = new DTOs.BingoSync.RevealCard.Request { Code = room };
 
 		using var request = new RequestBuilder()
 			.Put()
 			.ToEndpoint("/api/revealed")
-			.WithJson(payload)
+			.WithJson(body, _serializerSettings)
 			.Build();
 
 		var response = await _client.SendRequest(request, ct);

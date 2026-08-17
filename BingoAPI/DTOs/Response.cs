@@ -46,26 +46,27 @@ public sealed class Response<T>
 	public static Response<T> CreateResponse(
 		HttpResponseMessage response,
 		string content,
-		JsonSerializer serializer
+		JsonSerializerSettings serializerSettings
 	)
 	{
 		if (response.IsSuccessStatusCode)
-			return HandleSuccess(content, serializer);
+			return HandleSuccess(content, serializerSettings);
 
 		var jToken = JToken.Parse(content);
 
 		throw new NotSupportedException($"Received a payload that was not supported:\n{jToken}");
 	}
 
-	private static TPayload ParseJson<TPayload>(string content, JsonSerializer serializer)
+	private static TPayload ParseJson<TPayload>(
+		string content,
+		JsonSerializerSettings serializerSettings
+	)
 	{
 		TPayload? json;
 
 		try
 		{
-			using var reader = new JsonTextReader(new StringReader(content));
-
-			json = serializer.Deserialize<TPayload>(reader);
+			json = JsonConvert.DeserializeObject<TPayload>(content, serializerSettings);
 		}
 		catch (JsonException e)
 		{
@@ -83,9 +84,9 @@ public sealed class Response<T>
 		return json;
 	}
 
-	private static Response<T> HandleSuccess(string content, JsonSerializer serializer)
+	private static Response<T> HandleSuccess(string content, JsonSerializerSettings settings)
 	{
-		var data = ParseJson<T>(content, serializer);
+		var data = ParseJson<T>(content, settings);
 
 		return new Response<T>(data);
 	}

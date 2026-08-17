@@ -11,15 +11,15 @@ namespace BingoAPI.Network;
 public class HttpApiClient
 {
 	private readonly HttpClient _client;
-	private readonly JsonSerializer _jsonSerializer;
+	private readonly JsonSerializerSettings _serializerSettings;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="HttpApiClient"/> class.
 	/// </summary>
-	public HttpApiClient(HttpClient client, JsonSerializerSettings settings)
+	public HttpApiClient(HttpClient client, JsonSerializerSettings serializerSettings)
 	{
 		_client = client;
-		_jsonSerializer = JsonSerializer.Create(settings);
+		_serializerSettings = serializerSettings;
 	}
 
 	/// <summary>
@@ -39,6 +39,6 @@ public class HttpApiClient
 		var response = await SendRequest(request, ct);
 		var content = await response.Content.ReadAsStringAsync();
 
-		return Response<T>.CreateResponse(response, content, _jsonSerializer);
+		return Response<T>.CreateResponse(response, content, _serializerSettings);
 	}
 }
