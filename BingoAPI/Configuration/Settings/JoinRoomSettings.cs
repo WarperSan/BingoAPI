@@ -22,4 +22,9 @@ public record JoinRoomSettings
 	/// Name of the player to connect as
 	/// </summary>
 	public required string Nickname { get; init; }
+
+	/// <summary>
+	/// Defines if the player will join as a spectator
+	/// </summary>
+	public bool IsSpectator { get; init; }
 }

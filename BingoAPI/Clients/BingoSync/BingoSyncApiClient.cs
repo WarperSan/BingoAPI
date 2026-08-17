@@ -109,8 +109,7 @@ public class BingoSyncApiClient : IBingoApiClient
 			Code = settings.Code,
 			Password = settings.Password,
 			Username = settings.Nickname,
-			// TODO: Make IsSpectator this a parameter
-			IsSpectator = false,
+			IsSpectator = settings.IsSpectator,
 		};
 
 		using var request = new RequestBuilder()
