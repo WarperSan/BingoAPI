@@ -24,6 +24,11 @@ public record CreateRoomSettings
 	public required string Nickname { get; init; }
 
 	/// <summary>
+	/// Defines if the player will join as a spectator
+	/// </summary>
+	public bool IsSpectator { get; init; }
+
+	/// <summary>
 	/// Should the room be randomized or not
 	/// </summary>
 	public bool IsRandomized { get; set; }
