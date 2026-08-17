@@ -67,9 +67,9 @@ public sealed class RequestBuilder
 	/// <remarks>
 	/// This method parses the payload using <see cref="JsonConvert.SerializeObject(object)"/>
 	/// </remarks>
-	public RequestBuilder WithJson(object json)
+	public RequestBuilder WithJson(object json, JsonSerializerSettings serializerSettings)
 	{
-		var serializedJson = JsonConvert.SerializeObject(json);
+		var serializedJson = JsonConvert.SerializeObject(json, serializerSettings);
 
 		return WithJson(serializedJson);
 	}
