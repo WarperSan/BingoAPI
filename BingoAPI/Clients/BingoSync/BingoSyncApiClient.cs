@@ -28,9 +28,28 @@ public class BingoSyncApiClient : IBingoApiClient
 	}
 
 	/// <inheritdoc />
-	public Task<string> JoinRoom(JoinRoomSettings settings, CancellationToken ct)
+	public async Task<string> JoinRoom(JoinRoomSettings settings, CancellationToken ct)
 	{
-		throw new NotImplementedException();
+		var body = new DTOs.BingoSync.JoinRoom.Request
+		{
+			Code = settings.Code,
+			Password = settings.Password,
+			Username = settings.Nickname,
+			// TODO: Make IsSpectator this a parameter
+			IsSpectator = false,
+		};
+
+		using var request = new RequestBuilder()
+			.Post()
+			.ToEndpoint("/api/join-room")
+			.WithJson(body)
+			.Build();
+
+		var response = await _client.SendRequest<DTOs.BingoSync.JoinRoom.Response>(request, ct);
+
+		response.EnsureSuccess(out var data);
+
+		return data.SocketKey;
 	}
 
 	/// <inheritdoc />
