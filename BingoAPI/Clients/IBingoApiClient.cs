@@ -58,10 +58,7 @@ public interface IBingoApiClient
 	// TODO: public Task NewCard(string room, CancellationToken ct);
 
 	/// <summary>
-	/// Gets the information related to the given socket key
+	/// Gets the identity of the socket related to the given key
 	/// </summary>
-	public Task<DTOs.GetSocketInformation.Response> GetSocketInformation(
-		string socketKey,
-		CancellationToken ct
-	);
+	public Task<SocketIdentity> GetSocketIdentity(string socketKey, CancellationToken ct);
 }

@@ -100,7 +100,7 @@ public class BingoSyncSessionClient : IBingoSessionClient
 
 			await _socketClient.Connect(socketKey, OnMessageReceived, ct);
 
-			var socketInfo = await _apiClient.GetSocketInformation(socketKey, ct);
+			var socketInfo = await _apiClient.GetSocketIdentity(socketKey, ct);
 
 			_roomCode = socketInfo.Code;
 
