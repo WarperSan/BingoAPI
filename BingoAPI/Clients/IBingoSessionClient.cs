@@ -54,11 +54,17 @@ public interface IBingoSessionClient
 	/// <summary>
 	/// Marks the square at the given index for the current player
 	/// </summary>
+	/// <remarks>
+	/// The given index is 0-based
+	/// </remarks>
 	public Task<bool> MarkSquare(int index, CancellationToken ct = default);
 
 	/// <summary>
 	/// Clears the square at the given index for the current player
 	/// </summary>
+	/// <remarks>
+	/// The given index is 0-based
+	/// </remarks>
 	public Task<bool> ClearSquare(int index, CancellationToken ct = default);
 
 	/// <summary>

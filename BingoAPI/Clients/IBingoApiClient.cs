@@ -30,11 +30,17 @@ public interface IBingoApiClient
 	/// <summary>
 	/// Marks the square at the given index for a certain team
 	/// </summary>
+	/// <remarks>
+	/// The given index is 0-based
+	/// </remarks>
 	public Task MarkSquare(string room, Team team, int index, CancellationToken ct);
 
 	/// <summary>
 	/// Clears the square at the given index for a certain team
 	/// </summary>
+	/// <remarks>
+	/// The given index is 0-based
+	/// </remarks>
 	public Task ClearSquare(string room, Team team, int index, CancellationToken ct);
 
 	/// <summary>
