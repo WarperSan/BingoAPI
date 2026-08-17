@@ -40,9 +40,24 @@ public class BingoSyncApiClient : IBingoApiClient
 	}
 
 	/// <inheritdoc />
-	public Task ClearSquare(string room, Team team, int index, CancellationToken ct)
+	public async Task ClearSquare(string room, Team team, int index, CancellationToken ct)
 	{
-		throw new NotImplementedException();
+		var body = new DTOs.BingoSync.ClearSquare.Request
+		{
+			Code = room,
+			Team = team,
+			Index = (index + 1).ToString(),
+		};
+
+		using var request = new RequestBuilder()
+			.Put()
+			.ToEndpoint("/api/select")
+			.WithJson(body)
+			.Build();
+
+		var response = await _client.SendRequest(request, ct);
+
+		response.EnsureSuccessStatusCode();
 	}
 
 	/// <inheritdoc />
