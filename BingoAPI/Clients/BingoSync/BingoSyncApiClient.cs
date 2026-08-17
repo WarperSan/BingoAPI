@@ -198,9 +198,23 @@ public class BingoSyncApiClient : IBingoApiClient
 	}
 
 	/// <inheritdoc />
-	public Task<ICollection<Square>> GetSquares(string room, CancellationToken ct)
+	public async Task<ICollection<Square>> GetSquares(string room, CancellationToken ct)
 	{
-		throw new NotImplementedException();
+		using var request = new RequestBuilder().Get().ToEndpoint($"/room/{room}/board").Build();
+
+		var response = await _client.SendRequest<DTOs.BingoSync.GetSquares.Square[]>(request, ct);
+
+		response.EnsureSuccess(out var data);
+
+		return
+		[
+			.. data.Select(s => new Square
+			{
+				Index = s.Slot.Index,
+				Teams = s.Teams,
+				Text = s.Text,
+			}),
+		];
 	}
 
 	/// <inheritdoc />
