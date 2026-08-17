@@ -104,7 +104,8 @@ public class BingoSyncSessionClient : IBingoSessionClient
 
 			_roomCode = socketInfo.Code;
 
-			Team = _apiClient.DefaultTeam;
+			// TODO: Team = _apiClient.DefaultTeam;
+			Team = Team.Red;
 
 			var player = new Player
 			{

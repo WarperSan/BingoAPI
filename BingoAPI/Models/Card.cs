@@ -74,7 +74,12 @@ public class Card
 					$"Failed to find a goal under the name '{square.Text}', defaulting to manual."
 				);
 
-				goal = new Goal { Name = square.Text, Condition = new ManualCondition() };
+				goal = new Goal
+				{
+					Name = square.Text,
+					Condition = null,
+					// TODO: Condition = new ManualCondition()
+				};
 			}
 
 			_squares[index] = new CardSquare(square, goal);
