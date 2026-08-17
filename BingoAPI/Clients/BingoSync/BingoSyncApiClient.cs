@@ -46,9 +46,19 @@ public class BingoSyncApiClient : IBingoApiClient
 	}
 
 	/// <inheritdoc />
-	public Task SendMessage(string room, string message, CancellationToken ct)
+	public async Task SendMessage(string room, string message, CancellationToken ct)
 	{
-		throw new NotImplementedException();
+		var body = new DTOs.BingoSync.SendMessage.Request { Code = room, Message = message };
+
+		using var request = new RequestBuilder()
+			.Put()
+			.ToEndpoint("/api/chat")
+			.WithJson(body)
+			.Build();
+
+		var response = await _client.SendRequest(request, ct);
+
+		response.EnsureSuccessStatusCode();
 	}
 
 	/// <inheritdoc />
