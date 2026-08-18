@@ -4,7 +4,7 @@ using System.Text;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace BingoAPI.Networking;
+namespace BingoAPI.Network;
 
 /// <summary>
 /// Class allowing to build <see cref="HttpRequestMessage"/> with ease
