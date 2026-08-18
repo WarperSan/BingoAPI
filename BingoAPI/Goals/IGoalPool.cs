@@ -14,4 +14,9 @@ public interface IGoalPool : ICollection<Goal>
 	/// Gets the <see cref="Goal"/> represented by the given <see cref="Square"/>.
 	/// </summary>
 	public bool TryGetValue(Square square, [NotNullWhen(true)] out Goal? goal);
+
+	/// <summary>
+	/// Attempts to add the given <see cref="Goal"/>
+	/// </summary>
+	public bool TryAdd(Goal goal);
 }

@@ -28,15 +28,25 @@ public class GoalPool : IGoalPool
 	}
 
 	/// <inheritdoc />
-	public void Add(Goal item)
+	public bool TryAdd(Goal goal)
 	{
 		if (IsReadOnly)
 			throw new InvalidOperationException("The pool is read-only.");
 
-		if (Contains(item))
-			throw new ArgumentException("The goal has already been added.", nameof(item));
+		if (Contains(goal))
+			return false;
 
-		_goals.Add(item.Name, item);
+		_goals.Add(goal.Name, goal);
+		return true;
+	}
+
+	/// <inheritdoc />
+	public void Add(Goal item)
+	{
+		if (TryAdd(item))
+			return;
+
+		throw new ArgumentException("The goal has already been added.", nameof(item));
 	}
 
 	/// <inheritdoc />
