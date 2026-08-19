@@ -26,11 +26,11 @@ public static class JsonExtensions
 	/// <summary>
 	/// Gets the required propert with the given name of the type <typeparamref name="T"/>
 	/// </summary>
-	public static T GetRequired<T>(this JObject obj, string propertyName)
+	public static T GetRequired<T>(this JObject obj, string propertyName, JsonSerializer serializer)
 	{
 		var token = obj.GetRequired(propertyName);
 
-		var value = token.Value<T>();
+		var value = token.ToObject<T>(serializer);
 
 		if (value == null)
 			throw new JsonException(

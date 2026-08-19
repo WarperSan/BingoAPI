@@ -42,7 +42,7 @@ public class BingoSyncEventProvider : IEventProvider
 	/// <inheritdoc />
 	public IEvent Create(JObject obj)
 	{
-		var rawType = obj.GetRequired<string>("type");
+		var rawType = obj.GetRequired<string>("type", _jsonSerializer);
 
 		// TODO: Add support for JSON properties, as Player won't parse correctly
 
