@@ -1,38 +1,28 @@
-using BingoAPI.Networking.DTOs;
-using Newtonsoft.Json;
+using JetBrains.Annotations;
 
 namespace BingoAPI.Models;
 
 /// <summary>
 /// Represents a square on a bingo card
 /// </summary>
+[PublicAPI]
 public record Square
 {
 	/// <summary>
 	/// Text displayed on this square
 	/// </summary>
-	[JsonProperty("name")]
-	[JsonRequired]
 	public required string Text { get; init; }
 
 	/// <summary>
 	/// Index of this square
 	/// </summary>
-	[JsonProperty("slot")]
-	[JsonRequired]
-#pragma warning disable CS0649
-	private SlotIndex? _slot;
-#pragma warning restore CS0649
-
-	/// <summary>
-	/// Index of this square
-	/// </summary>
-	public int Index => _slot?.Index ?? 0;
+	/// <remarks>
+	/// This index is 0-based
+	/// </remarks>
+	public required int Index { get; init; }
 
 	/// <summary>
 	/// Teams currently owning this square
 	/// </summary>
-	[JsonProperty("colors")]
-	[JsonRequired]
 	public required Team Teams { get; init; }
 }

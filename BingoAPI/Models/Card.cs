@@ -1,20 +1,15 @@
-using BingoAPI.Conditions.BuiltIn;
 using BingoAPI.Goals;
-using BingoAPI.Helpers;
+using BingoAPI.Logging;
+using JetBrains.Annotations;
 
 namespace BingoAPI.Models;
 
 /// <summary>
 /// Represents the current state of a bingo card
 /// </summary>
-public sealed class Card
+[PublicAPI]
+public class Card
 {
-	private static readonly Goal UnknownGoal = new()
-	{
-		Name = "???",
-		Condition = new ManualCondition(),
-	};
-
 	private struct CardSquare
 	{
 		public CardSquare(Square square, Goal goal)
@@ -35,25 +30,35 @@ public sealed class Card
 	}
 
 	private readonly CardSquare[] _squares;
+	private readonly ILogger _logger;
 
 	/// <summary>
 	/// Size of the card on both axes
 	/// </summary>
-	public int Size { get; init; }
+	public readonly int Size;
 
-	internal Card(ICollection<Square> squares, GoalPool pool)
+	/// <summary>
+	/// Initializes a new instance of the <see cref="Card"/> class.
+	/// </summary>
+	public Card(ICollection<Square> squares, IGoalPool pool, ILogger logger)
 	{
 		if (squares.Count == 0)
-			throw new ArgumentException("Tried to create a card without providing any square.");
+			throw new ArgumentException(
+				"Tried to create a card without providing any square.",
+				nameof(squares)
+			);
 
 		var size = (int)Math.Sqrt(squares.Count);
 
 		if (size * size != squares.Count)
-			throw new ArgumentException($"Card must be a perfect square, but received '{size}'.");
-
-		Size = size;
+			throw new ArgumentException(
+				$"Card must be a perfect square, but received '{size}'.",
+				nameof(squares)
+			);
 
 		_squares = new CardSquare[squares.Count];
+		_logger = logger;
+		Size = size;
 
 		foreach (var square in squares)
 		{
@@ -62,59 +67,29 @@ public sealed class Card
 			if (index < 0 || index >= _squares.Length)
 				throw new ArgumentOutOfRangeException(nameof(square));
 
-			if (!pool.TryGet(square, out var goal))
+			// TODO: Consider if this is the responsibility of the card or of the pool
+			if (!pool.TryGetValue(square, out var goal))
 			{
-				Log.Error(
-					$"Failed to find a goal under the name '{square.Text}', defaulting to unknown."
+				logger.Error(
+					$"Failed to find a goal under the name '{square.Text}', defaulting to manual."
 				);
-				goal = UnknownGoal;
+
+				goal = new Goal
+				{
+					Name = square.Text,
+					Condition = null,
+					// TODO: Condition = new ManualCondition()
+				};
 			}
 
 			_squares[index] = new CardSquare(square, goal);
 		}
 	}
 
-	#region Goals
-
 	/// <summary>
 	/// Gets the <see cref="Goal"/> at the given index
 	/// </summary>
 	public Goal GetGoalAt(int index) => _squares[index].Goal;
-
-	/// <summary>
-	/// Gets all <see cref="Goal"/> instances present in this collection
-	/// </summary>
-	public Goal[] GetAllGoals()
-	{
-		var goals = new HashSet<Goal>();
-
-		foreach (var square in _squares)
-			goals.Add(square.Goal);
-
-		return goals.ToArray();
-	}
-
-	/// <summary>
-	/// Finds all indices where the given <see cref="Goal"/> appears
-	/// </summary>
-	public int[] FindByGoal(Goal goal)
-	{
-		var indices = new List<int>();
-
-		for (var i = 0; i < _squares.Length; i++)
-		{
-			if (GetGoalAt(i) != goal)
-				continue;
-
-			indices.Add(i);
-		}
-
-		return indices.ToArray();
-	}
-
-	#endregion
-
-	#region Teams
 
 	/// <summary>
 	/// Gets all <see cref="Team"/> that marked the square at the given index
@@ -135,6 +110,4 @@ public sealed class Card
 	/// Clears the square at the given index for the given <see cref="Team"/>
 	/// </summary>
 	public void Unmark(int index, Team team) => _squares[index].Teams &= ~team;
-
-	#endregion
 }
