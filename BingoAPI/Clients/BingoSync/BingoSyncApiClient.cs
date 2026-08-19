@@ -203,19 +203,11 @@ public class BingoSyncApiClient : IBingoApiClient
 	{
 		using var request = new RequestBuilder().Get().ToEndpoint($"/room/{room}/board").Build();
 
-		var response = await _client.SendRequest<DTOs.BingoSync.GetSquares.Square[]>(request, ct);
+		var response = await _client.SendRequest<Square[]>(request, ct);
 
 		response.EnsureSuccess(out var data);
 
-		return
-		[
-			.. data.Select(s => new Square
-			{
-				Index = s.Slot.Index,
-				Teams = s.Teams,
-				Text = s.Text,
-			}),
-		];
+		return data;
 	}
 
 	/// <inheritdoc />
