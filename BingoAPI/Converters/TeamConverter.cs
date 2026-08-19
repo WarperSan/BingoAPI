@@ -6,14 +6,14 @@ namespace BingoAPI.Converters;
 /// <summary>
 /// Converts a <see cref="Team"/> from and to a <see cref="string"/> using the given team mapping
 /// </summary>
-public class TeamConverter : JsonConverter<Team>
+public abstract class TeamConverter : JsonConverter<Team>
 {
 	private readonly Dictionary<string, Team> _teamMapping;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="TeamConverter"/> class.
 	/// </summary>
-	public TeamConverter(Dictionary<string, Team> teamMapping)
+	protected TeamConverter(Dictionary<string, Team> teamMapping)
 	{
 		_teamMapping = teamMapping;
 	}
