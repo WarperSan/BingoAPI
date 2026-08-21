@@ -27,6 +27,7 @@ public static class JsonExtensions
 	/// Gets the required propert with the given name of the type <typeparamref name="T"/>
 	/// </summary>
 	public static T GetRequired<T>(this JObject obj, string propertyName, JsonSerializer serializer)
+		where T : notnull
 	{
 		var token = obj.GetRequired(propertyName);
 
