@@ -4,13 +4,13 @@ using System.Text;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace BingoAPI.Network;
+namespace BingoAPI.Network.System;
 
 /// <summary>
-/// Class allowing to build <see cref="HttpRequestMessage"/> with ease
+/// Default implementation of <see cref="IRequestBuilder"/> for <see cref="System"/>
 /// </summary>
 [PublicAPI]
-public sealed class RequestBuilder
+public sealed class RequestBuilder : IRequestBuilder
 {
 	#region Methods
 
@@ -19,7 +19,7 @@ public sealed class RequestBuilder
 	/// <summary>
 	/// Sets the HTTP method
 	/// </summary>
-	public RequestBuilder WithMethod(HttpMethod method)
+	public IRequestBuilder WithMethod(HttpMethod method)
 	{
 		_method = method;
 		return this;
@@ -28,17 +28,17 @@ public sealed class RequestBuilder
 	/// <summary>
 	/// Sets the HTTP method to <see cref="HttpMethod.Get"/>
 	/// </summary>
-	public RequestBuilder Get() => WithMethod(HttpMethod.Get);
+	public IRequestBuilder Get() => WithMethod(HttpMethod.Get);
 
 	/// <summary>
 	/// Sets the HTTP method to <see cref="HttpMethod.Post"/>
 	/// </summary>
-	public RequestBuilder Post() => WithMethod(HttpMethod.Post);
+	public IRequestBuilder Post() => WithMethod(HttpMethod.Post);
 
 	/// <summary>
 	/// Sets the HTTP method to <see cref="HttpMethod.Put"/>
 	/// </summary>
-	public RequestBuilder Put() => WithMethod(HttpMethod.Put);
+	public IRequestBuilder Put() => WithMethod(HttpMethod.Put);
 
 	#endregion
 
@@ -49,7 +49,7 @@ public sealed class RequestBuilder
 	/// <summary>
 	/// Sets the endpoint of this request
 	/// </summary>
-	public RequestBuilder ToEndpoint(string endpoint)
+	public IRequestBuilder ToEndpoint(string endpoint)
 	{
 		_endpoint = endpoint;
 		return this;
@@ -67,7 +67,7 @@ public sealed class RequestBuilder
 	/// <remarks>
 	/// This method parses the payload using <see cref="JsonConvert.SerializeObject(object)"/>
 	/// </remarks>
-	public RequestBuilder WithJson(object json, JsonSerializerSettings serializerSettings)
+	public IRequestBuilder WithJson(object json, JsonSerializerSettings serializerSettings)
 	{
 		var serializedJson = JsonConvert.SerializeObject(json, serializerSettings);
 
@@ -77,7 +77,7 @@ public sealed class RequestBuilder
 	/// <summary>
 	/// Sets the payload of this request to the given JSON payload
 	/// </summary>
-	public RequestBuilder WithJson(string json)
+	public IRequestBuilder WithJson(string json)
 	{
 		_content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -87,7 +87,7 @@ public sealed class RequestBuilder
 	/// <summary>
 	/// Sets the payload of this request to the given form payload
 	/// </summary>
-	public RequestBuilder WithForm(object form)
+	public IRequestBuilder WithForm(object form)
 	{
 		var fields = new List<KeyValuePair<string, string>>();
 
