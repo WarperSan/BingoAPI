@@ -9,7 +9,7 @@ namespace BingoAPI.Goals;
 /// Collection of <see cref="Goal"/> instances, accessible by name
 /// </summary>
 [PublicAPI]
-public class GoalPool : IGoalPool
+public sealed class GoalPool : IGoalPool
 {
 	// TODO: Implement collision-safe ID
 

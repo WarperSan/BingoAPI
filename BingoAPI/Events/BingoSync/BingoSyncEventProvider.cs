@@ -7,7 +7,7 @@ namespace BingoAPI.Events.BingoSync;
 /// <summary>
 /// Default implementation of <see cref="IEventProvider"/> for BingoSync
 /// </summary>
-public class BingoSyncEventProvider : IEventProvider
+public sealed class BingoSyncEventProvider : IEventProvider
 {
 	private readonly JsonSerializer _jsonSerializer;
 

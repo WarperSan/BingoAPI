@@ -8,7 +8,7 @@ namespace BingoAPI.Converters.BingoSync;
 /// <summary>
 /// Converts a <see cref="Square"/> from and to a <see cref="string"/>
 /// </summary>
-public class BingoSyncSquareConverter : JsonConverter<Square>
+public sealed class BingoSyncSquareConverter : JsonConverter<Square>
 {
 	private const string TEXT_PROPERTY_NAME = "name";
 	private const string SLOT_PROPERTY_NAME = "slot";

@@ -6,7 +6,7 @@ namespace BingoAPI.DTOs.BingoSync.Connect;
 /// <summary>
 /// Model used as the payload of <see cref="BingoSyncSocketClient.Connect(string,Action{string},CancellationToken)"/>
 /// </summary>
-internal record Request
+internal sealed record Request
 {
 	[JsonProperty("socket_key")]
 	[JsonRequired]

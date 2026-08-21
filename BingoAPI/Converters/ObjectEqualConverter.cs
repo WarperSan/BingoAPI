@@ -5,7 +5,7 @@ namespace BingoAPI.Converters;
 /// <summary>
 /// Converts a <see cref="object"/> to a <see cref="bool"/> if the value is equal to the argument
 /// </summary>
-internal class ObjectEqualConverter : JsonConverter<bool>
+internal sealed class ObjectEqualConverter : JsonConverter<bool>
 {
 	private readonly object _value;
 

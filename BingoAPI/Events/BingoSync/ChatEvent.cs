@@ -6,7 +6,7 @@ namespace BingoAPI.Events.BingoSync;
 /// <summary>
 /// Event sent when a player sends a message in the room
 /// </summary>
-internal record ChatEvent : IEvent
+internal sealed record ChatEvent : IEvent
 {
 	/// <summary>
 	/// Player responsible for this event

@@ -7,7 +7,7 @@ namespace BingoAPI.DTOs.BingoSync.ChangeTeam;
 /// <summary>
 /// Model used as the payload of <see cref="BingoSyncApiClient.ChangeTeam(string,Models.Team,CancellationToken)"/>
 /// </summary>
-internal record Request
+internal sealed record Request
 {
 	[JsonProperty("room")]
 	[JsonRequired]

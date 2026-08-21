@@ -7,7 +7,7 @@ namespace BingoAPI.Models;
 /// Represents a bingo goal
 /// </summary>
 [PublicAPI]
-public record Goal
+public sealed record Goal
 {
 	/// <summary>
 	/// Name of this goal

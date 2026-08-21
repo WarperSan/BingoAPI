@@ -5,7 +5,7 @@ namespace BingoAPI.Converters.BingoSync;
 /// <summary>
 /// Implementation of <see cref="TeamConverter"/> specific for BingoSync
 /// </summary>
-public class BingoSyncTeamConverter : TeamConverter
+public sealed class BingoSyncTeamConverter : TeamConverter
 {
 	private static readonly Dictionary<string, Team> TeamMapping = new()
 	{

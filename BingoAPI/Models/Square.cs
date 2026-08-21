@@ -6,7 +6,7 @@ namespace BingoAPI.Models;
 /// Represents a square on a bingo card
 /// </summary>
 [PublicAPI]
-public record Square
+public sealed record Square
 {
 	/// <summary>
 	/// Text displayed on this square

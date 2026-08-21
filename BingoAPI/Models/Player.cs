@@ -6,7 +6,7 @@ namespace BingoAPI.Models;
 /// Represents a player in the room
 /// </summary>
 [PublicAPI]
-public record Player
+public sealed record Player
 {
 	/// <summary>
 	/// Unique identifier of this player

@@ -7,7 +7,7 @@ namespace BingoAPI.Models;
 /// Represents an identity for a <see cref="WebSocket"/>
 /// </summary>
 [PublicAPI]
-public record SocketIdentity
+public sealed record SocketIdentity
 {
 	/// <summary>
 	/// Code of the room the socket connects to

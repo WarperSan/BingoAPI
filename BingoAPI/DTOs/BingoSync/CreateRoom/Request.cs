@@ -7,7 +7,7 @@ namespace BingoAPI.DTOs.BingoSync.CreateRoom;
 /// <summary>
 /// Model used as the payload of <see cref="BingoSyncApiClient.CreateRoom(CreateRoomSettings,CancellationToken)"/>
 /// </summary>
-internal record Request
+internal sealed record Request
 {
 	private const int CUSTOM_GAME_TYPE = 18;
 	private const int RANDOMIZED_VARIANT_TYPE = 172;

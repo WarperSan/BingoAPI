@@ -6,7 +6,7 @@ namespace BingoAPI.Events.BingoSync;
 /// <summary>
 /// Default implementation of <see cref="IEventHandler"/> for BingoSync
 /// </summary>
-public class BingoSyncEventHandler : ICallbackEventHandler
+public sealed class BingoSyncEventHandler : ICallbackEventHandler
 {
 	private Player? _localPlayer;
 	private readonly ILogger _logger;

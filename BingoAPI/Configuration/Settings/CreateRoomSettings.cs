@@ -6,7 +6,7 @@ namespace BingoAPI.Configuration.Settings;
 /// Settings used when creating a room
 /// </summary>
 [PublicAPI]
-public record CreateRoomSettings
+public sealed record CreateRoomSettings
 {
 	/// <summary>
 	/// Name of the room

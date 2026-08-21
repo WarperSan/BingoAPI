@@ -10,7 +10,7 @@ namespace BingoAPI.Clients.BingoSync;
 /// <summary>
 /// Default implementation of <see cref="IBingoApiClient"/> for BingoSync
 /// </summary>
-public class BingoSyncApiClient : IBingoApiClient
+public sealed class BingoSyncApiClient : IBingoApiClient
 {
 	private readonly HttpApiClient _client;
 	private readonly JsonSerializerSettings _serializerSettings;

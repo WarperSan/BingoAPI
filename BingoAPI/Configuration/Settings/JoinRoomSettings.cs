@@ -6,7 +6,7 @@ namespace BingoAPI.Configuration.Settings;
 /// Settings used when joining a room
 /// </summary>
 [PublicAPI]
-public record JoinRoomSettings
+public sealed record JoinRoomSettings
 {
 	/// <summary>
 	/// Code of the room

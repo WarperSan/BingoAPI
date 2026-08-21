@@ -8,7 +8,7 @@ namespace BingoAPI.Network;
 /// Wrapper around <see cref="HttpClient"/>
 /// </summary>
 [PublicAPI]
-public class HttpApiClient
+public sealed class HttpApiClient
 {
 	private readonly HttpClient _client;
 	private readonly JsonSerializerSettings _serializerSettings;

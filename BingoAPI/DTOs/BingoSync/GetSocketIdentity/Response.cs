@@ -6,7 +6,7 @@ namespace BingoAPI.DTOs.BingoSync.GetSocketIdentity;
 /// <summary>
 /// Model used as the response of <see cref="BingoSyncApiClient.GetSocketIdentity(string,CancellationToken)"/>
 /// </summary>
-internal record Response
+internal sealed record Response
 {
 	[JsonProperty("room")]
 	[JsonRequired]

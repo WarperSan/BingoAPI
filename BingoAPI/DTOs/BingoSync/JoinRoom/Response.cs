@@ -7,7 +7,7 @@ namespace BingoAPI.DTOs.BingoSync.JoinRoom;
 /// <summary>
 /// Model used as the response of <see cref="BingoSyncApiClient.JoinRoom(JoinRoomSettings,CancellationToken)"/>
 /// </summary>
-internal record Response
+internal sealed record Response
 {
 	[JsonProperty("socket_key")]
 	[JsonRequired]

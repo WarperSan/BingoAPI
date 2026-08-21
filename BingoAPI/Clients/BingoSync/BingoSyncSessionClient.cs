@@ -11,7 +11,7 @@ namespace BingoAPI.Clients.BingoSync;
 /// <summary>
 /// Default implementation of <see cref="IBingoSessionClient"/> for BingoSync
 /// </summary>
-public class BingoSyncSessionClient : IBingoSessionClient
+public sealed class BingoSyncSessionClient : IBingoSessionClient
 {
 	private string? _roomCode;
 

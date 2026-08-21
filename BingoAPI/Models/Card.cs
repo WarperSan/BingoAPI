@@ -8,7 +8,7 @@ namespace BingoAPI.Models;
 /// Represents the current state of a bingo card
 /// </summary>
 [PublicAPI]
-public class Card
+public sealed class Card
 {
 	private struct CardSquare
 	{

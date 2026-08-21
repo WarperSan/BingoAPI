@@ -7,7 +7,7 @@ namespace BingoAPI.DTOs.BingoSync.JoinRoom;
 /// <summary>
 /// Model used as the payload of <see cref="BingoSyncApiClient.JoinRoom(JoinRoomSettings,CancellationToken)"/>
 /// </summary>
-internal record Request
+internal sealed record Request
 {
 	[JsonProperty("room")]
 	[JsonRequired]
