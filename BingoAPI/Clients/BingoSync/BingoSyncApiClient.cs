@@ -3,7 +3,6 @@ using BingoAPI.Configuration.Settings;
 using BingoAPI.Extensions;
 using BingoAPI.Models;
 using BingoAPI.Network;
-using BingoAPI.Network.System;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Clients.BingoSync;
