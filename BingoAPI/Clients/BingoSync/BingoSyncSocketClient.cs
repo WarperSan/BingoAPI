@@ -12,7 +12,6 @@ namespace BingoAPI.Clients.BingoSync;
 public sealed class BingoSyncSocketClient : IBingoSocketClient, IDisposable
 {
 	private readonly Uri _connectUri;
-	private readonly IWebSocketProvider _webSocketProvider;
 	private readonly ILogger _logger;
 
 	private WebSocket? _socket;
@@ -22,14 +21,9 @@ public sealed class BingoSyncSocketClient : IBingoSocketClient, IDisposable
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BingoSyncSocketClient"/> class.
 	/// </summary>
-	public BingoSyncSocketClient(
-		Uri connectUri,
-		IWebSocketProvider webSocketProvider,
-		ILogger logger
-	)
+	public BingoSyncSocketClient(Uri connectUri, ILogger logger)
 	{
 		_connectUri = connectUri;
-		_webSocketProvider = webSocketProvider;
 		_logger = logger;
 	}
 
@@ -43,7 +37,7 @@ public sealed class BingoSyncSocketClient : IBingoSocketClient, IDisposable
 		if (_socket != null)
 			throw new InvalidOperationException("Socket is already connected.");
 
-		var socket = _webSocketProvider.CreateClient();
+		var socket = new ClientWebSocket();
 
 		try
 		{
