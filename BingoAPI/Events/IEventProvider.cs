@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Events;
@@ -5,6 +6,7 @@ namespace BingoAPI.Events;
 /// <summary>
 /// Interface that represents any class that can provide <see cref="IEvent"/>
 /// </summary>
+[PublicAPI]
 public interface IEventProvider
 {
 	/// <summary>

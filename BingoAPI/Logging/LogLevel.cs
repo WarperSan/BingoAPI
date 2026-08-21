@@ -1,8 +1,11 @@
+using JetBrains.Annotations;
+
 namespace BingoAPI.Logging;
 
 /// <summary>
 /// Level of the log
 /// </summary>
+[PublicAPI]
 public enum LogLevel
 {
 	/// <summary>

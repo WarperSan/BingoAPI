@@ -1,8 +1,11 @@
+using JetBrains.Annotations;
+
 namespace BingoAPI.Logging;
 
 /// <summary>
 /// Interface that represents any class that can log messages
 /// </summary>
+[PublicAPI]
 public interface ILogger
 {
 	/// <summary>
