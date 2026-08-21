@@ -12,9 +12,35 @@ namespace BingoAPI.Network;
 [PublicAPI]
 public sealed class RequestBuilder
 {
+	/// <summary>
+	/// Initializes a new instance of the <see cref="RequestBuilder"/> class.
+	/// </summary>
+	public RequestBuilder()
+	{
+		_method = HttpMethod.Get;
+		_uriBuilder = new UriBuilder();
+		_content = null;
+	}
+
+	/// <summary>
+	/// Copies this builder to a brand-new builder with the same state
+	/// </summary>
+	public RequestBuilder(RequestBuilder original)
+		: this()
+	{
+		_uriBuilder = new UriBuilder(original._uriBuilder.Uri);
+		_method = original._method;
+
+		if (original._content != null)
+		{
+			var stream = original._content.ReadAsStreamAsync().GetAwaiter().GetResult();
+			_content = new StreamContent(stream);
+		}
+	}
+
 	#region Methods
 
-	private HttpMethod _method = HttpMethod.Get;
+	private HttpMethod _method;
 
 	/// <summary>
 	/// Sets the HTTP method
@@ -44,14 +70,23 @@ public sealed class RequestBuilder
 
 	#region URI
 
-	private string? _endpoint;
+	private UriBuilder _uriBuilder;
 
 	/// <summary>
 	/// Sets the endpoint of this request
 	/// </summary>
 	public RequestBuilder ToEndpoint(string endpoint)
 	{
-		_endpoint = endpoint;
+		_uriBuilder.Path = endpoint;
+		return this;
+	}
+
+	/// <summary>
+	/// Sets the URL of this request
+	/// </summary>
+	public RequestBuilder ToUri(Uri uri)
+	{
+		_uriBuilder = new UriBuilder(uri);
 		return this;
 	}
 
@@ -129,10 +164,12 @@ public sealed class RequestBuilder
 	/// </summary>
 	public HttpRequestMessage Build()
 	{
-		var request = new HttpRequestMessage { Method = _method, Content = _content };
-
-		if (_endpoint != null)
-			request.RequestUri = new Uri(_endpoint, UriKind.Relative);
+		var request = new HttpRequestMessage
+		{
+			Method = _method,
+			RequestUri = _uriBuilder.Uri,
+			Content = _content,
+		};
 
 		return request;
 	}
