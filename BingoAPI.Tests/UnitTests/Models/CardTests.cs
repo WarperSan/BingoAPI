@@ -16,8 +16,6 @@ public class CardTests
 		{
 			// ReSharper disable once UnusedVariable
 			var card = new Card([], pool, logger);
-
-			Assert.Fail();
 		});
 	}
 
@@ -49,8 +47,6 @@ public class CardTests
 		{
 			// ReSharper disable once UnusedVariable
 			var card = new Card(squares, pool, logger);
-
-			Assert.Fail();
 		});
 	}
 
@@ -77,8 +73,6 @@ public class CardTests
 		{
 			// ReSharper disable once UnusedVariable
 			var card = new Card(squares, pool, logger);
-
-			Assert.Fail();
 		});
 	}
 }
