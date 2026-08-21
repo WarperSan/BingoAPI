@@ -16,7 +16,7 @@ public static class UriExtensions
 	/// </summary>
 	public static bool TryGetRoomCode(this Uri uri, [NotNullWhen(true)] out string? code)
 	{
-		var match = Regex.Match(uri.AbsolutePath, "(?<=/room/)[a-zA-Z\\d-_]+");
+		var match = Regex.Match(uri.AbsolutePath, @"(?<=/room/)[a-zA-Z\d\-_]{22,22}");
 
 		if (!match.Success)
 		{
