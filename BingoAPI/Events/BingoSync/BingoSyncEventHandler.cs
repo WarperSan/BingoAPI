@@ -6,7 +6,7 @@ namespace BingoAPI.Events.BingoSync;
 /// <summary>
 /// Default implementation of <see cref="IEventHandler"/> for BingoSync
 /// </summary>
-public sealed class BingoSyncEventHandler : ICallbackEventHandler
+public sealed class BingoSyncEventHandler : IEventHandler, IEventCallback
 {
 	private Player? _localPlayer;
 	private readonly ILogger _logger;
@@ -172,52 +172,52 @@ public sealed class BingoSyncEventHandler : ICallbackEventHandler
 	#region Callbacks
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.ConnectionCallback? OnSelfConnected;
+	public event IEventCallback.ConnectionCallback? OnSelfConnected;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.DisconnectionCallback? OnSelfDisconnected;
+	public event IEventCallback.DisconnectionCallback? OnSelfDisconnected;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.MarkCallback? OnSelfSquareMarked;
+	public event IEventCallback.MarkCallback? OnSelfSquareMarked;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.ClearCallback? OnSelfSquareCleared;
+	public event IEventCallback.ClearCallback? OnSelfSquareCleared;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.ChatCallback? OnSelfMessageSent;
+	public event IEventCallback.ChatCallback? OnSelfMessageSent;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.TeamCallback? OnSelfTeamChanged;
+	public event IEventCallback.TeamCallback? OnSelfTeamChanged;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.RevealCallback? OnSelfCardRevealed;
+	public event IEventCallback.RevealCallback? OnSelfCardRevealed;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.GenerateCallback? OnSelfCardGenerated;
+	public event IEventCallback.GenerateCallback? OnSelfCardGenerated;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.ConnectionCallback? OnOtherConnected;
+	public event IEventCallback.ConnectionCallback? OnOtherConnected;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.DisconnectionCallback? OnOtherDisconnected;
+	public event IEventCallback.DisconnectionCallback? OnOtherDisconnected;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.MarkCallback? OnOtherSquareMarked;
+	public event IEventCallback.MarkCallback? OnOtherSquareMarked;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.ClearCallback? OnOtherSquareCleared;
+	public event IEventCallback.ClearCallback? OnOtherSquareCleared;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.ChatCallback? OnOtherMessageSent;
+	public event IEventCallback.ChatCallback? OnOtherMessageSent;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.TeamCallback? OnOtherTeamChanged;
+	public event IEventCallback.TeamCallback? OnOtherTeamChanged;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.RevealCallback? OnOtherCardRevealed;
+	public event IEventCallback.RevealCallback? OnOtherCardRevealed;
 
 	/// <inheritdoc />
-	public event ICallbackEventHandler.GenerateCallback? OnOtherCardGenerated;
+	public event IEventCallback.GenerateCallback? OnOtherCardGenerated;
 
 	#endregion
 }
