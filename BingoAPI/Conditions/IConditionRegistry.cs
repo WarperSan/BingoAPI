@@ -10,18 +10,33 @@ namespace BingoAPI.Conditions;
 public interface IConditionRegistry
 {
 	/// <summary>
-	/// Adds the type <typeparamref name="T"/> under the given key
+	/// Registers the type <typeparamref name="T"/> under the given key
 	/// </summary>
-	public void Add<T>(string key)
+	public void Register<T>(string key)
 		where T : ICondition;
 
 	/// <summary>
-	/// Adds the given <see cref="ICondition"/> type under the given key
+	/// Registers the given type under the given key
 	/// </summary>
-	public void Add(Type type, string key);
+	/// <remarks>
+	///	<paramref name="type"/> must implement <see cref="ICondition"/>
+	/// </remarks>
+	public void Register(Type type, string key);
 
 	/// <summary>
 	/// Attempts to get the type added under the given key
 	/// </summary>
 	public bool TryGet(string key, [NotNullWhen(true)] out ICondition? condition);
+
+	/// <summary>
+	/// Attempts to get the key of the given <typeparamref name="T"/>
+	/// </summary>
+	public bool TryGetKey<T>([NotNullWhen(true)] out string? key);
+
+	/// <summary>
+	/// Attempts to get the key of the given <see cref="Type"/>
+	/// </summary>
+	public bool TryGetKey(Type type, [NotNullWhen(true)] out string? key);
+
+	public IEnumerable<string> GetConditionParameters(string key);
 }
