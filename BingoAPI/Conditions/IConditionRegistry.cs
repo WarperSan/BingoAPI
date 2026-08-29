@@ -22,4 +22,19 @@ public interface IConditionRegistry
 	///	<paramref name="type"/> must implement <see cref="ICondition"/>
 	/// </remarks>
 	public void Register(Type type, string key);
+
+	/// <summary>
+	/// Attempts to get the key of the given <typeparamref name="T"/>
+	/// </summary>
+	public bool TryGetKey<T>([NotNullWhen(true)] out string? key);
+
+	/// <summary>
+	/// Attempts to get the key of the given <see cref="Type"/>
+	/// </summary>
+	public bool TryGetKey(Type type, [NotNullWhen(true)] out string? key);
+
+	/// <summary>
+	/// Attempts to get the <see cref="Type"/> of the given key
+	/// </summary>
+	public bool TryGetType(string key, [NotNullWhen(true)] out Type? type);
 }

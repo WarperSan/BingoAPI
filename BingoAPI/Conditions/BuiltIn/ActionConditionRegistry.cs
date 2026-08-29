@@ -31,18 +31,6 @@ public sealed class ActionConditionRegistry : IConditionRegistry
 	}
 
 	/// <inheritdoc />
-	public bool TryGet(string key, [NotNullWhen(true)] out ICondition? condition)
-	{
-		if (!_typePerAction.TryGetValue(key, out var type))
-		{
-			condition = null;
-			return false;
-		}
-
-		throw new NotImplementedException();
-	}
-
-	/// <inheritdoc />
 	public bool TryGetKey<T>([NotNullWhen(true)] out string? key)
 	{
 		return TryGetKey(typeof(T), out key);
@@ -51,25 +39,13 @@ public sealed class ActionConditionRegistry : IConditionRegistry
 	/// <inheritdoc />
 	public bool TryGetKey(Type type, [NotNullWhen(true)] out string? key)
 	{
-		foreach (var pair in _typePerAction)
-		{
-			if (pair.Value != type)
-				continue;
-
-			key = pair.Key;
-			return true;
-		}
-
-		key = null;
-		return false;
+		key = _typePerAction.FirstOrDefault(p => p.Value == type).Key;
+		return key != null;
 	}
 
 	/// <inheritdoc />
-	public IEnumerable<string> GetConditionParameters(string key)
+	public bool TryGetType(string key, [NotNullWhen(true)] out Type? type)
 	{
-		if (!_typePerAction.TryGetValue(key, out var type))
-			throw new ArgumentException($"No condition has been added under '{key}'.", nameof(key));
-
-		return type.GetProperties().Select(p => p.Name);
+		return _typePerAction.TryGetValue(key, out type);
 	}
 }
