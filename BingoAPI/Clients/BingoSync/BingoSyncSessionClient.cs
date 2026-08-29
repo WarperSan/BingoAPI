@@ -230,7 +230,7 @@ public sealed class BingoSyncSessionClient : IBingoSessionClient
 			var squares = await _apiClient.GetSquares(_roomCode, ct);
 
 			_logger.Info($"Got {squares.Count} squares for room '{_roomCode}'.");
-			return new Card(squares, pool, _logger);
+			return Card.Create(squares, pool, _logger);
 		}
 		catch (Exception e)
 		{
