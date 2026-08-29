@@ -16,6 +16,9 @@ namespace BingoAPI.Servers.BingoSync;
 [PublicAPI]
 public sealed class BingoSyncServer : IBingoServer, IDisposable
 {
+	private const string DEFAULT_BASE_URI = "https://bingoync.com/";
+	private const string DEFAULT_WEBSOCKET_URI = "wss://sockets.bingosync.com/broadcast/";
+
 	private readonly HttpClient _httpClient;
 
 	/// <summary>
@@ -52,11 +55,7 @@ public sealed class BingoSyncServer : IBingoServer, IDisposable
 	/// Initializes a new instance of the <see cref="BingoSyncServer"/> class.
 	/// </summary>
 	public BingoSyncServer(ILogger logger)
-		: this(
-			new Uri("https://bingosync.com/"),
-			new Uri("wss://sockets.bingosync.com/broadcast"),
-			logger
-		) { }
+		: this(new Uri(DEFAULT_BASE_URI), new Uri(DEFAULT_WEBSOCKET_URI), logger) { }
 
 	/// <inheritdoc />
 	public IEventHandler EventHandler { get; }
