@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
 	<!-- Project Properties -->
 	<PropertyGroup>
 		<AssemblyName>BingoAPI</AssemblyName>
@@ -25,15 +24,15 @@
 
 	<!-- Content includes -->
 	<ItemGroup>
-		<None Include="../icon.png" Pack="true" PackagePath=""/>
-		<None Include="../README.md" Pack="true" PackagePath=""/>
-		<None Include="../LICENSE" Pack="true" PackagePath=""/>
+		<None Include="../icon.png" Pack="true" PackagePath="" />
+		<None Include="../README.md" Pack="true" PackagePath="" />
+		<None Include="../LICENSE" Pack="true" PackagePath="" />
 	</ItemGroup>
 
 	<!-- Dependencies -->
 	<ItemGroup>
-		<PackageReference Include="JetBrains.Annotations" Version="2026.2.0" />
-		<PackageReference Include="PolySharp" Version="1.16.0" PrivateAssets="all"/>
+		<PackageReference Include="JetBrains.Annotations" Version="2026.2.0" PrivateAssets="all" />
+		<PackageReference Include="PolySharp" Version="1.16.0" PrivateAssets="all" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" PrivateAssets="all" />
 		<PackageReference Include="MinVer" Version="7.0.0" PrivateAssets="all" />
 	</ItemGroup>
