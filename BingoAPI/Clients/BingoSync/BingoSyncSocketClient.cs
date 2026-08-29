@@ -1,7 +1,6 @@
 using System.Net.WebSockets;
 using System.Text;
 using BingoAPI.Logging;
-using BingoAPI.Network;
 using Newtonsoft.Json;
 
 namespace BingoAPI.Clients.BingoSync;

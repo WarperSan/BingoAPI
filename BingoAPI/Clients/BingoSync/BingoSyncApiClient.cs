@@ -13,14 +13,20 @@ namespace BingoAPI.Clients.BingoSync;
 public sealed class BingoSyncApiClient : IBingoApiClient
 {
 	private readonly HttpApiClient _client;
+	private readonly RequestBuilder _requestBuilder;
 	private readonly JsonSerializerSettings _serializerSettings;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BingoSyncApiClient"/> class.
 	/// </summary>
-	public BingoSyncApiClient(HttpClient client, JsonSerializerSettings serializerSettings)
+	public BingoSyncApiClient(
+		HttpClient client,
+		RequestBuilder requestBuilder,
+		JsonSerializerSettings serializerSettings
+	)
 	{
 		_client = new HttpApiClient(client, serializerSettings);
+		_requestBuilder = requestBuilder;
 		_serializerSettings = serializerSettings;
 	}
 
@@ -34,7 +40,7 @@ public sealed class BingoSyncApiClient : IBingoApiClient
 		const string CREATION_TOKEN = "csrfmiddlewaretoken";
 		// ReSharper restore StringLiteralTypo
 
-		using var request = new RequestBuilder().Get().ToEndpoint("").Build();
+		using var request = new RequestBuilder(_requestBuilder).Get().ToEndpoint("").Build();
 
 		using var response = await _client.SendRequest(request, ct);
 
@@ -82,7 +88,11 @@ public sealed class BingoSyncApiClient : IBingoApiClient
 			CreationToken = tokens.CreationToken,
 		};
 
-		using var request = new RequestBuilder().Post().ToEndpoint("/").WithForm(body).Build();
+		using var request = new RequestBuilder(_requestBuilder)
+			.Post()
+			.ToEndpoint("/")
+			.WithForm(body)
+			.Build();
 
 		// ReSharper disable StringLiteralTypo
 		request.Headers.Add("Cookie", $"csrftoken={tokens.PublicToken}");
@@ -111,7 +121,7 @@ public sealed class BingoSyncApiClient : IBingoApiClient
 			IsSpectator = settings.IsSpectator,
 		};
 
-		using var request = new RequestBuilder()
+		using var request = new RequestBuilder(_requestBuilder)
 			.Post()
 			.ToEndpoint("/api/join-room")
 			.WithJson(body, _serializerSettings)
@@ -134,7 +144,7 @@ public sealed class BingoSyncApiClient : IBingoApiClient
 			Index = (index + 1).ToString(),
 		};
 
-		using var request = new RequestBuilder()
+		using var request = new RequestBuilder(_requestBuilder)
 			.Put()
 			.ToEndpoint("/api/select")
 			.WithJson(body, _serializerSettings)
@@ -155,7 +165,7 @@ public sealed class BingoSyncApiClient : IBingoApiClient
 			Index = (index + 1).ToString(),
 		};
 
-		using var request = new RequestBuilder()
+		using var request = new RequestBuilder(_requestBuilder)
 			.Put()
 			.ToEndpoint("/api/select")
 			.WithJson(body, _serializerSettings)
@@ -171,7 +181,7 @@ public sealed class BingoSyncApiClient : IBingoApiClient
 	{
 		var body = new DTOs.BingoSync.SendMessage.Request { Code = room, Message = message };
 
-		using var request = new RequestBuilder()
+		using var request = new RequestBuilder(_requestBuilder)
 			.Put()
 			.ToEndpoint("/api/chat")
 			.WithJson(body, _serializerSettings)
@@ -187,7 +197,7 @@ public sealed class BingoSyncApiClient : IBingoApiClient
 	{
 		var body = new DTOs.BingoSync.ChangeTeam.Request { Code = room, Team = team };
 
-		using var request = new RequestBuilder()
+		using var request = new RequestBuilder(_requestBuilder)
 			.Put()
 			.ToEndpoint("/api/color")
 			.WithJson(body, _serializerSettings)
@@ -201,7 +211,10 @@ public sealed class BingoSyncApiClient : IBingoApiClient
 	/// <inheritdoc />
 	public async Task<ICollection<Square>> GetSquares(string room, CancellationToken ct)
 	{
-		using var request = new RequestBuilder().Get().ToEndpoint($"/room/{room}/board").Build();
+		using var request = new RequestBuilder(_requestBuilder)
+			.Get()
+			.ToEndpoint($"/room/{room}/board")
+			.Build();
 
 		var response = await _client.SendRequest<Square[]>(request, ct);
 
@@ -215,7 +228,7 @@ public sealed class BingoSyncApiClient : IBingoApiClient
 	{
 		var body = new DTOs.BingoSync.RevealCard.Request { Code = room };
 
-		using var request = new RequestBuilder()
+		using var request = new RequestBuilder(_requestBuilder)
 			.Put()
 			.ToEndpoint("/api/revealed")
 			.WithJson(body, _serializerSettings)
@@ -229,7 +242,7 @@ public sealed class BingoSyncApiClient : IBingoApiClient
 	/// <inheritdoc />
 	public async Task<SocketIdentity> GetSocketIdentity(string socketKey, CancellationToken ct)
 	{
-		using var request = new RequestBuilder()
+		using var request = new RequestBuilder(_requestBuilder)
 			.Get()
 			.ToEndpoint($"/api/socket/{socketKey}")
 			.Build();

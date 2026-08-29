@@ -4,10 +4,10 @@ using JetBrains.Annotations;
 namespace BingoAPI.Events;
 
 /// <summary>
-/// Interface that represents any class that handles <see cref="IEvent"/> through callbacks
+/// Interface that represents any class that triggers callbacks upon receiving a <see cref="IEvent"/>
 /// </summary>
 [PublicAPI]
-public interface ICallbackEventHandler : IEventHandler
+public interface IEventCallback
 {
 	#region Delegates
 
