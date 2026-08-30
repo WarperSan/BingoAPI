@@ -97,6 +97,22 @@ public sealed class Card
 	}
 
 	/// <summary>
+	/// Gets all indexes where the given <see cref="Goal"/> is located
+	/// </summary>
+	public IEnumerable<int> GetIndexes(Goal goal)
+	{
+		for (var i = 0; i < _squares.Length; i++)
+		{
+			var otherGoal = GetGoalAt(i);
+
+			if (otherGoal != goal)
+				continue;
+
+			yield return i;
+		}
+	}
+
+	/// <summary>
 	/// Gets the <see cref="Goal"/> at the given index
 	/// </summary>
 	public Goal GetGoalAt(int index) => _squares[index].Goal;
