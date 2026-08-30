@@ -20,6 +20,6 @@ internal sealed record ConnectionEvent : Event
 	/// Defines if the player has connected or disconnected
 	/// </summary>
 	[JsonProperty("event_type")]
-	[JsonConverter(typeof(ObjectEqualConverter), "connected")]
+	[JsonConverter(typeof(StringEqualConverter), "connected")]
 	public required bool IsConnected { get; init; }
 }
