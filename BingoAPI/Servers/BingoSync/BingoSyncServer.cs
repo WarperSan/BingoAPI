@@ -39,16 +39,17 @@ public sealed class BingoSyncServer : IBingoServer, IDisposable
 
 		var socketClient = new BingoSyncSocketClient(webSocketUri, logger);
 
-		EventHandler = new BingoSyncEventHandler(logger);
+		var eventHandler = new BingoSyncEventHandler(logger);
 		var eventProvider = new BingoSyncEventProvider(serializerSettings);
 
 		SessionClient = new BingoSyncSessionClient(
 			apiClient,
 			socketClient,
-			EventHandler,
+			eventHandler,
 			eventProvider,
 			logger
 		);
+		EventCallback = eventHandler;
 	}
 
 	/// <summary>
@@ -58,7 +59,7 @@ public sealed class BingoSyncServer : IBingoServer, IDisposable
 		: this(new Uri(DEFAULT_BASE_URI), new Uri(DEFAULT_WEBSOCKET_URI), logger) { }
 
 	/// <inheritdoc />
-	public IEventHandler EventHandler { get; }
+	public IEventCallback EventCallback { get; }
 
 	/// <inheritdoc />
 	public IBingoSessionClient SessionClient { get; }
