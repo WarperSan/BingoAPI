@@ -4,7 +4,6 @@ using BingoAPI.Events;
 using BingoAPI.Goals;
 using BingoAPI.Logging;
 using BingoAPI.Models;
-using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Clients.BingoSync;
 
@@ -328,8 +327,7 @@ public sealed class BingoSyncSessionClient : IBingoSessionClient
 
 	private void OnMessageReceived(string message)
 	{
-		var obj = JObject.Parse(message);
-		var evt = _eventProvider.Create(obj);
+		var evt = _eventProvider.Create(message);
 
 		_eventHandler.Handle(evt);
 	}

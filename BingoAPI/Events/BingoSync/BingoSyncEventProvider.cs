@@ -40,8 +40,10 @@ public sealed class BingoSyncEventProvider : IEventProvider
 	}
 
 	/// <inheritdoc />
-	public IEvent Create(JObject obj)
+	public IEvent Create(string content)
 	{
+		var obj = JObject.Parse(content);
+
 		var rawType = obj.GetRequired<string>("type", _jsonSerializer);
 
 		var type = GetEventType(rawType);

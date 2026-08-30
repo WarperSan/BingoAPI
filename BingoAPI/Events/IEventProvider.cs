@@ -10,7 +10,7 @@ namespace BingoAPI.Events;
 public interface IEventProvider
 {
 	/// <summary>
-	/// Creates a <see cref="IEvent"/> from the given <see cref="JObject"/>
+	/// Creates a <see cref="IEvent"/> from the given input
 	/// </summary>
-	public IEvent Create(JObject obj);
+	public IEvent Create(string content);
 }
