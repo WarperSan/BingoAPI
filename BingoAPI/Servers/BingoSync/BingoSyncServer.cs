@@ -28,7 +28,12 @@ public sealed class BingoSyncServer : IBingoServer, IDisposable
 	{
 		var serializerSettings = new JsonSerializerSettings
 		{
-			Converters = [new BingoSyncTeamConverter(), new BingoSyncSquareConverter()],
+			Converters =
+			[
+				new BingoSyncTeamConverter(),
+				new BingoSyncSquareConverter(),
+				new BingoSyncPlayerConverter(),
+			],
 		};
 
 		var requestBuilder = new RequestBuilder().ToUri(baseUri);

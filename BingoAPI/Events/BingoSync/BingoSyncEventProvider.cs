@@ -44,8 +44,6 @@ public sealed class BingoSyncEventProvider : IEventProvider
 	{
 		var rawType = obj.GetRequired<string>("type", _jsonSerializer);
 
-		// TODO: Add support for JSON properties, as Player won't parse correctly
-
 		var type = GetEventType(rawType);
 
 		var rawEvent = obj.ToObject(type, _jsonSerializer);
