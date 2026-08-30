@@ -25,7 +25,7 @@ public sealed class BingoSyncEventHandler : IEventHandler, IEventCallback
 	private bool IsLocal(Player player) => player.UUID == _localPlayer?.UUID;
 
 	/// <inheritdoc />
-	public void Handle(IEvent evt)
+	public void Handle(Event evt)
 	{
 		switch (evt)
 		{

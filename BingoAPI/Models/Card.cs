@@ -38,9 +38,25 @@ public sealed class Card
 	public readonly int Size;
 
 	/// <summary>
+	/// Amount of goals the card has
+	/// </summary>
+	public readonly int Count;
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="Card"/> class.
 	/// </summary>
-	public Card(ICollection<Square> squares, IGoalPool pool, ILogger logger)
+	private Card(CardSquare[] squares, int size, ILogger logger)
+	{
+		_squares = squares;
+		_logger = logger;
+		Size = size;
+		Count = Size * Size;
+	}
+
+	/// <summary>
+	/// Creates an instance of <see cref="Card"/> from the given collection of <see cref="Square"/>
+	/// </summary>
+	public static Card Create(ICollection<Square> squares, IGoalPool pool, ILogger logger)
 	{
 		if (squares.Count == 0)
 			throw new ArgumentException(
@@ -56,15 +72,13 @@ public sealed class Card
 				nameof(squares)
 			);
 
-		_squares = new CardSquare[squares.Count];
-		_logger = logger;
-		Size = size;
+		var resolvedSquares = new CardSquare[squares.Count];
 
 		foreach (var square in squares)
 		{
 			var index = square.Index;
 
-			if (index < 0 || index >= _squares.Length)
+			if (index < 0 || index >= resolvedSquares.Length)
 				throw new ArgumentOutOfRangeException(nameof(square));
 
 			// TODO: Consider if this is the responsibility of the card or of the pool
@@ -82,8 +96,10 @@ public sealed class Card
 				};
 			}
 
-			_squares[index] = new CardSquare(square, goal);
+			resolvedSquares[index] = new CardSquare(square, goal);
 		}
+
+		return new Card(resolvedSquares, size, logger);
 	}
 
 	/// <summary>

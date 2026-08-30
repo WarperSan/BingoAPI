@@ -11,9 +11,9 @@ namespace BingoAPI.Servers;
 public interface IBingoServer
 {
 	/// <summary>
-	/// Instance of <see cref="IEventHandler"/> used by this server
+	/// Instance of <see cref="IEventCallback"/> used by this server
 	/// </summary>
-	public IEventHandler EventHandler { get; }
+	public IEventCallback EventCallback { get; }
 
 	/// <summary>
 	/// Instance of <see cref="IBingoSessionClient"/> used by this server

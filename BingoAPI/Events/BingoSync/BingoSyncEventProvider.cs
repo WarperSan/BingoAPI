@@ -40,19 +40,19 @@ public sealed class BingoSyncEventProvider : IEventProvider
 	}
 
 	/// <inheritdoc />
-	public IEvent Create(JObject obj)
+	public Event Create(string content)
 	{
-		var rawType = obj.GetRequired<string>("type", _jsonSerializer);
+		var obj = JObject.Parse(content);
 
-		// TODO: Add support for JSON properties, as Player won't parse correctly
+		var rawType = obj.GetRequired<string>("type", _jsonSerializer);
 
 		var type = GetEventType(rawType);
 
 		var rawEvent = obj.ToObject(type, _jsonSerializer);
 
-		if (rawEvent is not IEvent evt)
+		if (rawEvent is not Event evt)
 			throw new ArgumentException(
-				$"Failed to parse the given JSON into a supported '{nameof(IEvent)}'.",
+				$"Failed to parse the given JSON into a supported '{nameof(Event)}'.",
 				nameof(obj)
 			);
 

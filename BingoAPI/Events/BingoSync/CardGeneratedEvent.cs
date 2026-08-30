@@ -6,7 +6,7 @@ namespace BingoAPI.Events.BingoSync;
 /// <summary>
 /// Event sent when a player generates a new card
 /// </summary>
-internal sealed record CardGeneratedEvent : IEvent
+internal sealed record CardGeneratedEvent : Event
 {
 	/// <summary>
 	/// Player responsible for this event

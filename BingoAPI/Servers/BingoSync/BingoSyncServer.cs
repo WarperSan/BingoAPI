@@ -16,6 +16,9 @@ namespace BingoAPI.Servers.BingoSync;
 [PublicAPI]
 public sealed class BingoSyncServer : IBingoServer, IDisposable
 {
+	private const string DEFAULT_BASE_URI = "https://bingosync.com/";
+	private const string DEFAULT_WEBSOCKET_URI = "wss://sockets.bingosync.com/broadcast";
+
 	private readonly HttpClient _httpClient;
 
 	/// <summary>
@@ -25,7 +28,12 @@ public sealed class BingoSyncServer : IBingoServer, IDisposable
 	{
 		var serializerSettings = new JsonSerializerSettings
 		{
-			Converters = [new BingoSyncTeamConverter(), new BingoSyncSquareConverter()],
+			Converters =
+			[
+				new BingoSyncTeamConverter(),
+				new BingoSyncSquareConverter(),
+				new BingoSyncPlayerConverter(),
+			],
 		};
 
 		var requestBuilder = new RequestBuilder().ToUri(baseUri);
@@ -36,30 +44,27 @@ public sealed class BingoSyncServer : IBingoServer, IDisposable
 
 		var socketClient = new BingoSyncSocketClient(webSocketUri, logger);
 
-		EventHandler = new BingoSyncEventHandler(logger);
+		var eventHandler = new BingoSyncEventHandler(logger);
 		var eventProvider = new BingoSyncEventProvider(serializerSettings);
 
 		SessionClient = new BingoSyncSessionClient(
 			apiClient,
 			socketClient,
-			EventHandler,
+			eventHandler,
 			eventProvider,
 			logger
 		);
+		EventCallback = eventHandler;
 	}
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BingoSyncServer"/> class.
 	/// </summary>
 	public BingoSyncServer(ILogger logger)
-		: this(
-			new Uri("https://bingosync.com/"),
-			new Uri("wss://sockets.bingosync.com/broadcast"),
-			logger
-		) { }
+		: this(new Uri(DEFAULT_BASE_URI), new Uri(DEFAULT_WEBSOCKET_URI), logger) { }
 
 	/// <inheritdoc />
-	public IEventHandler EventHandler { get; }
+	public IEventCallback EventCallback { get; }
 
 	/// <inheritdoc />
 	public IBingoSessionClient SessionClient { get; }

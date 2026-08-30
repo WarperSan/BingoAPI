@@ -6,4 +6,4 @@ namespace BingoAPI.Events;
 /// Represents any class that can be used as an event
 /// </summary>
 [PublicAPI]
-public interface IEvent;
+public abstract record Event;

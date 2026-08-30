@@ -1,16 +1,15 @@
 using JetBrains.Annotations;
-using Newtonsoft.Json.Linq;
 
 namespace BingoAPI.Events;
 
 /// <summary>
-/// Interface that represents any class that can provide <see cref="IEvent"/>
+/// Interface that represents any class that can provide <see cref="Event"/>
 /// </summary>
 [PublicAPI]
 public interface IEventProvider
 {
 	/// <summary>
-	/// Creates a <see cref="IEvent"/> from the given <see cref="JObject"/>
+	/// Creates a <see cref="Event"/> from the given input
 	/// </summary>
-	public IEvent Create(JObject obj);
+	public Event Create(string content);
 }
