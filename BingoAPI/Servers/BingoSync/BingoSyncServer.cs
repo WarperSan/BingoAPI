@@ -16,8 +16,8 @@ namespace BingoAPI.Servers.BingoSync;
 [PublicAPI]
 public sealed class BingoSyncServer : IBingoServer, IDisposable
 {
-	private const string DEFAULT_BASE_URI = "https://bingoync.com/";
-	private const string DEFAULT_WEBSOCKET_URI = "wss://sockets.bingosync.com/broadcast/";
+	private const string DEFAULT_BASE_URI = "https://bingosync.com/";
+	private const string DEFAULT_WEBSOCKET_URI = "wss://sockets.bingosync.com/broadcast";
 
 	private readonly HttpClient _httpClient;
 
