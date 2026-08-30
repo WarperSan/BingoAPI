@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 namespace BingoAPI.Events;
 
 /// <summary>
-/// Interface that represents any class that triggers callbacks upon receiving a <see cref="IEvent"/>
+/// Interface that represents any class that triggers callbacks upon receiving a <see cref="Event"/>
 /// </summary>
 [PublicAPI]
 public interface IEventCallback
