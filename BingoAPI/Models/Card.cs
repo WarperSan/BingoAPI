@@ -38,13 +38,19 @@ public sealed class Card
 	public readonly int Size;
 
 	/// <summary>
+	/// Amount of goals the card has
+	/// </summary>
+	public readonly int Count;
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="Card"/> class.
 	/// </summary>
 	private Card(CardSquare[] squares, int size, ILogger logger)
 	{
 		_squares = squares;
-		Size = size;
 		_logger = logger;
+		Size = size;
+		Count = Size * Size;
 	}
 
 	/// <summary>
@@ -94,22 +100,6 @@ public sealed class Card
 		}
 
 		return new Card(resolvedSquares, size, logger);
-	}
-
-	/// <summary>
-	/// Gets all indexes where the given <see cref="Goal"/> is located
-	/// </summary>
-	public IEnumerable<int> GetIndexes(Goal goal)
-	{
-		for (var i = 0; i < _squares.Length; i++)
-		{
-			var otherGoal = GetGoalAt(i);
-
-			if (otherGoal != goal)
-				continue;
-
-			yield return i;
-		}
 	}
 
 	/// <summary>
