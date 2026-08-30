@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 namespace BingoAPI.Goals;
 
 /// <summary>
-/// Interface that represents any class that can hold and retrieve <see cref=""/>
+/// Interface that represents any class that can hold and retrieve <see cref="Goal"/>
 /// </summary>
 [PublicAPI]
 public interface IGoalPool : ICollection<Goal>
