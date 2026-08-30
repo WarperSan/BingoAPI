@@ -7,7 +7,7 @@ namespace BingoAPI.Tests.UnitTests.Models;
 public class CardTests
 {
 	[Fact]
-	public void ctor_WhenNoSquare_ThrowException()
+	public void Create_WhenNoSquare_ThrowException()
 	{
 		var pool = new GoalPool();
 		var logger = new TestLogger();
@@ -15,7 +15,7 @@ public class CardTests
 		Assert.Throws<ArgumentException>(() =>
 		{
 			// ReSharper disable once UnusedVariable
-			var card = new Card([], pool, logger);
+			var card = Card.Create([], pool, logger);
 		});
 	}
 
@@ -26,7 +26,7 @@ public class CardTests
 	[InlineData(10)]
 	[InlineData(15)]
 	[InlineData(101)]
-	public void ctor_WhenNonSquareAmount_ThrowException(int amount)
+	public void Create_WhenNonSquareAmount_ThrowException(int amount)
 	{
 		var square = new Square
 		{
@@ -46,7 +46,7 @@ public class CardTests
 		Assert.Throws<ArgumentException>(() =>
 		{
 			// ReSharper disable once UnusedVariable
-			var card = new Card(squares, pool, logger);
+			var card = Card.Create(squares, pool, logger);
 		});
 	}
 
@@ -54,7 +54,7 @@ public class CardTests
 	[InlineData(-1)]
 	[InlineData(10)]
 	[InlineData(int.MaxValue)]
-	public void ctor_WhenIndexOutOfBounds_ThrowException(int index)
+	public void Create_WhenIndexOutOfBounds_ThrowException(int index)
 	{
 		var squares = new Square[]
 		{
@@ -72,7 +72,7 @@ public class CardTests
 		Assert.Throws<ArgumentOutOfRangeException>(() =>
 		{
 			// ReSharper disable once UnusedVariable
-			var card = new Card(squares, pool, logger);
+			var card = Card.Create(squares, pool, logger);
 		});
 	}
 }
